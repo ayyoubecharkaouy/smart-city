@@ -11,7 +11,8 @@ const criticalOccupancy = 0.35;
 const routeFactors = {
     r1: 0.20,
     r2: 1.35,
-    r3: 1.05
+    r3: 1.05,
+    r4: 0.80
 };
 
 const trafficSensors = msg.trafficSensors || [];

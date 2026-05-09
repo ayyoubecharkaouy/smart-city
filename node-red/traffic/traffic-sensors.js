@@ -127,6 +127,61 @@ msg.trafficSensors = [
   {
     id: "TRAFFIC-ELJ-030",
     routeId: "r3",
+  },
+  {
+    id: "TRAFFIC-ELJ-031",
+    routeId: "r1",
+  },
+
+  {
+    id: "TRAFFIC-ELJ-032",
+    routeId: "r4",
+  },
+  {
+    id: "TRAFFIC-ELJ-033",
+    routeId: "r4",
+  },
+  {
+    id: "TRAFFIC-ELJ-034",
+    routeId: "r4",
+  },
+
+  {
+    id: "TRAFFIC-ELJ-035",
+    routeId: "r4",
+  },
+  {
+    id: "TRAFFIC-ELJ-036",
+    routeId: "r4",
+  },
+  {
+    id: "TRAFFIC-ELJ-037",
+    routeId: "r4",
+  },
+   {
+    id: "TRAFFIC-ELJ-038",
+    routeId: "r5",
+  },
+  {
+    id: "TRAFFIC-ELJ-039",
+    routeId: "r5",
+  },
+  {
+    id: "TRAFFIC-ELJ-040",
+    routeId: "r5",
+  },
+
+  {
+    id: "TRAFFIC-ELJ-041",
+    routeId: "r5",
+  },
+  {
+    id: "TRAFFIC-ELJ-042",
+    routeId: "r5",
+  },
+  {
+    id: "TRAFFIC-ELJ-043",
+    routeId: "r5",
   }
 ];
 

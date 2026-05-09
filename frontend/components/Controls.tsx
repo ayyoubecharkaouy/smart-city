@@ -22,10 +22,8 @@ export default function Controls({
   return (
     <aside className="w-full h-screen /40 backdrop-blur-md border-r border-gray-200 flex flex-col overflow-y-auto bg-[#fafaf8]">
       {/* Header */}
-      <div className="px-5 pt-6 pb-5 mb-6">
-        <h1 className="text-4xl font-bold tracking-wide text-start">
-          El Jadida
-        </h1>
+      <div className="px-5 pt-6 pb-5 mb-6 flex items-center justify-center">
+        <img src={"/images/logos/eljadida-removebg.png"} className="h-20 w-auto" />
       </div>
 
       {/* Data Displayed & Visualization Options */}
