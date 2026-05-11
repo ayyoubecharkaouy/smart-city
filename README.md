@@ -6,6 +6,7 @@ Ce projet contient plusieurs parties :
 - Node-RED
 - Backend Node.js
 - Frontend Next.js
+- Spark
 
 ## Ordre de démarrage du projet
 
@@ -79,6 +80,9 @@ http://127.0.0.1:1880/
 ## 3. Démarrer le backend
 (suirve README.md | backend/README.md)
 
+## 4. Démarrer Spark
+(suirve README.md | spark/README.md)
+
 ## 4. Démarrer le frontend
 (suirve README.md | frontend/README.md)
 
@@ -91,4 +95,5 @@ L’ordre recommandé est le suivant :
 2. Démarrer Node-RED
 3. Démarrer le backend
 4. Démarrer le frontend
+5. Démarrer Spark
 ```
