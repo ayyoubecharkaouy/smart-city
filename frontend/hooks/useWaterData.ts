@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { getSocket, disconnectSocket } from "@/lib/socket";
 import type { WaterReading, DistrictWater } from "@/lib/types";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://192.168.1.22:4000";
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
 
 export function useWaterData(enabled: boolean = true) {
   const [latestReadings, setLatestReadings] = useState<WaterReading[]>([]);

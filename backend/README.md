@@ -34,7 +34,7 @@ node server.js
 Par défaut, le serveur peut être accessible sur :
 
 ```text
-http://0.0.0.0:4000
+http://localhost:4000
 ```
 
 Vérifiez le port utilisé dans le fichier de configuration ou dans le fichier principal du serveur.

@@ -1,0 +1,437 @@
+[
+    {
+        "id": "e0aff20e9fba01a9",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "ecdaf913d2563b80",
+        "type": "inject",
+        "z": "e0aff20e9fba01a9",
+        "name": "Repeat : 4s",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "4",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 170,
+        "y": 680,
+        "wires": [
+            [
+                "d8ddbfd146287b2b"
+            ]
+        ]
+    },
+    {
+        "id": "add2b7fe7c852fd6",
+        "type": "function",
+        "z": "e0aff20e9fba01a9",
+        "name": "function 1 : generer_temperature",
+        "func": "function temperatureEstimee(mois, heure) {\n  // Données climatiques pour El Jadida\n  const MOIS = {\n    1: { Tmin: 10.9, Tmax: 16.8, Tmoy: 13.85, A: 2.95, h0: 8 },\n    2: { Tmin: 11.2, Tmax: 17.3, Tmoy: 14.25, A: 3.05, h0: 9 },\n    3: { Tmin: 12.7, Tmax: 19.1, Tmoy: 15.9, A: 3.2, h0: 9 },\n    4: { Tmin: 14.1, Tmax: 20.2, Tmoy: 17.15, A: 3.05, h0: 9 },\n    5: { Tmin: 16.2, Tmax: 22.5, Tmoy: 19.35, A: 3.15, h0: 9 },\n    6: { Tmin: 18.5, Tmax: 24.9, Tmoy: 21.7, A: 3.2, h0: 9 },\n    7: { Tmin: 20.1, Tmax: 26.4, Tmoy: 23.25, A: 3.15, h0: 9 },\n    8: { Tmin: 20.8, Tmax: 27.3, Tmoy: 24.05, A: 3.25, h0: 9 },\n    9: { Tmin: 19.9, Tmax: 26.0, Tmoy: 22.95, A: 3.05, h0: 9 },\n    10: { Tmin: 18.1, Tmax: 24.1, Tmoy: 21.1, A: 3.0, h0: 9 },\n    11: { Tmin: 14.4, Tmax: 20.2, Tmoy: 17.3, A: 2.9, h0: 9 },\n    12: { Tmin: 12.2, Tmax: 18.1, Tmoy: 15.15, A: 2.95, h0: 9 }\n  };\n\n  if (!MOIS[mois]) {\n    throw new Error(\"Le mois doit être compris entre 1 et 12.\");\n  }\n\n  if (!Number.isInteger(heure) || heure < 0 || heure > 23) {\n    throw new Error(\"L'heure doit être comprise entre 0 et 23.\");\n  }\n\n  const bruit = Math.random() * 3 - 1.5;\n  const donneesMois = MOIS[mois];\n\n  const temperature =\n    donneesMois.Tmoy +\n    donneesMois.A *\n      Math.sin(((2 * Math.PI) / 24) * (heure - donneesMois.h0)) +\n    bruit;\n\n  return Number(temperature.toFixed(2));\n}\n\n// Vérifier que msg.sensors existe\nif (!Array.isArray(msg.sensors)) {\n  throw new Error(\"msg.sensors est introuvable. Ajoute d'abord le node config_capteurs.\");\n}\n\nconst now = new Date();\nconst moisActuel = now.getMonth() + 1;\nconst heureActuelle = now.getHours();\n\n// Ajouter la température à chaque capteur\nmsg.sensors = msg.sensors.map(sensor => {\n  return {\n    ...sensor,\n    temperature: temperatureEstimee(moisActuel, heureActuelle),\n    temperature_unit: \"°C\"\n  };\n});\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 620,
+        "wires": [
+            [
+                "fbf8d1afc7918e7d"
+            ]
+        ]
+    },
+    {
+        "id": "8f2aeae2e1d19cee",
+        "type": "kafkajs-producer",
+        "z": "e0aff20e9fba01a9",
+        "name": "Kafka-Topic-Environment.",
+        "client": "f5ea23608ca28e6a",
+        "topic": "smartcity.environment.readings",
+        "advancedoptions": false,
+        "acknowledge": "all",
+        "partition": "",
+        "headeritems": {},
+        "key": "",
+        "responsetimeout": 30000,
+        "transactiontimeout": 60000,
+        "metadatamaxage": 300000,
+        "allowautotopiccreation": false,
+        "x": 910,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "fbf8d1afc7918e7d",
+        "type": "function",
+        "z": "e0aff20e9fba01a9",
+        "name": "function 2 : generer_qualite_air",
+        "func": "function randomBetween(min, max, decimals = 2) {\n  const value = Math.random() * (max - min) + min;\n  return Number(value.toFixed(decimals));\n}\n\nfunction calculerAQIPM25(pm25) {\n  // AQI basé sur PM2.5 selon l'échelle US EPA\n  const breakpoints = [\n    { cLow: 0.0, cHigh: 9.0, iLow: 0, iHigh: 50, status: \"good\" },\n    { cLow: 9.1, cHigh: 35.4, iLow: 51, iHigh: 100, status: \"moderate\" },\n    { cLow: 35.5, cHigh: 55.4, iLow: 101, iHigh: 150, status: \"unhealthy_sensitive\" },\n    { cLow: 55.5, cHigh: 125.4, iLow: 151, iHigh: 200, status: \"unhealthy\" },\n    { cLow: 125.5, cHigh: 225.4, iLow: 201, iHigh: 300, status: \"very_unhealthy\" },\n    { cLow: 225.5, cHigh: 325.4, iLow: 301, iHigh: 500, status: \"hazardous\" }\n  ];\n\n  const bp = breakpoints.find(b => pm25 >= b.cLow && pm25 <= b.cHigh);\n\n  if (!bp) {\n    return {\n      aqi: 500,\n      status: \"hazardous\"\n    };\n  }\n\n  const aqi =\n    ((bp.iHigh - bp.iLow) / (bp.cHigh - bp.cLow)) *\n      (pm25 - bp.cLow) +\n    bp.iLow;\n\n  return {\n    aqi: Math.round(aqi),\n    status: bp.status\n  };\n}\n\nfunction facteurZone(districtId) {\n  // Facteur estimé selon la zone\n  const facteurs = {\n    sidi_bouzid: 0.90,\n    bennani: 1.05,\n    el_manar: 1.05,\n    sidi_moussa: 1.00,\n    essaada: 1.08,\n    mouilha: 1.02,\n    cite_portugaise: 1.15,\n    najd: 1.00,\n    les_facultes: 0.95,\n    quartier_jaouhara: 1.03\n  };\n\n  return facteurs[districtId] || 1.00;\n}\n\nfunction qualiteAirEstimee(districtId, heure) {\n  const facteur = facteurZone(districtId);\n\n  // Valeurs estimées réalistes pour El Jadida\n  // PM2.5 généralement autour de 11 à 16.5 µg/m³\n  let pm25Base = randomBetween(11, 16.5);\n\n  // Variation horaire : plus de pollution pendant les heures de trafic\n  if (heure >= 7 && heure <= 9) {\n    pm25Base += randomBetween(2, 5);\n  } else if (heure >= 17 && heure <= 20) {\n    pm25Base += randomBetween(2, 6);\n  } else if (heure >= 0 && heure <= 5) {\n    pm25Base -= randomBetween(1, 3);\n  }\n\n  const pm25 = Math.max(3, pm25Base * facteur + randomBetween(-1.2, 1.2));\n  const pm10 = pm25 * randomBetween(1.8, 2.8);\n  const no2 = randomBetween(8, 32) * facteur;\n  const co = randomBetween(0.2, 0.8) * facteur;\n  const o3 = randomBetween(30, 75);\n\n  const aqiResult = calculerAQIPM25(pm25);\n\n  return {\n    aqi: aqiResult.aqi,\n    status: aqiResult.status,\n    main_pollutant: \"PM2.5\",\n    pm25: Number(pm25.toFixed(2)),\n    pm10: Number(pm10.toFixed(2)),\n    no2: Number(no2.toFixed(2)),\n    co: Number(co.toFixed(2)),\n    o3: Number(o3.toFixed(2)),\n    units: {\n      pm25: \"µg/m³\",\n      pm10: \"µg/m³\",\n      no2: \"µg/m³\",\n      co: \"mg/m³\",\n      o3: \"µg/m³\"\n    }\n  };\n}\n\n// Vérifier que msg.sensors existe\nif (!Array.isArray(msg.sensors)) {\n  throw new Error(\"msg.sensors est introuvable. Ajoute d'abord config_capteurs puis generer_temperature.\");\n}\n\nconst now = new Date();\nconst heureActuelle = now.getHours();\n\n// Ajouter la qualité de l'air à chaque capteur\nmsg.sensors = msg.sensors.map(sensor => {\n  return {\n    ...sensor,\n    air_quality: qualiteAirEstimee(sensor.districtId, heureActuelle)\n  };\n});\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 680,
+        "wires": [
+            [
+                "8f5d296809bb4c74"
+            ]
+        ]
+    },
+    {
+        "id": "d8ddbfd146287b2b",
+        "type": "function",
+        "z": "e0aff20e9fba01a9",
+        "name": "Capteurs : Env",
+        "func": "msg.sensors = [\n  { id: \"TEMP-ELJ-001\", districtId: \"sidi_bouzid\", districtName: \"Sidi Bouzid\" },\n  { id: \"TEMP-ELJ-002\", districtId: \"sidi_bouzid\", districtName: \"Sidi Bouzid\" },\n  { id: \"TEMP-ELJ-003\", districtId: \"sidi_bouzid\", districtName: \"Sidi Bouzid\" },\n\n  { id: \"TEMP-ELJ-004\", districtId: \"bennani\", districtName: \"Bennani\" },\n  { id: \"TEMP-ELJ-005\", districtId: \"bennani\", districtName: \"Bennani\" },\n  { id: \"TEMP-ELJ-006\", districtId: \"bennani\", districtName: \"Bennani\" },\n\n  { id: \"TEMP-ELJ-007\", districtId: \"el_manar\", districtName: \"El Manar\" },\n  { id: \"TEMP-ELJ-008\", districtId: \"el_manar\", districtName: \"El Manar\" },\n  { id: \"TEMP-ELJ-009\", districtId: \"el_manar\", districtName: \"El Manar\" },\n\n  { id: \"TEMP-ELJ-010\", districtId: \"sidi_moussa\", districtName: \"Sidi Moussa\" },\n  { id: \"TEMP-ELJ-011\", districtId: \"sidi_moussa\", districtName: \"Sidi Moussa\" },\n  { id: \"TEMP-ELJ-012\", districtId: \"sidi_moussa\", districtName: \"Sidi Moussa\" },\n\n  { id: \"TEMP-ELJ-013\", districtId: \"essaada\", districtName: \"Essaada\" },\n  { id: \"TEMP-ELJ-014\", districtId: \"essaada\", districtName: \"Essaada\" },\n  { id: \"TEMP-ELJ-015\", districtId: \"essaada\", districtName: \"Essaada\" },\n\n  { id: \"TEMP-ELJ-016\", districtId: \"mouilha\", districtName: \"Mouilha\" },\n  { id: \"TEMP-ELJ-017\", districtId: \"mouilha\", districtName: \"Mouilha\" },\n  { id: \"TEMP-ELJ-018\", districtId: \"mouilha\", districtName: \"Mouilha\" },\n\n  { id: \"TEMP-ELJ-020\", districtId: \"cite_portugaise\", districtName: \"Cité Portugaise\" },\n\n  { id: \"TEMP-ELJ-022\", districtId: \"najd\", districtName: \"Najd\" },\n  { id: \"TEMP-ELJ-023\", districtId: \"najd\", districtName: \"Najd\" },\n  { id: \"TEMP-ELJ-024\", districtId: \"najd\", districtName: \"Najd\" },\n\n  { id: \"TEMP-ELJ-025\", districtId: \"les_facultes\", districtName: \"Les Facultés\" },\n  { id: \"TEMP-ELJ-026\", districtId: \"les_facultes\", districtName: \"Les Facultés\" },\n  { id: \"TEMP-ELJ-027\", districtId: \"les_facultes\", districtName: \"Les Facultés\" },\n\n  { id: \"TEMP-ELJ-028\", districtId: \"quartier_jaouhara\", districtName: \"Quartier Jaouhara\" },\n  { id: \"TEMP-ELJ-029\", districtId: \"quartier_jaouhara\", districtName: \"Quartier Jaouhara\" },\n  { id: \"TEMP-ELJ-030\", districtId: \"quartier_jaouhara\", districtName: \"Quartier Jaouhara\" }\n];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 680,
+        "wires": [
+            [
+                "add2b7fe7c852fd6"
+            ]
+        ]
+    },
+    {
+        "id": "8f5d296809bb4c74",
+        "type": "function",
+        "z": "e0aff20e9fba01a9",
+        "name": "function 3 : preparer_kafka",
+        "func": "const timestamp = new Date().toISOString();\n\nconst allData = msg.sensors.map(sensor => {\n  return {\n    sensor_id: sensor.id,\n    city: \"El Jadida\",\n    district_id: sensor.districtId,\n    district: sensor.districtName,\n\n    temperature: sensor.temperature,\n    temperature_unit: sensor.temperature_unit,\n\n    air_quality: sensor.air_quality,\n\n    timestamp: timestamp\n  };\n});\n\nmsg.topic = \"smartcity.environment.readings\";\nmsg.payload = JSON.stringify(allData);\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 620,
+        "wires": [
+            [
+                "8f2aeae2e1d19cee"
+            ]
+        ]
+    },
+    {
+        "id": "7bd53efda181c28c",
+        "type": "function",
+        "z": "e0aff20e9fba01a9",
+        "name": "Capteurs : Water",
+        "func": "msg.waterSensors = [\n  {\n    id: \"WATER-ELJ-001\",\n    districtId: \"sidi_bouzid\",\n    districtName: \"Sidi Bouzid\"\n  },\n  {\n    id: \"WATER-ELJ-002\",\n    districtId: \"sidi_bouzid\",\n    districtName: \"Sidi Bouzid\"\n  },\n  {\n    id: \"WATER-ELJ-003\",\n    districtId: \"sidi_bouzid\",\n    districtName: \"Sidi Bouzid\"\n  },\n\n  {\n    id: \"WATER-ELJ-004\",\n    districtId: \"bennani\",\n    districtName: \"Bennani\"\n  },\n  {\n    id: \"WATER-ELJ-005\",\n    districtId: \"bennani\",\n    districtName: \"Bennani\"\n  },\n  {\n    id: \"WATER-ELJ-006\",\n    districtId: \"bennani\",\n    districtName: \"Bennani\"\n  },\n\n  {\n    id: \"WATER-ELJ-007\",\n    districtId: \"el_manar\",\n    districtName: \"El Manar\"\n  },\n  {\n    id: \"WATER-ELJ-008\",\n    districtId: \"el_manar\",\n    districtName: \"El Manar\"\n  },\n  {\n    id: \"WATER-ELJ-009\",\n    districtId: \"el_manar\",\n    districtName: \"El Manar\"\n  },\n\n  {\n    id: \"WATER-ELJ-010\",\n    districtId: \"sidi_moussa\",\n    districtName: \"Sidi Moussa\"\n  },\n  {\n    id: \"WATER-ELJ-011\",\n    districtId: \"sidi_moussa\",\n    districtName: \"Sidi Moussa\"\n  },\n  {\n    id: \"WATER-ELJ-012\",\n    districtId: \"sidi_moussa\",\n    districtName: \"Sidi Moussa\"\n  },\n\n  {\n    id: \"WATER-ELJ-013\",\n    districtId: \"essaada\",\n    districtName: \"Essaada\"\n  },\n  {\n    id: \"WATER-ELJ-014\",\n    districtId: \"essaada\",\n    districtName: \"Essaada\"\n  },\n  {\n    id: \"WATER-ELJ-015\",\n    districtId: \"essaada\",\n    districtName: \"Essaada\"\n  },\n\n  {\n    id: \"WATER-ELJ-016\",\n    districtId: \"mouilha\",\n    districtName: \"Mouilha\"\n  },\n  {\n    id: \"WATER-ELJ-017\",\n    districtId: \"mouilha\",\n    districtName: \"Mouilha\"\n  },\n  {\n    id: \"WATER-ELJ-018\",\n    districtId: \"mouilha\",\n    districtName: \"Mouilha\"\n  },\n\n  {\n    id: \"WATER-ELJ-019\",\n    districtId: \"cite_portugaise\",\n    districtName: \"Cité Portugaise\"\n  },\n  {\n    id: \"WATER-ELJ-020\",\n    districtId: \"cite_portugaise\",\n    districtName: \"Cité Portugaise\"\n  },\n  {\n    id: \"WATER-ELJ-021\",\n    districtId: \"cite_portugaise\",\n    districtName: \"Cité Portugaise\"\n  },\n\n  {\n    id: \"WATER-ELJ-022\",\n    districtId: \"najd\",\n    districtName: \"Najd\"\n  },\n  {\n    id: \"WATER-ELJ-023\",\n    districtId: \"najd\",\n    districtName: \"Najd\"\n  },\n  {\n    id: \"WATER-ELJ-024\",\n    districtId: \"najd\",\n    districtName: \"Najd\"\n  },\n\n  {\n    id: \"WATER-ELJ-025\",\n    districtId: \"les_facultes\",\n    districtName: \"Les Facultés\"\n  },\n  {\n    id: \"WATER-ELJ-026\",\n    districtId: \"les_facultes\",\n    districtName: \"Les Facultés\"\n  },\n  {\n    id: \"WATER-ELJ-027\",\n    districtId: \"les_facultes\",\n    districtName: \"Les Facultés\"\n  },\n\n  {\n    id: \"WATER-ELJ-028\",\n    districtId: \"quartier_jaouhara\",\n    districtName: \"Quartier Jaouhara\"\n  },\n  {\n    id: \"WATER-ELJ-029\",\n    districtId: \"quartier_jaouhara\",\n    districtName: \"Quartier Jaouhara\"\n  },\n  {\n    id: \"WATER-ELJ-030\",\n    districtId: \"quartier_jaouhara\",\n    districtName: \"Quartier Jaouhara\"\n  }\n];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 780,
+        "wires": [
+            [
+                "37d25c41e9566181"
+            ]
+        ]
+    },
+    {
+        "id": "4e2e52b535b420d2",
+        "type": "kafkajs-producer",
+        "z": "e0aff20e9fba01a9",
+        "name": "Kafka-Topic-Water.",
+        "client": "c177ba7cb6384811",
+        "topic": "smartcity.water.readings",
+        "advancedoptions": false,
+        "acknowledge": "all",
+        "partition": "",
+        "headeritems": {},
+        "key": "",
+        "responsetimeout": 30000,
+        "transactiontimeout": 60000,
+        "metadatamaxage": 300000,
+        "allowautotopiccreation": false,
+        "x": 930,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "37d25c41e9566181",
+        "type": "function",
+        "z": "e0aff20e9fba01a9",
+        "name": "function 1 : generer_water_flow",
+        "func": "function zoneFactor(districtId) {\n  const factors = {\n    sidi_bouzid: 2.0,\n    bennani: 1.5,\n    el_manar: 2.5,\n    sidi_moussa: 1.0,\n    essaada: 1.7,\n    mouilha: 1.6,\n    cite_portugaise: 1.9,\n    najd: 1.8,\n    les_facultes: 1.4,\n    quartier_jaouhara: 1.6\n  };\n\n  return factors[districtId] || 1.0;\n}\n\nfunction waterFlowEstimated(hour, districtId) {\n  let baseFlow = 3;\n\n  // Consommation plus élevée le matin et le soir\n  if ((hour >= 6 && hour <= 9) || (hour >= 18 && hour <= 22)) {\n    baseFlow += 7;\n  }\n\n  const factor = zoneFactor(districtId);\n  const variation = Math.random() * 1.5 - 0.75;\n\n  const flowRate = baseFlow + factor + variation;\n\n  let status = \"normal\";\n\n  // Fuite possible : débit trop élevé pendant la nuit\n  if (hour >= 1 && hour <= 5 && flowRate > 5) {\n    status = \"possible_leak\";\n  }\n\n  // Forte consommation\n  if (flowRate > 15) {\n    status = \"high_consumption\";\n  }\n\n  const pulses = Math.round(flowRate * 7.5);\n  const volume = flowRate / 60;\n\n  return {\n    pulses: pulses,\n    flow_rate_l_min: Number(flowRate.toFixed(2)),\n    volume_l: Number(volume.toFixed(3)),\n    flow_unit: \"L/min\",\n    volume_unit: \"L\",\n    status: status\n  };\n}\n\n// Vérifier que le node précédent a créé msg.waterSensors\nif (!Array.isArray(msg.waterSensors)) {\n  throw new Error(\"msg.waterSensors est introuvable. Ajoute d'abord le node config_capteurs_water.\");\n}\n\nconst now = new Date();\nconst hour = now.getHours();\n\n// Ajouter les données de débit à chaque capteur\nmsg.waterSensors = msg.waterSensors.map(sensor => {\n  return {\n    ...sensor,\n    type: \"hall_flow_meter\",\n    water_flow: waterFlowEstimated(hour, sensor.districtId)\n  };\n});\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 740,
+        "wires": [
+            [
+                "387032e492bb1390"
+            ]
+        ]
+    },
+    {
+        "id": "387032e492bb1390",
+        "type": "function",
+        "z": "e0aff20e9fba01a9",
+        "name": "function 2 : generer_water_quality",
+        "func": "function randomBetween(min, max, decimals = 2) {\n  const value = Math.random() * (max - min) + min;\n  return Number(value.toFixed(decimals));\n}\n\nfunction zoneQualityFactor(districtId) {\n  const factors = {\n    sidi_bouzid: 1.00,\n    bennani: 1.03,\n    el_manar: 1.02,\n    sidi_moussa: 1.01,\n    essaada: 1.03,\n    mouilha: 1.02,\n    cite_portugaise: 1.04,\n    najd: 1.01,\n    les_facultes: 1.00,\n    quartier_jaouhara: 1.02\n  };\n\n  return factors[districtId] || 1.00;\n}\n\nfunction waterQualityEstimated(districtId) {\n  const factor = zoneQualityFactor(districtId);\n\n  // Valeurs réalistes pour eau potable surveillée\n  const ph = randomBetween(7.0, 7.8);\n  const turbidity = randomBetween(0.2, 2.0) * factor;\n  const tds = randomBetween(250, 650, 0) * factor;\n  const chlorine = randomBetween(0.2, 0.8);\n  const conductivity = tds * randomBetween(1.5, 2.0);\n  const temperature = randomBetween(16, 24);\n\n  let status = \"safe\";\n\n  if (ph < 6.5 || ph > 8.5) {\n    status = \"ph_alert\";\n  } else if (turbidity > 5) {\n    status = \"turbidity_alert\";\n  } else if (tds > 1000) {\n    status = \"tds_alert\";\n  } else if (chlorine < 0.1 || chlorine > 1.0) {\n    status = \"chlorine_alert\";\n  }\n\n  return {\n    ph: Number(ph.toFixed(2)),\n    turbidity_ntu: Number(turbidity.toFixed(2)),\n    tds_ppm: Math.round(tds),\n    chlorine_mg_l: Number(chlorine.toFixed(2)),\n    conductivity_us_cm: Math.round(conductivity),\n    water_temperature_c: Number(temperature.toFixed(2)),\n    status: status,\n    units: {\n      ph: \"pH\",\n      turbidity: \"NTU\",\n      tds: \"ppm\",\n      chlorine: \"mg/L\",\n      conductivity: \"µS/cm\",\n      water_temperature: \"°C\"\n    }\n  };\n}\n\n// Vérifier que le node précédent a créé msg.waterSensors\nif (!Array.isArray(msg.waterSensors)) {\n  throw new Error(\"msg.waterSensors est introuvable. Ajoute d'abord config_capteurs_water puis generer_water_flow.\");\n}\n\n// Ajouter la qualité de l'eau à chaque capteur\nmsg.waterSensors = msg.waterSensors.map(sensor => {\n  return {\n    ...sensor,\n    water_quality: waterQualityEstimated(sensor.districtId)\n  };\n});\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
+        "y": 800,
+        "wires": [
+            [
+                "985027594cd243f6"
+            ]
+        ]
+    },
+    {
+        "id": "985027594cd243f6",
+        "type": "function",
+        "z": "e0aff20e9fba01a9",
+        "name": "function 3 : preparer_kafka",
+        "func": "const timestamp = new Date().toISOString();\n\nif (!Array.isArray(msg.waterSensors)) {\n  throw new Error(\"msg.waterSensors est introuvable.\");\n}\n\nconst allData = msg.waterSensors.map(sensor => {\n  return {\n    sensor_id: sensor.id,\n    city: \"El Jadida\",\n    district_id: sensor.districtId,\n    district: sensor.districtName,\n    type: sensor.type || \"water_sensor\",\n\n    water_flow: sensor.water_flow,\n    water_quality: sensor.water_quality,\n\n    timestamp: timestamp\n  };\n});\n\nmsg.topic = \"smartcity.water.readings\";\nmsg.payload = JSON.stringify(allData);\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 920,
+        "y": 740,
+        "wires": [
+            [
+                "4e2e52b535b420d2"
+            ]
+        ]
+    },
+    {
+        "id": "cd6a6646b61f5dfb",
+        "type": "function",
+        "z": "e0aff20e9fba01a9",
+        "name": "Capteurs : Traffic",
+        "func": "msg.trafficSensors = [\n  {\n    id: \"TRAFFIC-ELJ-001\",\n    routeId: \"r1\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-002\",\n    routeId: \"r1\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-003\",\n    routeId: \"r1\",\n  },\n\n  {\n    id: \"TRAFFIC-ELJ-004\",\n    routeId: \"r2\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-005\",\n    routeId: \"r2\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-006\",\n    routeId: \"r2\",\n  },\n\n  {\n    id: \"TRAFFIC-ELJ-007\",\n    routeId: \"r3\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-008\",\n    routeId: \"r3\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-009\",\n    routeId: \"r3\",\n  },\n\n  {\n    id: \"TRAFFIC-ELJ-010\",\n    routeId: \"r1\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-011\",\n    routeId: \"r1\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-012\",\n    routeId: \"r1\",\n  },\n\n  {\n    id: \"TRAFFIC-ELJ-013\",\n    routeId: \"r2\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-014\",\n    routeId: \"r2\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-015\",\n    routeId: \"r2\",\n  },\n\n  {\n    id: \"TRAFFIC-ELJ-016\",\n    routeId: \"r3\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-017\",\n    routeId: \"r3\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-018\",\n    routeId: \"r3\",\n  },\n\n  {\n    id: \"TRAFFIC-ELJ-019\",\n    routeId: \"r1\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-020\",\n    routeId: \"r1\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-021\",\n    routeId: \"r1\",\n  },\n\n  {\n    id: \"TRAFFIC-ELJ-022\",\n    routeId: \"r1\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-023\",\n    routeId: \"r1\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-024\",\n    routeId: \"r1\",\n  },\n\n  {\n    id: \"TRAFFIC-ELJ-025\",\n    routeId: \"r2\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-026\",\n    routeId: \"r2\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-027\",\n    routeId: \"r2\",\n  },\n\n  {\n    id: \"TRAFFIC-ELJ-028\",\n    routeId: \"r3\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-029\",\n    routeId: \"r3\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-030\",\n    routeId: \"r3\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-031\",\n    routeId: \"r1\",\n  },\n\n  {\n    id: \"TRAFFIC-ELJ-032\",\n    routeId: \"r4\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-033\",\n    routeId: \"r4\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-034\",\n    routeId: \"r4\",\n  },\n\n  {\n    id: \"TRAFFIC-ELJ-035\",\n    routeId: \"r4\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-036\",\n    routeId: \"r4\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-037\",\n    routeId: \"r4\",\n  },\n   {\n    id: \"TRAFFIC-ELJ-038\",\n    routeId: \"r5\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-039\",\n    routeId: \"r5\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-040\",\n    routeId: \"r5\",\n  },\n\n  {\n    id: \"TRAFFIC-ELJ-041\",\n    routeId: \"r5\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-042\",\n    routeId: \"r5\",\n  },\n  {\n    id: \"TRAFFIC-ELJ-043\",\n    routeId: \"r5\",\n  }\n];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 860,
+        "wires": [
+            [
+                "8d45cb8982559f70"
+            ]
+        ]
+    },
+    {
+        "id": "8d45cb8982559f70",
+        "type": "function",
+        "z": "e0aff20e9fba01a9",
+        "name": "function 1 : generer_traffic",
+        "func": "// ======================================================\n// SMART CITY EL JADIDA — TRAFIC & CONGESTION SENSOR\n// Node-RED Function Node\n// Données simulées réalistes par capteur\n// ======================================================\n\nconst observationTime = 60; // secondes\nconst criticalOccupancy = 0.35;\n\n// Coefficients techniques uniquement pour la simulation\nconst routeFactors = {\n    r1: 0.20,\n    r2: 1.35,\n    r3: 1.05,\n    r4: 0.80\n};\n\nconst trafficSensors = msg.trafficSensors || [];\n\nif (!Array.isArray(trafficSensors) || trafficSensors.length === 0) {\n    node.warn(\"Aucun capteur trouvé dans msg.trafficSensors\");\n    msg.topic = \"smartcity.traffic.readings\";\n    msg.payload = JSON.stringify([]);\n    return msg;\n}\n\nfunction simulateTraffic(hour, routeId) {\n\n    let baseOccupancy = 0.15;\n\n    if (hour >= 7 && hour <= 9) {\n        baseOccupancy = 0.55;\n    }\n    else if (hour >= 17 && hour <= 20) {\n        baseOccupancy = 0.65;\n    }\n    else if (hour >= 0 && hour <= 5) {\n        baseOccupancy = 0.05;\n    }\n    else if (hour >= 12 && hour <= 14) {\n        baseOccupancy = 0.40;\n    }\n\n    const routeFactor = routeFactors[routeId] || 1;\n\n    baseOccupancy *= routeFactor;\n\n    const variation = (Math.random() * 0.10) - 0.05;\n\n    let occupancyRate = baseOccupancy + variation;\n\n    if (occupancyRate > 0.95) occupancyRate = 0.95;\n    if (occupancyRate < 0.01) occupancyRate = 0.01;\n\n    const occupiedTime = occupancyRate * observationTime;\n\n    const congestionIndex = occupancyRate / criticalOccupancy;\n\n    let avgSpeed;\n\n    if (congestionIndex >= 1.5) {\n        avgSpeed = 8 + Math.random() * 12;\n    }\n    else if (congestionIndex >= 1) {\n        avgSpeed = 20 + Math.random() * 15;\n    }\n    else if (congestionIndex >= 0.7) {\n        avgSpeed = 35 + Math.random() * 20;\n    }\n    else {\n        avgSpeed = 50 + Math.random() * 25;\n    }\n\n    const vehicleCount = Math.round(occupancyRate * 120);\n\n    let trafficStatus = \"fluide\";\n\n    if (congestionIndex >= 1.5) {\n        trafficStatus = \"forte_congestion\";\n    }\n    else if (congestionIndex >= 1) {\n        trafficStatus = \"congestion\";\n    }\n    else if (congestionIndex >= 0.7) {\n        trafficStatus = \"dense\";\n    }\n\n    return {\n        occupancyRate,\n        occupiedTime,\n        congestionIndex,\n        avgSpeed,\n        vehicleCount,\n        trafficStatus\n    };\n}\n\nconst now = new Date();\nconst hour = now.getHours();\n\nconst allTrafficData = trafficSensors.map((sensor) => {\n\n    const traffic = simulateTraffic(hour, sensor.routeId);\n\n    return {\n        sensor_id: sensor.id,\n        route_id: sensor.routeId,\n        city: \"El Jadida\",\n        sensor_type: \"IR + Inductive Loop\",\n\n        observation_time_s: observationTime,\n\n        occupied_time_s: Number(traffic.occupiedTime.toFixed(2)),\n        occupancy_rate: Number(traffic.occupancyRate.toFixed(2)),\n        congestion_index: Number(traffic.congestionIndex.toFixed(2)),\n        average_speed_kmh: Number(traffic.avgSpeed.toFixed(2)),\n        vehicle_count: traffic.vehicleCount,\n        vehicle_detected: traffic.vehicleCount > 0 ? 1 : 0,\n        traffic_status: traffic.trafficStatus,\n\n        timestamp: new Date().toISOString()\n    };\n});\n\nmsg.topic = \"smartcity.traffic.readings\";\nmsg.payload = JSON.stringify(allTrafficData);\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 570,
+        "y": 860,
+        "wires": [
+            [
+                "405f5d730896d55a"
+            ]
+        ]
+    },
+    {
+        "id": "405f5d730896d55a",
+        "type": "kafkajs-producer",
+        "z": "e0aff20e9fba01a9",
+        "name": "Kafka-Topic-traffic",
+        "client": "b6ff97c5ad677681",
+        "topic": "smartcity.traffic.readings",
+        "advancedoptions": false,
+        "acknowledge": "all",
+        "partition": "",
+        "headeritems": {},
+        "key": "",
+        "responsetimeout": 30000,
+        "transactiontimeout": 60000,
+        "metadatamaxage": 300000,
+        "allowautotopiccreation": false,
+        "x": 790,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "99eb1ee8d29d38ab",
+        "type": "inject",
+        "z": "e0aff20e9fba01a9",
+        "name": "Repeat : 5s",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 170,
+        "y": 860,
+        "wires": [
+            [
+                "cd6a6646b61f5dfb"
+            ]
+        ]
+    },
+    {
+        "id": "dbf88a052ea84ebf",
+        "type": "inject",
+        "z": "e0aff20e9fba01a9",
+        "name": "Repeat : 5s",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 170,
+        "y": 780,
+        "wires": [
+            [
+                "7bd53efda181c28c"
+            ]
+        ]
+    },
+    {
+        "id": "f5ea23608ca28e6a",
+        "type": "kafkajs-client",
+        "name": "Kafka Smart City",
+        "brokers": "localhost:9092",
+        "clientid": "smartcity.environment.readings",
+        "connectiontimeout": 3000,
+        "requesttimeout": 25000,
+        "advancedretry": false,
+        "maxretrytime": 30000,
+        "initialretrytime": 300,
+        "factor": 0.2,
+        "multiplier": 2,
+        "retries": 5,
+        "auth": "none",
+        "tlsselfsign": false,
+        "tlscacert": "",
+        "tlsclientcert": "",
+        "tlsprivatekey": "",
+        "tlspassphrase": "",
+        "saslssl": true,
+        "saslmechanism": "plain",
+        "loglevel": "debug"
+    },
+    {
+        "id": "c177ba7cb6384811",
+        "type": "kafkajs-client",
+        "name": "Smart city - water",
+        "brokers": "localhost:9092",
+        "clientid": "smartcity.water.readings",
+        "connectiontimeout": 3000,
+        "requesttimeout": 25000,
+        "advancedretry": false,
+        "maxretrytime": 30000,
+        "initialretrytime": 300,
+        "factor": 0.2,
+        "multiplier": 2,
+        "retries": 5,
+        "auth": "none",
+        "tlsselfsign": false,
+        "tlscacert": "",
+        "tlsclientcert": "",
+        "tlsprivatekey": "",
+        "tlspassphrase": "",
+        "saslssl": true,
+        "saslmechanism": "plain",
+        "loglevel": "debug"
+    },
+    {
+        "id": "b6ff97c5ad677681",
+        "type": "kafkajs-client",
+        "name": "Smart City Traffic",
+        "brokers": "localhost:9092",
+        "clientid": "smartcity.traffic.readings",
+        "connectiontimeout": 3000,
+        "requesttimeout": 25000,
+        "advancedretry": false,
+        "maxretrytime": 30000,
+        "initialretrytime": 300,
+        "factor": 0.2,
+        "multiplier": 2,
+        "retries": 5,
+        "auth": "none",
+        "tlsselfsign": false,
+        "tlscacert": "",
+        "tlsclientcert": "",
+        "tlsprivatekey": "",
+        "tlspassphrase": "",
+        "saslssl": true,
+        "saslmechanism": "plain",
+        "loglevel": "debug"
+    },
+    {
+        "id": "ced831379075b862",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-kafkajs": "0.0.7"
+        }
+    }
+]

@@ -9,7 +9,7 @@ import type {
 } from "@/lib/types";
 
 const BACKEND_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://192.168.1.22:4000";
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
 
 export interface UseTemperatureDataReturn {
   /** Latest readings per sensor */

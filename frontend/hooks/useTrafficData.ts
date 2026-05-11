@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { getSocket } from "@/lib/socket";
 import type { TrafficReading, RouteTrafficStats, TrafficStatus } from "@/lib/types";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://192.168.1.22:4000";
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
 
 function dominantStatus(statuses: TrafficStatus[]): TrafficStatus {
   const order: TrafficStatus[] = ["forte_congestion", "congestion", "dense", "fluide"];

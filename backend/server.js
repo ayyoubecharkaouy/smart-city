@@ -31,6 +31,6 @@ io.on("connection", (socket) => {
 startKafkaConsumer(io);
 
 const PORT = process.env.PORT || 4000;
-server.listen(PORT, "0.0.0.0", () => {
-  console.log(`Backend server running on http://0.0.0.0:${PORT}`);
+server.listen(PORT, () => {
+  console.log(`Backend server running on http://localhost:${PORT}`);
 });
