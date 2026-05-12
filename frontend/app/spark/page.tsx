@@ -8,7 +8,7 @@ export default function SparkDataPage() {
   return (
     <div className="p-8 max-w-7xl mx-auto w-full">
       <header className="mb-10">
-        <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center gap-2 mb-4">
           <Image
             src="/images/logos/spark.png"
             alt="Spark"
@@ -28,12 +28,12 @@ export default function SparkDataPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Sidebar Info */}
-        <div className="space-y-6">
+        <div className="space-y-2">
           <div className="bg-white p-6 rounded-3xl border border-gray-100">
             <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
               <Cpu className="w-4 h-4" /> Architecture
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-bold text-gray-600">Moteur</span>
                 <span className="text-sm font-black text-orange-600">

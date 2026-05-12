@@ -25,13 +25,14 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-screen shrink-0">
+    <aside className="w-64 border-r border-gray-200 flex flex-col h-screen shrink-0">
       <div className="p-2">
         <Image
           src="/images/logos/eljadida.png"
           alt="Logo"
-          width={100}
-          height={100}
+          width={200}
+          height={200}
+          className="mx-auto"
         />
 
         <nav className="space-y-1">

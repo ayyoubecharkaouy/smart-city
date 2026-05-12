@@ -31,7 +31,7 @@ export default function AlertsPage() {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-4">
+        <div className="lg:col-span-2 space-y-2">
           <h3 className="text-lg font-bold text-gray-900 mb-4">
             Alertes Récentes
           </h3>
@@ -56,7 +56,7 @@ export default function AlertsPage() {
                 className={`bg-white p-6 rounded-3xl border transition-all ${alert.acknowledged ? "border-gray-100 opacity-60" : "border-rose-100 shadow-rose-50"}`}
               >
                 <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-start gap-2">
                     <div
                       className={`p-3 rounded-2xl ${alert.acknowledged ? "bg-gray-100" : "bg-rose-50"}`}
                     >
@@ -68,7 +68,7 @@ export default function AlertsPage() {
                       <h4 className="text-lg font-bold text-gray-900">
                         Température Critique : {alert.temperature}°C
                       </h4>
-                      <div className="flex items-center gap-4 mt-2 text-sm text-gray-400 font-medium">
+                      <div className="flex items-center gap-2 mt-2 text-sm text-gray-400 font-medium">
                         <span className="flex items-center gap-1">
                           <MapPin className="w-4 h-4" />
                           {alert.district}
@@ -94,7 +94,7 @@ export default function AlertsPage() {
           )}
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-2">
           <div className="bg-gray-900 rounded-3xl p-8 text-white">
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
               <Bell className="w-5 h-5 text-yellow-400" />
@@ -113,7 +113,7 @@ export default function AlertsPage() {
             <h3 className="text-lg font-bold text-gray-900 mb-4">
               Statistiques d'incidents
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-bold text-gray-500">
                   Total Mois

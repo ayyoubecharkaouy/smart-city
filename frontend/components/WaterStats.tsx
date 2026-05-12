@@ -50,7 +50,7 @@ export default function WaterStats({
   }, [initialHistory, avgFlow]);
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-2 p-4">
       <div className="border border-gray-200 rounded-4xl p-4 bg-white/50 backdrop-blur-sm">
         <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2 mb-2 px-2">
           <TrendingUp className="w-5 h-5 text-blue-500" />
@@ -80,7 +80,7 @@ export default function WaterStats({
 
         {!loading && districts.length > 0 && (
           <>
-            <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="grid grid-cols-2 gap-2 mb-6">
               <div className="bg-blue-50 p-3 rounded-4xl text-center border border-blue-100">
                 <span className="block text-[10px] uppercase font-bold text-blue-600 mb-1">
                   Volume Total

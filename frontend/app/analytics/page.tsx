@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   BarChart as BarIcon,
   LineChart as LineIcon,
@@ -13,9 +13,7 @@ import {
   Droplets,
   Car,
   Settings2,
-  ChevronRight,
   Maximize2,
-  Download,
   Gauge as GaugeIcon,
 } from "lucide-react";
 import { useTemperatureData } from "@/hooks/useTemperatureData";
@@ -51,6 +49,7 @@ export default function AnalyticsPage() {
   } = useTrafficData();
 
   const loading = envLoading || waterLoading || trafficLoading;
+  const [time, setTime] = useState<string | null>(null);
 
   const chartConfig = useMemo(() => {
     let rawData: any[] = [];
@@ -68,13 +67,13 @@ export default function AnalyticsPage() {
         if (isRealtime) {
           rawData = Array.from(envStats.values()).map((d) => ({
             name: d.district,
-            value: d.avg_temperature,
+            value: d.avg_temperature.toFixed(2),
           }));
           xAxis = "name";
         } else {
           rawData = envHistory.map((h) => ({
             time: new Date(h.time).getHours() + "h",
-            value: h.temperature,
+            value: h.temperature.toFixed(2),
           }));
         }
         break;
@@ -84,13 +83,13 @@ export default function AnalyticsPage() {
         if (isRealtime) {
           rawData = Array.from(envStats.values()).map((d) => ({
             name: d.district,
-            value: d.avg_aqi || 0,
+            value: (d.avg_aqi || 0).toFixed(2),
           }));
           xAxis = "name";
         } else {
           rawData = envHistory.map((h) => ({
             time: new Date(h.time).getHours() + "h",
-            value: h.aqi,
+            value: h.aqi.toFixed(2),
           }));
         }
         break;
@@ -101,13 +100,13 @@ export default function AnalyticsPage() {
         if (isRealtime) {
           rawData = Array.from(waterStats.values()).map((d) => ({
             name: d.district,
-            value: d.avg_flow,
+            value: d.avg_flow.toFixed(2),
           }));
           xAxis = "name";
         } else {
           rawData = waterHistory.map((h) => ({
             time: new Date(h.time).getHours() + "h",
-            value: h.flow,
+            value: h.flow.toFixed(2),
           }));
         }
         break;
@@ -118,13 +117,13 @@ export default function AnalyticsPage() {
         if (isRealtime) {
           rawData = Array.from(trafficStats.values()).map((r) => ({
             name: r.route_id,
-            value: r.avg_congestion,
+            value: r.avg_congestion.toFixed(2),
           }));
           xAxis = "name";
         } else {
           rawData = trafficHistory.map((h) => ({
             time: new Date(h.time).getHours() + "h",
-            value: h.avg_congestion,
+            value: h.avg_congestion.toFixed(2),
           }));
         }
         break;
@@ -183,10 +182,14 @@ export default function AnalyticsPage() {
       },
     ];
 
+  useEffect(() => {
+    setTime(new Date().toLocaleTimeString());
+  }, []);
+
   return (
     <div className="flex h-[calc(100vh-2rem)] overflow-hidden">
       {/* Configuration Sidebar */}
-      <aside className="w-80 bg-white border-r border-gray-100 flex flex-col p-6 overflow-y-auto">
+      <aside className="w-80 border-r border-gray-100 flex flex-col p-4 overflow-y-auto">
         <div className="flex items-center gap-3 mb-10">
           <Settings2 className="w-5 h-5 text-gray-500" />
           <h2 className="text-xl font-black text-gray-900 uppercase tracking-tighter">
@@ -283,9 +286,9 @@ export default function AnalyticsPage() {
       </aside>
 
       {/* Main Content Viewport */}
-      <main className="flex-1 bg-gray-50 p-8 flex flex-col overflow-hidden">
+      <main className="flex-1 p-2 flex flex-col overflow-hidden">
         <header className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <div
               className={`w-3 h-10 rounded-full ${metrics.find((m) => m.id === metric)?.color}`}
             />
@@ -312,11 +315,7 @@ export default function AnalyticsPage() {
         </header>
 
         {/* Main Chart Card */}
-        <div className="flex-1 bg-white rounded-[40px] border border-gray-100 shadow-2xl shadow-gray-200/50 p-10 flex flex-col relative overflow-hidden">
-          {/* Background Flair */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full -mr-32 -mt-32 blur-3xl opacity-50" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-50 rounded-full -ml-32 -mb-32 blur-3xl opacity-50" />
-
+        <div className="flex-1 p-2 flex flex-col relative overflow-hidden">
           <div className="relative flex-1">
             <AnalyticsChart
               type={chartType}
@@ -353,7 +352,7 @@ export default function AnalyticsPage() {
                   Dernière Sync
                 </span>
                 <span className="text-sm font-bold text-gray-700">
-                  {new Date().toLocaleTimeString()}
+                  {time ?? "--:--:--"}
                 </span>
               </div>
             </div>

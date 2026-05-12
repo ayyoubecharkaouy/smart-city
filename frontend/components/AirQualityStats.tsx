@@ -58,7 +58,7 @@ export default function AirQualityStats({
   }, [initialHistory, avgAqi]);
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-2 p-4">
       <div className="border border-gray-200 rounded-4xl p-4 bg-white/50 backdrop-blur-sm">
         <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2 px-2 mb-2">
           <TrendingUp className="w-5 h-5 text-emerald-500" />

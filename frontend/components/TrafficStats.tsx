@@ -70,7 +70,7 @@ export default function TrafficStats({
   }, [initialHistory, globalAvgSpeed]);
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-2 p-4">
       {/* Speed Trend Chart */}
       <div className="border border-gray-200 rounded-sm p-4 bg-white/50 backdrop-blur-sm">
         <div className="flex items-center justify-between mb-2">

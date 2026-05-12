@@ -59,7 +59,7 @@ export default function TemperatureStats({
   ).length;
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-2 p-4">
       <div className="border border-gray-200 rounded-4xl p-4 bg-white/50 backdrop-blur-sm">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-lg font-bold text-gray-800 flex items-center px-4 gap-2">

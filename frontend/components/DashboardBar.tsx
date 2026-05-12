@@ -440,15 +440,15 @@ const DashboardBar = memo(
     if (!stats) return null;
 
     return (
-      <div className="absolute top-4 left-4 right-4 z-1000 flex flex-col items-center gap-4 pointer-events-none">
+      <div className="absolute top-4 left-4 right-4 z-1000 flex flex-col items-center gap-2 pointer-events-none">
         {/* KPI Row */}
-        <div className="w-full flex items-stretch justify-around flex-wrap gap-4">
+        <div className="w-full flex items-stretch justify-around flex-wrap gap-2">
           {stats.kpis.map((kpi, idx) => (
             <div
               key={idx}
               className="flex-1 bg-white/70 backdrop-blur-xl border border-white/40 rounded-4xl p-4 pointer-events-auto transition-all hover:bg-white/90"
             >
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
                 <div
                   className={`w-14 min-w-14 h-14 rounded-4xl bg-linear-to-br ${kpi.color} flex items-center justify-center text-white [&>svg]:w-7 [&>svg]:h-7`}
                 >
@@ -480,14 +480,14 @@ const DashboardBar = memo(
 
         {/* Distribution Statistics Bar */}
         {stats.distribution && (
-          <div className="w-full max-w-max bg-white/70 backdrop-blur-xl border border-white/40 rounded-full px-6 py-3 pointer-events-auto flex items-center gap-6">
+          <div className="w-full max-w-max bg-white/70 backdrop-blur-xl border border-white/40 rounded-full px-6 py-3 pointer-events-auto flex items-center gap-2">
             <div className="flex items-center gap-2 text-gray-700">
               <span className="text-sm font-bold uppercase tracking-widest whitespace-nowrap">
                 {stats.title}
               </span>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               {connected && (
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
