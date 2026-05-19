@@ -102,12 +102,12 @@ function RoutesOverlay({
               ? `${10 * scale} ${6 * scale}`
               : undefined;
         } else if (isTrafficMode) {
-          color = "#9ca3af";
+          color = "#005eff";
           weight = Math.max(2, 3 * scale);
           opacity = 0.5;
           dashArray = undefined;
         } else {
-          color = "#9ca3af";
+          color = "#ff0000";
           weight = 1.2;
           opacity = 0.15;
           dashArray = undefined;
