@@ -9,6 +9,7 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 /* ── Leaflet popup/tooltip overrides (can't use Tailwind in Leaflet DOM) ── */
