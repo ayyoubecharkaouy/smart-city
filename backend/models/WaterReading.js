@@ -26,4 +26,8 @@ const WaterReadingSchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now }
 });
 
+WaterReadingSchema.index({ timestamp: -1 });
+WaterReadingSchema.index({ district: 1, timestamp: -1 });
+WaterReadingSchema.index({ sensor_id: 1, timestamp: -1 });
+
 module.exports = mongoose.model("WaterReading", WaterReadingSchema);

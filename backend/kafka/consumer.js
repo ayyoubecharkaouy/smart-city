@@ -37,13 +37,13 @@ async function startKafkaConsumer(io) {
 
         // --- Données Brutes : ON NE STOCKE PLUS, ON EMIT SEULEMENT POUR LE LIVE ---
         if (topic === TOPICS.ENVIRONMENT) {
-          io.emit("temperature:new", dataArray);
+          io.volatile.emit("temperature:new", dataArray);
         } 
         else if (topic === TOPICS.WATER) {
-          io.emit("water:new", dataArray);
+          io.volatile.emit("water:new", dataArray);
         }
         else if (topic === TOPICS.TRAFFIC) {
-          io.emit("traffic:new", dataArray);
+          io.volatile.emit("traffic:new", dataArray);
         }
 
         // --- Spark Topics : ON STOCKE POUR L'HISTORIQUE ET ON EMIT ---

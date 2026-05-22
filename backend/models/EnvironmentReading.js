@@ -20,4 +20,8 @@ const EnvironmentReadingSchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now }
 });
 
+EnvironmentReadingSchema.index({ timestamp: -1 });
+EnvironmentReadingSchema.index({ district: 1, timestamp: -1 });
+EnvironmentReadingSchema.index({ sensor_id: 1, timestamp: -1 });
+
 module.exports = mongoose.model("EnvironmentReading", EnvironmentReadingSchema);

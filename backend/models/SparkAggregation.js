@@ -10,4 +10,9 @@ const SparkAggregationSchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now }
 });
 
+SparkAggregationSchema.index({ type: 1, timestamp: -1 });
+SparkAggregationSchema.index({ type: 1, district: 1, timestamp: -1 });
+SparkAggregationSchema.index({ type: 1, route_id: 1, timestamp: -1 });
+SparkAggregationSchema.index({ window_end: 1 });
+
 module.exports = mongoose.model("SparkAggregation", SparkAggregationSchema);
