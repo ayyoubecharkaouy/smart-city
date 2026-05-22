@@ -80,12 +80,33 @@ export default function AnalyticsChart({
     );
   }
 
+  const chartData = data
+    .map((datum) => {
+      const numericValue = Number(datum[yAxisKey]);
+
+      return {
+        ...datum,
+        [yAxisKey]: Number.isFinite(numericValue) ? numericValue : 0,
+      };
+    })
+    .filter((datum) => datum[xAxisKey] !== undefined && datum[xAxisKey] !== null);
+
+  if (chartData.length === 0) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gray-50/50 rounded-3xl border border-dashed border-gray-200">
+        <p className="text-gray-400 font-medium">
+          Données reçues, mais format inexploitable pour ce graphique.
+        </p>
+      </div>
+    );
+  }
+
   const renderChart = () => {
     switch (type) {
       case "line":
         return (
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
+            <LineChart data={chartData}>
               <CartesianGrid
                 strokeDasharray="3 3"
                 stroke="#f1f5f9"
@@ -131,7 +152,7 @@ export default function AnalyticsChart({
         return (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
-              data={data}
+              data={chartData}
               margin={{ top: 20, right: 20, left: 10, bottom: 20 }}
               barCategoryGap="8%"
               barGap={0}
@@ -172,7 +193,7 @@ export default function AnalyticsChart({
                 radius={[8, 8, 0, 0]}
                 animationDuration={1500}
               >
-                {data.map((_, index) => (
+                {chartData.map((_, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={COLORS[index % COLORS.length]}
@@ -204,7 +225,7 @@ export default function AnalyticsChart({
               </defs>
 
               <Pie
-                data={data}
+                data={chartData}
                 cx="50%"
                 cy="45%"
                 innerRadius="58%"
@@ -218,7 +239,7 @@ export default function AnalyticsChart({
                 stroke="#ffffff"
                 strokeWidth={3}
               >
-                {data.map((_, index) => (
+                {chartData.map((_, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={`url(#pieGradient-${index % COLORS.length})`}
@@ -243,7 +264,7 @@ export default function AnalyticsChart({
                   fontWeight: 600,
                 }}
                 formatter={(value, name) => [
-                  `${Number(value).toLocaleString()}${unit ? ` ${unit}` : ""}`,
+                  `${Number(value || 0).toLocaleString()}${unit ? ` ${unit}` : ""}`,
                   name,
                 ]}
               />
@@ -265,28 +286,32 @@ export default function AnalyticsChart({
           </ResponsiveContainer>
         );
       case "nightingale":
+        const maxValue = Math.max(
+          ...chartData.map((d) => Number(d[yAxisKey])),
+          0,
+        );
+
         return (
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={data}
+                data={chartData}
                 cx="50%"
                 cy="50%"
                 labelLine={false}
                 outerRadius={(entry: ChartDatum) =>
                   60 +
-                  (Number(entry[yAxisKey]) /
-                    Math.max(...data.map((d) => Number(d[yAxisKey])))) *
+                  (maxValue > 0 ? Number(entry[yAxisKey]) / maxValue : 0) *
                     60
                 }
                 dataKey={yAxisKey}
                 nameKey={xAxisKey}
                 animationDuration={1500}
                 label={({ name, percent }) =>
-                  `${name} ${(percent ?? 0 * 100).toFixed(0)}%`
+                  `${name} ${((percent ?? 0) * 100).toFixed(0)}%`
                 }
               >
-                {data.map((_, index) => (
+                {chartData.map((_, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={COLORS[index % COLORS.length]}
@@ -302,9 +327,9 @@ export default function AnalyticsChart({
         );
 
       case "gauge":
-        const gaugeData = data.slice(0, 5).map((d, i) => ({
+        const gaugeData = chartData.slice(0, 5).map((d, i) => ({
           name: d[xAxisKey],
-          value: d[yAxisKey],
+          value: Number(d[yAxisKey]) || 0,
           fill: COLORS[i % COLORS.length],
         }));
 
@@ -355,7 +380,7 @@ export default function AnalyticsChart({
                 </thead>
 
                 <tbody className="divide-y divide-slate-50">
-                  {data.map((row, i) => (
+                  {chartData.map((row, i) => (
                     <tr
                       key={i}
                       className="group transition-colors hover:bg-slate-50"

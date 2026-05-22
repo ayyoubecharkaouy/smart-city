@@ -22,6 +22,7 @@ function dominantStatus(statuses: TrafficStatus[]): TrafficStatus {
 function buildRouteStats(readings: TrafficReading[]): Map<string, RouteTrafficStats> {
   const byRoute = new Map<string, TrafficReading[]>();
   readings.forEach(r => {
+    if (!r.route_id) return;
     const arr = byRoute.get(r.route_id) || [];
     arr.push(r);
     byRoute.set(r.route_id, arr);
@@ -30,12 +31,14 @@ function buildRouteStats(readings: TrafficReading[]): Map<string, RouteTrafficSt
   const stats = new Map<string, RouteTrafficStats>();
   byRoute.forEach((items, routeId) => {
     const n = items.length;
+    if (n === 0) return;
+
     stats.set(routeId, {
       route_id: routeId,
-      avg_speed: items.reduce((s, r) => s + r.average_speed_kmh, 0) / n,
-      avg_occupancy: items.reduce((s, r) => s + r.occupancy_rate, 0) / n,
-      avg_congestion: items.reduce((s, r) => s + r.congestion_index, 0) / n,
-      total_vehicles: items.reduce((s, r) => s + r.vehicle_count, 0),
+      avg_speed: items.reduce((s, r) => s + (Number(r.average_speed_kmh) || 0), 0) / n,
+      avg_occupancy: items.reduce((s, r) => s + (Number(r.occupancy_rate) || 0), 0) / n,
+      avg_congestion: items.reduce((s, r) => s + (Number(r.congestion_index) || 0), 0) / n,
+      total_vehicles: items.reduce((s, r) => s + (Number(r.vehicle_count) || 0), 0),
       sensor_count: n,
       last_update: items.reduce((latest, r) =>
         new Date(r.timestamp) > new Date(latest) ? r.timestamp : latest, items[0].timestamp),
@@ -52,14 +55,14 @@ export function useTrafficData(enabled: boolean = true) {
   const [loading, setLoading] = useState(enabled);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchInitialData = useCallback(async () => {
+  const fetchInitialData = useCallback(async (signal?: AbortSignal) => {
     if (!enabled) return;
     setLoading(true);
     setError(null);
     try {
       const [latestRes, historyRes] = await Promise.all([
-        fetch(`${BACKEND_URL}/api/traffic/latest`),
-        fetch(`${BACKEND_URL}/api/traffic/history`),
+        fetch(`${BACKEND_URL}/api/traffic/latest`, { signal }),
+        fetch(`${BACKEND_URL}/api/traffic/history`, { signal }),
       ]);
 
       if (!latestRes.ok || !historyRes.ok) {
@@ -68,11 +71,24 @@ export function useTrafficData(enabled: boolean = true) {
 
       const rawData: TrafficReading[] = await latestRes.json();
       const historyData = await historyRes.json();
-      setHistory(historyData);
+      if (signal?.aborted) return;
+
+      setHistory(Array.isArray(historyData) ? historyData : []);
 
       // Keep latest per sensor
       const latestMap = new Map<string, TrafficReading>();
-      rawData.forEach(r => {
+      const validRawData = Array.isArray(rawData)
+        ? rawData.filter(
+            (r) =>
+              r?.sensor_id &&
+              r?.route_id &&
+              r?.timestamp &&
+              Number.isFinite(Number(r.average_speed_kmh)) &&
+              Number.isFinite(Number(r.congestion_index)),
+          )
+        : [];
+
+      validRawData.forEach(r => {
         const existing = latestMap.get(r.sensor_id);
         if (!existing || new Date(r.timestamp) > new Date(existing.timestamp)) {
           latestMap.set(r.sensor_id, r);
@@ -81,43 +97,63 @@ export function useTrafficData(enabled: boolean = true) {
       const latest = Array.from(latestMap.values());
       setLatestReadings(latest);
     } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
       const msg = err instanceof Error ? err.message : "Erreur inconnue";
       setError(msg);
       console.error("[useTrafficData] Error:", msg);
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   }, [enabled]);
 
   useEffect(() => {
     if (!enabled) return;
 
+    const controller = new AbortController();
     const fetchTimeout = window.setTimeout(() => {
-      void fetchInitialData();
+      void fetchInitialData(controller.signal);
     }, 0);
     const socket = getSocket();
+    const handleConnect = () => setConnected(true);
+    const handleDisconnect = () => setConnected(false);
 
-    socket.on("connect", () => setConnected(true));
-    socket.on("disconnect", () => setConnected(false));
-
-    socket.on("traffic:new", (payload: TrafficReading | TrafficReading[]) => {
+    const handleTrafficNew = (payload: TrafficReading | TrafficReading[]) => {
       const readings = Array.isArray(payload) ? payload : [payload];
+      const validReadings = readings.filter(
+        (r) =>
+          r?.sensor_id &&
+          r?.route_id &&
+          r?.timestamp &&
+          Number.isFinite(Number(r.average_speed_kmh)) &&
+          Number.isFinite(Number(r.congestion_index)),
+      );
+      if (validReadings.length === 0) return;
+
       setLatestReadings(prev => {
         const updated = [...prev];
-        readings.forEach(r => {
+        validReadings.forEach(r => {
           const idx = updated.findIndex(e => e.sensor_id === r.sensor_id);
           if (idx >= 0) updated[idx] = r;
           else updated.unshift(r);
         });
         return updated;
       });
-    });
+    };
+
+    const connectedTimeout = window.setTimeout(() => {
+      setConnected(socket.connected);
+    }, 0);
+    socket.on("connect", handleConnect);
+    socket.on("disconnect", handleDisconnect);
+    socket.on("traffic:new", handleTrafficNew);
 
     return () => {
-      socket.off("traffic:new");
-      socket.off("connect");
-      socket.off("disconnect");
+      controller.abort();
+      socket.off("traffic:new", handleTrafficNew);
+      socket.off("connect", handleConnect);
+      socket.off("disconnect", handleDisconnect);
       window.clearTimeout(fetchTimeout);
+      window.clearTimeout(connectedTimeout);
     };
   }, [fetchInitialData, enabled]);
 

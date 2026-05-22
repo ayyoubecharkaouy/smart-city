@@ -25,11 +25,16 @@ import StateNotice from "@/components/StateNotice";
 
 type MetricType = "temperature" | "aqi" | "water" | "traffic";
 
+function formatMetricValue(value: unknown): string {
+  const numericValue = Number(value);
+  return Number.isFinite(numericValue) ? numericValue.toFixed(2) : "0.00";
+}
+
 export default function AnalyticsPage() {
   const [chartType, setChartType] = useState<ChartType>("line");
   const [metric, setMetric] = useState<MetricType>("temperature");
   const [isRealtime, setIsRealtime] = useState(false);
-  const [time, setTime] = useState<string>(() => new Date().toLocaleTimeString());
+  const [time, setTime] = useState<string | null>(null);
 
   // Data Hooks
   const {
@@ -84,13 +89,13 @@ export default function AnalyticsPage() {
         if (isRealtime) {
           rawData = Array.from(envStats.values()).map((d) => ({
             name: d.district,
-            value: d.avg_temperature.toFixed(2),
+            value: formatMetricValue(d.avg_temperature),
           }));
           xAxis = "name";
         } else {
           rawData = envHistory.map((h) => ({
             time: new Date(h.time).getHours() + "h",
-            value: h.temperature.toFixed(2),
+            value: formatMetricValue(h.temperature),
           }));
         }
         break;
@@ -100,13 +105,13 @@ export default function AnalyticsPage() {
         if (isRealtime) {
           rawData = Array.from(envStats.values()).map((d) => ({
             name: d.district,
-            value: (d.avg_aqi || 0).toFixed(2),
+            value: formatMetricValue(d.avg_aqi),
           }));
           xAxis = "name";
         } else {
           rawData = envHistory.map((h) => ({
             time: new Date(h.time).getHours() + "h",
-            value: h.aqi.toFixed(2),
+            value: formatMetricValue(h.aqi),
           }));
         }
         break;
@@ -117,13 +122,13 @@ export default function AnalyticsPage() {
         if (isRealtime) {
           rawData = Array.from(waterStats.values()).map((d) => ({
             name: d.district,
-            value: d.avg_flow.toFixed(2),
+            value: formatMetricValue(d.avg_flow),
           }));
           xAxis = "name";
         } else {
           rawData = waterHistory.map((h) => ({
             time: new Date(h.time).getHours() + "h",
-            value: h.flow.toFixed(2),
+            value: formatMetricValue(h.flow),
           }));
         }
         break;
@@ -134,13 +139,13 @@ export default function AnalyticsPage() {
         if (isRealtime) {
           rawData = Array.from(trafficStats.values()).map((r) => ({
             name: r.route_id,
-            value: r.avg_congestion.toFixed(2),
+            value: formatMetricValue(r.avg_congestion),
           }));
           xAxis = "name";
         } else {
           rawData = trafficHistory.map((h) => ({
             time: new Date(h.time).getHours() + "h",
-            value: h.avg_congestion.toFixed(2),
+            value: formatMetricValue(h.avg_congestion),
           }));
         }
         break;
@@ -200,10 +205,15 @@ export default function AnalyticsPage() {
     ];
 
   useEffect(() => {
+    const updateTime = () => setTime(new Date().toLocaleTimeString());
+    const timeout = window.setTimeout(updateTime, 0);
     const interval = window.setInterval(() => {
-      setTime(new Date().toLocaleTimeString());
+      updateTime();
     }, 1000);
-    return () => window.clearInterval(interval);
+    return () => {
+      window.clearTimeout(timeout);
+      window.clearInterval(interval);
+    };
   }, []);
 
   return (
@@ -219,7 +229,7 @@ export default function AnalyticsPage() {
 
         {/* Metric Selection */}
         <section className="mb-8">
-          <label className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 block">
+          <label className="text-xs font-black text-gray-700 uppercase tracking-widest mb-4 block">
             Source de Données
           </label>
           <div className="grid grid-cols-1 gap-2">
@@ -248,7 +258,7 @@ export default function AnalyticsPage() {
 
         {/* Mode Toggle */}
         <section className="mb-8">
-          <label className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 block">
+          <label className="text-xs font-black text-gray-700 uppercase tracking-widest mb-4 block">
             Fenêtre Temporelle
           </label>
           <div className="flex p-1 bg-gray-50 rounded-2xl gap-1">
@@ -259,7 +269,7 @@ export default function AnalyticsPage() {
               }`}
             >
               <Zap
-                className={`w-4 h-4 ${isRealtime ? "text-yellow-500" : ""}`}
+                className={`w-6 h-6 ${isRealtime ? "text-yellow-500" : ""}`}
               />
               Temps Réel
             </button>
@@ -269,7 +279,7 @@ export default function AnalyticsPage() {
                 !isRealtime ? "bg-white text-gray-900" : "text-gray-400"
               }`}
             >
-              <Clock className="w-4 h-4 text-blue-500" />
+              <Clock className="w-6 h-6 text-blue-500" />
               Historique
             </button>
           </div>
@@ -277,7 +287,7 @@ export default function AnalyticsPage() {
 
         {/* Chart Type Selection */}
         <section className="mb-8">
-          <label className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 block">
+          <label className="text-xs font-black text-gray-700 uppercase tracking-widest mb-4 block">
             Visualisation
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -378,7 +388,7 @@ export default function AnalyticsPage() {
           <footer className="mt-8 pt-8 border-t border-gray-50 flex items-center justify-between">
             <div className="flex items-center gap-8">
               <div className="flex flex-col">
-                <span className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">
+                <span className="text-xs font-black text-gray-700 uppercase tracking-widest mb-1">
                   Métrique Active
                 </span>
                 <span className="text-sm font-bold text-gray-700">
@@ -386,7 +396,7 @@ export default function AnalyticsPage() {
                 </span>
               </div>
               <div className="flex flex-col">
-                <span className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">
+                <span className="text-xs font-black text-gray-700 uppercase tracking-widest mb-1">
                   Total Points
                 </span>
                 <span className="text-sm font-bold text-gray-700">
@@ -394,7 +404,7 @@ export default function AnalyticsPage() {
                 </span>
               </div>
               <div className="flex flex-col">
-                <span className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">
+                <span className="text-xs font-black text-gray-700 uppercase tracking-widest mb-1">
                   Dernière Sync
                 </span>
                 <span className="text-sm font-bold text-gray-700">

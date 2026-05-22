@@ -13,15 +13,15 @@ export function useWaterData(enabled: boolean = true) {
   const [loading, setLoading] = useState(enabled);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchInitialData = useCallback(async () => {
+  const fetchInitialData = useCallback(async (signal?: AbortSignal) => {
     if (!enabled) return;
     setLoading(true);
     setError(null);
     try {
       const [latestRes, statsRes, historyRes] = await Promise.all([
-        fetch(`${BACKEND_URL}/api/water/latest`),
-        fetch(`${BACKEND_URL}/api/water/stats-by-district`),
-        fetch(`${BACKEND_URL}/api/water/history`),
+        fetch(`${BACKEND_URL}/api/water/latest`, { signal }),
+        fetch(`${BACKEND_URL}/api/water/stats-by-district`, { signal }),
+        fetch(`${BACKEND_URL}/api/water/history`, { signal }),
       ]);
 
       if (!latestRes.ok || !statsRes.ok || !historyRes.ok) {
@@ -30,10 +30,16 @@ export function useWaterData(enabled: boolean = true) {
 
       const rawData: WaterReading[] = await latestRes.json();
       const historyData = await historyRes.json();
-      setHistory(historyData);
+      if (signal?.aborted) return;
+
+      setHistory(Array.isArray(historyData) ? historyData : []);
       
       const latestMap = new Map<string, WaterReading>();
-      rawData.forEach(r => {
+      const validRawData = Array.isArray(rawData)
+        ? rawData.filter((r) => r?.sensor_id && r?.district && r?.timestamp)
+        : [];
+
+      validRawData.forEach(r => {
         const existing = latestMap.get(r.sensor_id);
         if (!existing || new Date(r.timestamp) > new Date(existing.timestamp)) {
           latestMap.set(r.sensor_id, r);
@@ -42,43 +48,58 @@ export function useWaterData(enabled: boolean = true) {
       const latest = Array.from(latestMap.values());
       setLatestReadings(latest);
     } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
       const msg = err instanceof Error ? err.message : "Erreur inconnue";
       setError(msg);
       console.error("[useWaterData] Error:", msg);
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   }, [enabled]);
 
   useEffect(() => {
     if (!enabled) return;
 
+    const controller = new AbortController();
     const fetchTimeout = window.setTimeout(() => {
-      void fetchInitialData();
+      void fetchInitialData(controller.signal);
     }, 0);
     const socket = getSocket();
+    const handleConnect = () => setConnected(true);
+    const handleDisconnect = () => setConnected(false);
 
-    socket.on("connect", () => setConnected(true));
-    socket.on("disconnect", () => setConnected(false));
-
-    socket.on("water:new", (payload: WaterReading | WaterReading[]) => {
+    const handleWaterNew = (payload: WaterReading | WaterReading[]) => {
       const readings = Array.isArray(payload) ? payload : [payload];
+      const validReadings = readings.filter(
+        (r) => r?.sensor_id && r?.district && r?.timestamp,
+      );
+      if (validReadings.length === 0) return;
+
       setLatestReadings(prev => {
         const updated = [...prev];
-        readings.forEach(r => {
+        validReadings.forEach(r => {
           const idx = updated.findIndex(existing => existing.sensor_id === r.sensor_id);
           if (idx >= 0) updated[idx] = r;
           else updated.unshift(r);
         });
         return updated;
       });
-    });
+    };
+
+    const connectedTimeout = window.setTimeout(() => {
+      setConnected(socket.connected);
+    }, 0);
+    socket.on("connect", handleConnect);
+    socket.on("disconnect", handleDisconnect);
+    socket.on("water:new", handleWaterNew);
 
     return () => {
-      socket.off("water:new");
-      socket.off("connect");
-      socket.off("disconnect");
+      controller.abort();
+      socket.off("water:new", handleWaterNew);
+      socket.off("connect", handleConnect);
+      socket.off("disconnect", handleDisconnect);
       window.clearTimeout(fetchTimeout);
+      window.clearTimeout(connectedTimeout);
     };
   }, [fetchInitialData, enabled]);
 
@@ -87,9 +108,10 @@ export function useWaterData(enabled: boolean = true) {
     latestReadings.forEach((r) => {
       if (!r.district) return;
       const existing = statsMap.get(r.district);
-      const flow = r.water_flow?.flow_rate_l_min || 0;
-      const vol = r.water_flow?.volume_l || 0;
-      const ph = r.water_quality?.ph || 7;
+      const flow = Number(r.water_flow?.flow_rate_l_min) || 0;
+      const vol = Number(r.water_flow?.volume_l) || 0;
+      const ph = Number(r.water_quality?.ph) || 7;
+      const turbidity = Number(r.water_quality?.turbidity_ntu) || 0;
 
       if (existing) {
         const count = existing.sensor_count + 1;
@@ -98,6 +120,9 @@ export function useWaterData(enabled: boolean = true) {
           avg_flow: (existing.avg_flow * existing.sensor_count + flow) / count,
           total_volume: existing.total_volume + vol,
           avg_ph: (existing.avg_ph * existing.sensor_count + ph) / count,
+          avg_turbidity:
+            (existing.avg_turbidity * existing.sensor_count + turbidity) /
+            count,
           sensor_count: count,
           last_update:
             r.timestamp > existing.last_update
@@ -110,7 +135,7 @@ export function useWaterData(enabled: boolean = true) {
           avg_flow: flow,
           total_volume: vol,
           avg_ph: ph,
-          avg_turbidity: r.water_quality?.turbidity_ntu || 0,
+          avg_turbidity: turbidity,
           sensor_count: 1,
           last_update: r.timestamp,
         });

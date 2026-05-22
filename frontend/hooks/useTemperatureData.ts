@@ -39,15 +39,15 @@ export function useTemperatureData(enabled: boolean = true): UseTemperatureDataR
   const [error, setError] = useState<string | null>(null);
   const alertIdCounter = useRef(0);
 
-  const fetchInitialData = useCallback(async () => {
+  const fetchInitialData = useCallback(async (signal?: AbortSignal) => {
     if (!enabled) return;
     setLoading(true);
     setError(null);
     try {
       const [latestRes, avgRes, historyRes] = await Promise.all([
-        fetch(`${BACKEND_URL}/api/temperatures/latest`),
-        fetch(`${BACKEND_URL}/api/temperatures/avg-by-district`),
-        fetch(`${BACKEND_URL}/api/temperatures/history`),
+        fetch(`${BACKEND_URL}/api/temperatures/latest`, { signal }),
+        fetch(`${BACKEND_URL}/api/temperatures/avg-by-district`, { signal }),
+        fetch(`${BACKEND_URL}/api/temperatures/history`, { signal }),
       ]);
 
       if (!latestRes.ok || !avgRes.ok || !historyRes.ok) {
@@ -56,10 +56,22 @@ export function useTemperatureData(enabled: boolean = true): UseTemperatureDataR
 
       const rawData: TemperatureReading[] = await latestRes.json();
       const historyData = await historyRes.json();
-      setHistory(historyData);
+      if (signal?.aborted) return;
+
+      setHistory(Array.isArray(historyData) ? historyData : []);
       
       const latestDataMap = new Map<string, TemperatureReading>();
-      rawData.forEach(r => {
+      const validRawData = Array.isArray(rawData)
+        ? rawData.filter(
+            (r) =>
+              r?.sensor_id &&
+              r?.district &&
+              Number.isFinite(Number(r.temperature)) &&
+              r?.timestamp,
+          )
+        : [];
+
+      validRawData.forEach(r => {
         const existing = latestDataMap.get(r.sensor_id);
         if (!existing || new Date(r.timestamp) > new Date(existing.timestamp)) {
           latestDataMap.set(r.sensor_id, r);
@@ -80,26 +92,34 @@ export function useTemperatureData(enabled: boolean = true): UseTemperatureDataR
         }));
       setAlerts(initialAlerts);
     } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
       const msg = err instanceof Error ? err.message : "Erreur inconnue";
       setError(msg);
       console.error("[useTemperatureData] Fetch error:", msg);
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   }, [enabled]);
 
   useEffect(() => {
     if (!enabled) return;
 
+    const controller = new AbortController();
     const fetchTimeout = window.setTimeout(() => {
-      void fetchInitialData();
+      void fetchInitialData(controller.signal);
     }, 0);
     const socket = getSocket();
-    socket.on("connect", () => setConnected(true));
-    socket.on("disconnect", () => setConnected(false));
-    socket.on("temperature:new", (payload: TemperatureReading | TemperatureReading[]) => {
+    const handleConnect = () => setConnected(true);
+    const handleDisconnect = () => setConnected(false);
+    const handleTemperatureNew = (payload: TemperatureReading | TemperatureReading[]) => {
       const readings = Array.isArray(payload) ? payload : [payload];
-      const validReadings = readings.filter(r => r && r.district);
+      const validReadings = readings.filter(
+        (r) =>
+          r?.sensor_id &&
+          r?.district &&
+          Number.isFinite(Number(r.temperature)) &&
+          r?.timestamp,
+      );
       if (validReadings.length === 0) return;
 
       setLatestReadings((prev) => {
@@ -127,23 +147,41 @@ export function useTemperatureData(enabled: boolean = true): UseTemperatureDataR
         }
       });
       if (newAlerts.length > 0) setAlerts((prev) => [...newAlerts, ...prev].slice(0, 100));
-    });
+    };
 
-    socket.on("temperature:alert", (alertData: Omit<TemperatureAlert, "id" | "acknowledged">) => {
+    const handleTemperatureAlert = (alertData: Omit<TemperatureAlert, "id" | "acknowledged">) => {
+      if (
+        !alertData?.sensor_id ||
+        !alertData?.district ||
+        !Number.isFinite(Number(alertData.temperature))
+      ) {
+        return;
+      }
+
       const newAlert: TemperatureAlert = {
         ...alertData,
         id: `be-${alertIdCounter.current++}`,
         acknowledged: false,
       };
       setAlerts((prev) => [newAlert, ...prev].slice(0, 100));
-    });
+    };
+
+    const connectedTimeout = window.setTimeout(() => {
+      setConnected(socket.connected);
+    }, 0);
+    socket.on("connect", handleConnect);
+    socket.on("disconnect", handleDisconnect);
+    socket.on("temperature:new", handleTemperatureNew);
+    socket.on("temperature:alert", handleTemperatureAlert);
 
     return () => {
-      socket.off("temperature:new");
-      socket.off("temperature:alert");
-      socket.off("connect");
-      socket.off("disconnect");
+      controller.abort();
+      socket.off("temperature:new", handleTemperatureNew);
+      socket.off("temperature:alert", handleTemperatureAlert);
+      socket.off("connect", handleConnect);
+      socket.off("disconnect", handleDisconnect);
       window.clearTimeout(fetchTimeout);
+      window.clearTimeout(connectedTimeout);
     };
   }, [fetchInitialData, enabled]);
 
@@ -153,7 +191,8 @@ export function useTemperatureData(enabled: boolean = true): UseTemperatureDataR
       if (!r.district) return;
       const existing = statsMap.get(r.district);
       const rTemp = Number(r.temperature);
-      const rAqi = r.air_quality?.aqi;
+      const rawAqi = Number(r.air_quality?.aqi);
+      const rAqi = Number.isFinite(rawAqi) ? rawAqi : undefined;
 
       if (existing) {
         const nextCount = existing.sensor_count + 1;

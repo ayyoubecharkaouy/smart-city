@@ -296,7 +296,7 @@ export default function Map() {
 
   return (
     <div
-      className={`flex h-full w-full bg-gray-50 overflow-hidden select-none ${isResizingRight ? "cursor-col-resize" : ""}`}
+      className={`flex flex-row-reverse h-full w-full bg-gray-50 overflow-hidden select-none ${isResizingRight ? "cursor-col-resize" : ""}`}
     >
       {/* Menu Modal */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>

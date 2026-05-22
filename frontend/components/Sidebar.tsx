@@ -15,7 +15,7 @@ import { useState, useEffect } from "react";
 
 const navItems = [
   { label: "Vue d'ensemble", icon: LayoutDashboard, href: "/" },
-  { label: "Carte Interactive", icon: MapIcon, href: "/dashboard" },
+  { label: "Carte Interactive", icon: MapIcon, href: "/map" },
   { label: "Données Spark", icon: Star, href: "/spark" },
   { label: "Analytiques", icon: LineChart, href: "/analytics" },
   { label: "Alertes", icon: Bell, href: "/alerts" },

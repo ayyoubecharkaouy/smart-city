@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
 import type {
@@ -62,6 +62,20 @@ const DashboardBar = memo(
     connected,
     loading,
   }: DashboardBarProps) => {
+    const [currentTime, setCurrentTime] = useState<string | null>(null);
+
+    useEffect(() => {
+      const updateTime = () => setCurrentTime(new Date().toLocaleTimeString("fr-FR"));
+      const timeout = window.setTimeout(updateTime, 0);
+      const interval = window.setInterval(() => {
+        updateTime();
+      }, 1000);
+      return () => {
+        window.clearTimeout(timeout);
+        window.clearInterval(interval);
+      };
+    }, []);
+
     const stats = useMemo(() => {
       // Helper to handle empty data during loading
       const getKpis = () => {
@@ -506,7 +520,7 @@ const DashboardBar = memo(
                 </div>
               )}
               <span className="text-sm font-medium text-gray-500 tabular-nums border-b-2 border-red-600">
-                {new Date().toLocaleTimeString("fr-FR")}
+                {currentTime ?? "--:--:--"}
               </span>
             </div>
           </div>
