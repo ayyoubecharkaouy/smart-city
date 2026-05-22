@@ -50,17 +50,21 @@ export function useTrafficData(enabled: boolean = true) {
   const [history, setHistory] = useState<{ time: string; avg_speed: number; avg_congestion: number; total_vehicles: number }[]>([]);
   const [connected, setConnected] = useState(false);
   const [loading, setLoading] = useState(enabled);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchInitialData = useCallback(async () => {
     if (!enabled) return;
     setLoading(true);
+    setError(null);
     try {
       const [latestRes, historyRes] = await Promise.all([
         fetch(`${BACKEND_URL}/api/traffic/latest`),
         fetch(`${BACKEND_URL}/api/traffic/history`),
       ]);
 
-      if (!latestRes.ok || !historyRes.ok) throw new Error("Fetch error");
+      if (!latestRes.ok || !historyRes.ok) {
+        throw new Error("Erreur lors de la récupération des données trafic");
+      }
 
       const rawData: TrafficReading[] = await latestRes.json();
       const historyData = await historyRes.json();
@@ -77,7 +81,9 @@ export function useTrafficData(enabled: boolean = true) {
       const latest = Array.from(latestMap.values());
       setLatestReadings(latest);
     } catch (err) {
-      console.error("[useTrafficData] Error:", err);
+      const msg = err instanceof Error ? err.message : "Erreur inconnue";
+      setError(msg);
+      console.error("[useTrafficData] Error:", msg);
     } finally {
       setLoading(false);
     }
@@ -117,5 +123,5 @@ export function useTrafficData(enabled: boolean = true) {
 
   const routeStats = useMemo(() => buildRouteStats(latestReadings), [latestReadings]);
 
-  return { latestReadings, routeStats, history, connected, loading };
+  return { latestReadings, routeStats, history, connected, loading, error };
 }

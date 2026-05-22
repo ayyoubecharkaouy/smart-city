@@ -26,6 +26,7 @@ import TrafficStats from "./TrafficStats";
 import WaterStats from "./WaterStats";
 import TemperatureAlerts from "./TemperatureAlerts";
 import GenericPlaceholderStats from "./GenericPlaceholderStats";
+import StateNotice from "./StateNotice";
 
 import "leaflet/dist/leaflet.css";
 
@@ -223,6 +224,7 @@ export default function Map() {
     history: waterHistory,
     connected: waterConnected,
     loading: waterLoading,
+    error: waterError,
   } = useWaterData(isWaterMode);
 
   const {
@@ -230,6 +232,7 @@ export default function Map() {
     history: trafficHistory,
     connected: trafficConnected,
     loading: trafficLoading,
+    error: trafficError,
   } = useTrafficData(isTrafficMode);
 
   const currentStats = isTrafficMode
@@ -247,6 +250,12 @@ export default function Map() {
     : isWaterMode
       ? waterLoading
       : envLoading;
+  const currentError = isTrafficMode
+    ? trafficError
+    : isWaterMode
+      ? waterError
+      : envError;
+  const currentHasData = currentStats.size > 0;
 
   const totalSensors = useMemo(() => {
     let count = 0;
@@ -374,6 +383,36 @@ export default function Map() {
             connected={currentConnected}
             loading={currentLoading}
           />
+        )}
+
+        {!currentLoading && currentError && (
+          <div className="absolute top-28 left-6 right-6 z-1001 pointer-events-none">
+            <StateNotice
+              variant="error"
+              message={`${currentError}. Les dernières données affichées peuvent être obsolètes.`}
+              className="mx-auto max-w-2xl shadow-sm pointer-events-auto"
+            />
+          </div>
+        )}
+
+        {!currentLoading && !currentError && !currentConnected && !currentHasData && (
+          <div className="absolute top-28 left-6 right-6 z-1001 pointer-events-none">
+            <StateNotice
+              variant="disconnected"
+              message="Le backend n'est pas connecté. Lancez l'API et les producteurs Kafka pour alimenter la carte."
+              className="mx-auto max-w-2xl shadow-sm pointer-events-auto"
+            />
+          </div>
+        )}
+
+        {!currentLoading && !currentError && currentConnected && !currentHasData && (
+          <div className="absolute top-28 left-6 right-6 z-1001 pointer-events-none">
+            <StateNotice
+              variant="empty"
+              message="Connexion active, mais aucune mesure n'est disponible pour cette couche."
+              className="mx-auto max-w-2xl shadow-sm pointer-events-auto"
+            />
+          </div>
         )}
 
         {/* Legends */}

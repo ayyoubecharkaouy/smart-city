@@ -21,6 +21,7 @@ import { useTemperatureData } from "@/hooks/useTemperatureData";
 import { useWaterData } from "@/hooks/useWaterData";
 import { useTrafficData } from "@/hooks/useTrafficData";
 import AnalyticsChart, { ChartType } from "@/components/AnalyticsChart";
+import StateNotice from "@/components/StateNotice";
 
 type MetricType = "temperature" | "aqi" | "water" | "traffic";
 
@@ -35,19 +36,37 @@ export default function AnalyticsPage() {
     districtStats: envStats,
     history: envHistory,
     loading: envLoading,
+    connected: envConnected,
+    error: envError,
   } = useTemperatureData();
   const {
     districtStats: waterStats,
     history: waterHistory,
     loading: waterLoading,
+    connected: waterConnected,
+    error: waterError,
   } = useWaterData();
   const {
     routeStats: trafficStats,
     history: trafficHistory,
     loading: trafficLoading,
+    connected: trafficConnected,
+    error: trafficError,
   } = useTrafficData();
 
   const loading = envLoading || waterLoading || trafficLoading;
+  const activeError =
+    metric === "water"
+      ? waterError
+      : metric === "traffic"
+        ? trafficError
+        : envError;
+  const activeConnected =
+    metric === "water"
+      ? waterConnected
+      : metric === "traffic"
+        ? trafficConnected
+        : envConnected;
 
   const chartConfig = useMemo(() => {
     let rawData: Record<string, string | number>[] = [];
@@ -318,16 +337,42 @@ export default function AnalyticsPage() {
         {/* Main Chart Card */}
         <div className="flex-1 p-2 flex flex-col relative overflow-hidden">
           <div className="relative flex-1">
-            <AnalyticsChart
-              type={chartType}
-              data={chartConfig.data}
-              loading={loading}
-              color={chartConfig.color}
-              label={chartConfig.label}
-              unit={chartConfig.unit}
-              xAxisKey={chartConfig.xAxis}
-              yAxisKey={chartConfig.yAxis}
-            />
+            {activeError ? (
+              <div className="flex h-full items-center justify-center">
+                <StateNotice
+                  variant="error"
+                  message={`${activeError}. Vérifiez la disponibilité de l'API backend.`}
+                  className="max-w-xl"
+                />
+              </div>
+            ) : !loading && !activeConnected && chartConfig.data.length === 0 ? (
+              <div className="flex h-full items-center justify-center">
+                <StateNotice
+                  variant="disconnected"
+                  message="Le backend temps réel n'est pas connecté et aucune donnée locale n'est disponible."
+                  className="max-w-xl"
+                />
+              </div>
+            ) : !loading && chartConfig.data.length === 0 ? (
+              <div className="flex h-full items-center justify-center">
+                <StateNotice
+                  variant="empty"
+                  message="Aucune mesure ne correspond à cette métrique et à cette fenêtre temporelle."
+                  className="max-w-xl"
+                />
+              </div>
+            ) : (
+              <AnalyticsChart
+                type={chartType}
+                data={chartConfig.data}
+                loading={loading}
+                color={chartConfig.color}
+                label={chartConfig.label}
+                unit={chartConfig.unit}
+                xAxisKey={chartConfig.xAxis}
+                yAxisKey={chartConfig.yAxis}
+              />
+            )}
           </div>
 
           <footer className="mt-8 pt-8 border-t border-gray-50 flex items-center justify-between">

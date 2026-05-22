@@ -7,12 +7,12 @@ import {
   Activity,
   ArrowUpRight,
   ArrowDownRight,
-  Loader,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useTemperatureData } from "@/hooks/useTemperatureData";
 import { useWaterData } from "@/hooks/useWaterData";
 import { useTrafficData } from "@/hooks/useTrafficData";
+import StateNotice from "@/components/StateNotice";
 
 function MetricCard({
   title,
@@ -62,16 +62,79 @@ function MetricCard({
 }
 
 export default function Overview() {
-  const { districtStats: envStats, history: envHistory, loading: envLoading } = useTemperatureData();
-  const { districtStats: waterStats, history: waterHistory, loading: waterLoading } = useWaterData();
-  const { routeStats: trafficStats, history: trafficHistory, loading: trafficLoading } = useTrafficData();
+  const {
+    districtStats: envStats,
+    history: envHistory,
+    loading: envLoading,
+    connected: envConnected,
+    error: envError,
+  } = useTemperatureData();
+  const {
+    districtStats: waterStats,
+    history: waterHistory,
+    loading: waterLoading,
+    connected: waterConnected,
+    error: waterError,
+  } = useWaterData();
+  const {
+    routeStats: trafficStats,
+    history: trafficHistory,
+    loading: trafficLoading,
+    connected: trafficConnected,
+    error: trafficError,
+  } = useTrafficData();
+
+  const error = envError || waterError || trafficError;
+  const hasAnyData =
+    envStats.size > 0 || waterStats.size > 0 || trafficStats.size > 0;
+  const backendDisconnected =
+    !envConnected && !waterConnected && !trafficConnected && !hasAnyData;
 
   if (envLoading || waterLoading || trafficLoading) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center h-[80vh]">
-        <Loader className="w-8 h-8 text-gray-600 animate-spin mb-4" />
-        <h2 className="text-2xl font-black text-gray-900">Préparation de la vue d&apos;ensemble</h2>
-        <p className="text-gray-500 font-medium mt-2">Synchronisation avec les flux Big Data...</p>
+      <div className="flex-1 flex items-center justify-center h-[80vh] px-8">
+        <StateNotice
+          variant="loading"
+          title="Préparation de la vue d&apos;ensemble"
+          message="Synchronisation avec les flux Big Data..."
+          className="max-w-xl"
+        />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex-1 flex items-center justify-center h-[80vh] px-8">
+        <StateNotice
+          variant="error"
+          message={`${error}. Vérifiez que le backend est lancé sur le bon port.`}
+          className="max-w-xl"
+        />
+      </div>
+    );
+  }
+
+  if (backendDisconnected) {
+    return (
+      <div className="flex-1 flex items-center justify-center h-[80vh] px-8">
+        <StateNotice
+          variant="disconnected"
+          message="Aucune connexion Socket.IO active. Lancez le backend pour recevoir les flux temps réel."
+          className="max-w-xl"
+        />
+      </div>
+    );
+  }
+
+  if (!hasAnyData) {
+    return (
+      <div className="flex-1 flex items-center justify-center h-[80vh] px-8">
+        <StateNotice
+          variant="empty"
+          message="Les APIs répondent, mais aucun capteur n'a encore envoyé de mesure."
+          className="max-w-xl"
+        />
       </div>
     );
   }

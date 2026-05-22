@@ -11,10 +11,12 @@ export function useWaterData(enabled: boolean = true) {
   const [history, setHistory] = useState<{ time: string; flow: number }[]>([]);
   const [connected, setConnected] = useState(false);
   const [loading, setLoading] = useState(enabled);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchInitialData = useCallback(async () => {
     if (!enabled) return;
     setLoading(true);
+    setError(null);
     try {
       const [latestRes, statsRes, historyRes] = await Promise.all([
         fetch(`${BACKEND_URL}/api/water/latest`),
@@ -22,7 +24,9 @@ export function useWaterData(enabled: boolean = true) {
         fetch(`${BACKEND_URL}/api/water/history`),
       ]);
 
-      if (!latestRes.ok || !statsRes.ok || !historyRes.ok) throw new Error("Fetch error");
+      if (!latestRes.ok || !statsRes.ok || !historyRes.ok) {
+        throw new Error("Erreur lors de la récupération des données eau");
+      }
 
       const rawData: WaterReading[] = await latestRes.json();
       const historyData = await historyRes.json();
@@ -38,7 +42,9 @@ export function useWaterData(enabled: boolean = true) {
       const latest = Array.from(latestMap.values());
       setLatestReadings(latest);
     } catch (err) {
-      console.error("[useWaterData] Error:", err);
+      const msg = err instanceof Error ? err.message : "Erreur inconnue";
+      setError(msg);
+      console.error("[useWaterData] Error:", msg);
     } finally {
       setLoading(false);
     }
@@ -113,5 +119,5 @@ export function useWaterData(enabled: boolean = true) {
     return statsMap;
   }, [latestReadings]);
 
-  return { latestReadings, districtStats, history, connected, loading };
+  return { latestReadings, districtStats, history, connected, loading, error };
 }

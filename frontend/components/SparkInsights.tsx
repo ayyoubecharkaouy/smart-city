@@ -2,8 +2,9 @@
 
 import { memo, useEffect, useState } from "react";
 import { getSocket } from "@/lib/socket";
-import { Activity, Droplet, Loader } from "lucide-react";
+import { Activity, Droplet } from "lucide-react";
 import Image from "next/image";
+import StateNotice from "./StateNotice";
 
 interface SparkEnvironmentData {
   district: string;
@@ -43,12 +44,20 @@ const SparkInsights = memo(() => {
   const [waterData, setWaterData] = useState<SparkWaterData[]>([]);
   const [trafficData, setTrafficData] = useState<SparkTrafficData[]>([]);
   const [connected, setConnected] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const socket = getSocket();
 
-    socket.on("connect", () => setConnected(true));
+    socket.on("connect", () => {
+      setConnected(true);
+      setError(null);
+    });
     socket.on("disconnect", () => setConnected(false));
+    socket.on("connect_error", () => {
+      setConnected(false);
+      setError("Impossible de joindre le backend Socket.IO");
+    });
 
     socket.on("spark:environment", (payload: unknown) => {
       const data = parseSparkPayload<SparkEnvironmentData>(payload);
@@ -90,17 +99,27 @@ const SparkInsights = memo(() => {
       socket.off("spark:environment");
       socket.off("spark:water");
       socket.off("spark:traffic");
+      socket.off("connect_error");
     };
   }, []);
 
   if (envData.length === 0 && waterData.length === 0 && trafficData.length === 0) {
     return (
-      <div className="p-8 bg-orange-50/50 border border-orange-100 rounded-3xl mt-4 flex flex-col items-center justify-center text-center">
-        <Loader className="w-8 h-8 text-orange-500 animate-spin mb-4" />
-        <h3 className="text-sm font-bold text-orange-600 uppercase tracking-widest">
-          En attente de Spark Streaming
-        </h3>
-        <p className="text-xs text-gray-500 mt-2 max-w-[200px]">Le moteur Big Data traite actuellement la première fenêtre temporelle.</p>
+      <div className="p-4 mt-4">
+        {error ? (
+          <StateNotice variant="error" message={error} />
+        ) : !connected ? (
+          <StateNotice
+            variant="disconnected"
+            message="Le backend temps réel est hors ligne. Les résultats Spark arriveront après reconnexion."
+          />
+        ) : (
+          <StateNotice
+            variant="empty"
+            title="En attente de Spark Streaming"
+            message="Connexion active, mais aucune fenêtre d'agrégation Spark n'a encore été reçue."
+          />
+        )}
       </div>
     );
   }
