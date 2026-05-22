@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, X, Thermometer, Check } from "lucide-react";
+import { AlertTriangle, Thermometer, Check } from "lucide-react";
 import type { TemperatureAlert } from "@/lib/types";
 
 interface TemperatureAlertsProps {

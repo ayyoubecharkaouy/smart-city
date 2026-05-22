@@ -18,7 +18,7 @@ export default function AlertsPage() {
       <header className="flex items-center justify-between mb-10">
         <div>
           <h2 className="text-3xl font-black text-gray-900 mb-2">
-            Centre d'Alertes
+            Centre d&apos;Alertes
           </h2>
           <p className="text-gray-500 font-medium">
             Surveillance des incidents et seuils critiques
@@ -111,7 +111,7 @@ export default function AlertsPage() {
 
           <div className="bg-white rounded-3xl border border-gray-100 p-6">
             <h3 className="text-lg font-bold text-gray-900 mb-4">
-              Statistiques d'incidents
+              Statistiques d&apos;incidents
             </h3>
             <div className="space-y-2">
               <div className="flex items-center justify-between">

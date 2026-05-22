@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef, useMemo } from "react";
-import { getSocket, disconnectSocket } from "@/lib/socket";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { getSocket } from "@/lib/socket";
 import type { WaterReading, DistrictWater } from "@/lib/types";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
@@ -47,7 +47,9 @@ export function useWaterData(enabled: boolean = true) {
   useEffect(() => {
     if (!enabled) return;
 
-    fetchInitialData();
+    const fetchTimeout = window.setTimeout(() => {
+      void fetchInitialData();
+    }, 0);
     const socket = getSocket();
 
     socket.on("connect", () => setConnected(true));
@@ -70,6 +72,7 @@ export function useWaterData(enabled: boolean = true) {
       socket.off("water:new");
       socket.off("connect");
       socket.off("disconnect");
+      window.clearTimeout(fetchTimeout);
     };
   }, [fetchInitialData, enabled]);
 

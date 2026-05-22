@@ -2,7 +2,6 @@
 
 import { type MetricKey, METRICS, type ZoneProperties } from "@/data/zones";
 import { getTrafficColor, getTrafficLabel } from "@/data/routes";
-import getLucideIcon from "./Controls";
 
 interface LegendProps {
   activeMetric: MetricKey;
@@ -19,8 +18,6 @@ export default function Legend({
   const values = zones.map((z) => z[activeMetric] as number);
   const min = Math.min(...values);
   const max = Math.max(...values);
-  const steps = metric.colors.length;
-  const stepSize = (max - min) / steps;
 
   return (
     <div className="absolute bottom-6 right-6 z-1000 /40 backdrop-blur-md border border-gray-200 rounded-sm p-2 w-[220px]  animate-[slideUp_0.3s_ease-out]">

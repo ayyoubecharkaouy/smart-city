@@ -1,10 +1,10 @@
 "use client";
 
 import { AlertTriangle, Wifi, WifiOff, TrendingUp } from "lucide-react";
-import type { DistrictTemperature, TemperatureReading } from "@/lib/types";
+import type { DistrictTemperature } from "@/lib/types";
 import { getTemperatureLevel, getTemperatureLevelColor } from "@/lib/types";
 import TrendChart from "./TrendChart";
-import { useEffect, useState, useMemo } from "react";
+import { useMemo } from "react";
 
 interface TemperatureStatsProps {
   districtStats: Map<string, DistrictTemperature>;

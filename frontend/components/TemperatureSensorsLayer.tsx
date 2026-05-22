@@ -49,14 +49,16 @@ export default function EnvironmentSensorsLayer({
     });
 
     if (newAnims.size > 0) {
-      setAnimatingSensors((prev) => {
-        const merged = new Set(prev);
-        newAnims.forEach((id) => merged.add(id));
-        return merged;
-      });
+      const startTimeout = window.setTimeout(() => {
+        setAnimatingSensors((prev) => {
+          const merged = new Set(prev);
+          newAnims.forEach((id) => merged.add(id));
+          return merged;
+        });
+      }, 0);
 
       // Clear the animation after 2.5 seconds
-      const timeout = setTimeout(() => {
+      const timeout = window.setTimeout(() => {
         setAnimatingSensors((prev) => {
           const next = new Set(prev);
           newAnims.forEach((id) => next.delete(id));
@@ -64,7 +66,10 @@ export default function EnvironmentSensorsLayer({
         });
       }, 2500);
 
-      return () => clearTimeout(timeout);
+      return () => {
+        window.clearTimeout(startTimeout);
+        window.clearTimeout(timeout);
+      };
     }
   }, [latestReadings]);
 

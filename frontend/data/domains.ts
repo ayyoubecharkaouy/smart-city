@@ -1,4 +1,5 @@
 import { Car, Droplet, Wind, Thermometer, Zap, Lightbulb, Trash2 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 export type DomainId = 
   | "traffic_congestion" 
@@ -13,7 +14,7 @@ export type DomainId =
 export interface SubDomain {
   id: DomainId;
   label: string;
-  icon: any; // LucideIcon
+  icon: LucideIcon;
   colorClass: string; 
   bgClass: string;
 }

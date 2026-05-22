@@ -33,14 +33,20 @@ export default function WaterSensorsLayer({ latestReadings, visible, mode }: Wat
     });
 
     if (newAnims.size > 0) {
-      setAnimatingSensors(prev => new Set([...prev, ...newAnims]));
-      setTimeout(() => {
+      const startTimeout = window.setTimeout(() => {
+        setAnimatingSensors(prev => new Set([...prev, ...newAnims]));
+      }, 0);
+      const clearAnimationTimeout = window.setTimeout(() => {
         setAnimatingSensors(prev => {
           const next = new Set(prev);
           newAnims.forEach(id => next.delete(id));
           return next;
         });
       }, 2500);
+      return () => {
+        window.clearTimeout(startTimeout);
+        window.clearTimeout(clearAnimationTimeout);
+      };
     }
   }, [latestReadings]);
 

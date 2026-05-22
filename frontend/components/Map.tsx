@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useMemo, useState, useCallback, Suspense } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -11,9 +11,10 @@ import {
   Pane,
 } from "react-leaflet";
 import { trafficRoutes } from "@/data/routes";
-import type { RouteTrafficStats } from "@/lib/types";
+import type { DistrictTemperature, DistrictWater, RouteTrafficStats, TrafficStatus } from "@/lib/types";
 import { getTrafficStatusColor, getTrafficStatusLabel } from "@/lib/types";
 import { SMART_CITY_DOMAINS } from "@/data/domains";
+import type { DomainId } from "@/data/domains";
 import { useTemperatureData } from "@/hooks/useTemperatureData";
 import { useWaterData } from "@/hooks/useWaterData";
 import { useTrafficData } from "@/hooks/useTrafficData";
@@ -43,7 +44,7 @@ const WaterSensorsLayer = dynamic(() => import("./WaterSensorsLayer"), {
 });
 
 /* ── Invalidate map size when dimensions change ── */
-function MapResizer({ dimensions }: { dimensions: any }) {
+function MapResizer({ dimensions }: { dimensions: { rightWidth: number } }) {
   const map = useMap();
   useEffect(() => {
     map.invalidateSize();
@@ -84,7 +85,7 @@ function RoutesOverlay({
 
         if (isTrafficMode && liveStats) {
           color = getTrafficStatusColor(liveStats.dominant_status);
-          const statusWeight = {
+          const statusWeight: Record<TrafficStatus, number> = {
             fluide: 3,
             dense: 5,
             congestion: 7,
@@ -92,7 +93,7 @@ function RoutesOverlay({
           };
           weight = Math.max(
             2,
-            ((statusWeight as any)[liveStats.dominant_status] || 3) *
+            (statusWeight[liveStats.dominant_status] || 3) *
               scale *
               0.2,
           );
@@ -182,7 +183,7 @@ import Modal from "./Modal";
 import { Menu } from "lucide-react";
 
 export default function Map() {
-  const [mode, setMode] = useState<string>("temperature");
+  const [mode, setMode] = useState<DomainId>("temperature");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Sidebar State
@@ -249,7 +250,7 @@ export default function Map() {
 
   const totalSensors = useMemo(() => {
     let count = 0;
-    currentStats.forEach((d: any) => {
+    currentStats.forEach((d: DistrictTemperature | DistrictWater | RouteTrafficStats) => {
       count += d.sensor_count;
     });
     return count;
@@ -328,13 +329,13 @@ export default function Map() {
           <TemperatureMapLayer
             districtStats={envStats}
             visible={isEnvMode}
-            mode={mode as any}
+            mode={mode as "temperature" | "air_quality"}
           />
           <Pane name="envSensorsPane" style={{ zIndex: 460 }}>
             <TemperatureSensorsLayer
               latestReadings={envReadings}
               visible={isEnvMode}
-              mode={mode as any}
+              mode={mode as "temperature" | "air_quality"}
             />
           </Pane>
 
@@ -342,13 +343,13 @@ export default function Map() {
           <WaterMapLayer
             districtStats={waterStats}
             visible={isWaterMode}
-            mode={mode as any}
+            mode={mode as "water_consumption" | "water_quality"}
           />
           <Pane name="waterSensorsPane" style={{ zIndex: 460 }}>
             <WaterSensorsLayer
               latestReadings={waterReadings}
               visible={isWaterMode}
-              mode={mode as any}
+              mode={mode as "water_consumption" | "water_quality"}
             />
           </Pane>
 

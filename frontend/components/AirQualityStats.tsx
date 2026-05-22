@@ -88,7 +88,7 @@ export default function AirQualityStats({
 
         {loading && (
           <div className="text-xs text-gray-500 text-center py-4">
-            Analyse de l'air en cours...
+            Analyse de l&apos;air en cours...
           </div>
         )}
 

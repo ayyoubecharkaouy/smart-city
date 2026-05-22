@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
-import { getSocket, disconnectSocket } from "@/lib/socket";
+import { getSocket } from "@/lib/socket";
 import type {
   TemperatureReading,
   DistrictTemperature,
@@ -91,7 +91,9 @@ export function useTemperatureData(enabled: boolean = true): UseTemperatureDataR
   useEffect(() => {
     if (!enabled) return;
 
-    fetchInitialData();
+    const fetchTimeout = window.setTimeout(() => {
+      void fetchInitialData();
+    }, 0);
     const socket = getSocket();
     socket.on("connect", () => setConnected(true));
     socket.on("disconnect", () => setConnected(false));
@@ -141,6 +143,7 @@ export function useTemperatureData(enabled: boolean = true): UseTemperatureDataR
       socket.off("temperature:alert");
       socket.off("connect");
       socket.off("disconnect");
+      window.clearTimeout(fetchTimeout);
     };
   }, [fetchInitialData, enabled]);
 

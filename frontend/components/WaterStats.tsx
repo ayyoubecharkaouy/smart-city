@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import { Droplets, Wifi, WifiOff, TrendingUp, Activity } from "lucide-react";
+import { useMemo } from "react";
+import { Wifi, WifiOff, TrendingUp, Activity } from "lucide-react";
 import type { DistrictWater } from "@/lib/types";
 import { getPhColor } from "@/lib/types";
 import TrendChart from "./TrendChart";
@@ -145,7 +145,7 @@ export default function WaterStats({
 
         {loading && (
           <div className="text-center py-6 text-xs text-gray-400 animate-pulse">
-            Analyse des flux d'eau...
+            Analyse des flux d&apos;eau...
           </div>
         )}
       </div>

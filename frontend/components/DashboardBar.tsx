@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, useMemo } from "react";
+import type { ReactNode } from "react";
 
 import type {
   DistrictTemperature,
@@ -25,7 +26,6 @@ import {
   AlertTriangle,
   TrendingUp,
   TrendingDown,
-  BarChart3,
   Wind,
   Droplets,
   FlaskConical,
@@ -42,6 +42,15 @@ interface DashboardBarProps {
   trafficStats?: Map<string, RouteTrafficStats>;
   connected: boolean;
   loading: boolean;
+}
+
+interface Kpi {
+  icon: ReactNode;
+  label: string;
+  unit: string;
+  color: string;
+  key: string;
+  value?: string | null;
 }
 
 const DashboardBar = memo(
@@ -226,7 +235,7 @@ const DashboardBar = memo(
           traffic_congestion: "Trafic Routier",
         }[mode as never] || "Smart City";
 
-      const baseKpis = getKpis();
+      const baseKpis: Kpi[] = getKpis();
 
       if (loading) {
         return { title, kpis: baseKpis.map((k) => ({ ...k, value: null })) };
@@ -459,12 +468,12 @@ const DashboardBar = memo(
                     {kpi.label}
                   </p>
                   <div className="flex items-baseline gap-1">
-                    {(kpi as any).value === null || loading ? (
+                    {kpi.value === null || loading ? (
                       <Loader className="w-5 h-5 animate-spin text-gray-400" />
                     ) : (
                       <>
                         <span className="text-2xl font-black text-gray-900 tabular-nums">
-                          {(kpi as any).value}
+                          {kpi.value}
                         </span>
                         <span className="text-[10px] font-bold text-gray-500">
                           {kpi.unit}
@@ -506,5 +515,7 @@ const DashboardBar = memo(
     );
   },
 );
+
+DashboardBar.displayName = "DashboardBar";
 
 export default DashboardBar;

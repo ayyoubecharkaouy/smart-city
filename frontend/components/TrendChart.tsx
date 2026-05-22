@@ -76,7 +76,7 @@ export default function TrendChart({
               borderRadius: "12px",
               border: "1px solid #e5e7eb",
             }}
-            formatter={(val: any) => {
+            formatter={(val: unknown) => {
               const numVal = Number(val);
               return [isNaN(numVal) ? "0.0" : numVal.toFixed(1) + unit, label];
             }}

@@ -2,7 +2,8 @@
 
 import { memo, useEffect, useState } from "react";
 import { getSocket } from "@/lib/socket";
-import { Zap, Activity, Droplet, Loader } from "lucide-react";
+import { Activity, Droplet, Loader } from "lucide-react";
+import Image from "next/image";
 
 interface SparkEnvironmentData {
   district: string;
@@ -26,6 +27,17 @@ interface SparkTrafficData {
   window: { start: string; end: string };
 }
 
+function parseSparkPayload<T>(payload: unknown): T | null {
+  if (typeof payload === "string") {
+    try {
+      return JSON.parse(payload) as T;
+    } catch {
+      return null;
+    }
+  }
+  return payload as T;
+}
+
 const SparkInsights = memo(() => {
   const [envData, setEnvData] = useState<SparkEnvironmentData[]>([]);
   const [waterData, setWaterData] = useState<SparkWaterData[]>([]);
@@ -38,12 +50,9 @@ const SparkInsights = memo(() => {
     socket.on("connect", () => setConnected(true));
     socket.on("disconnect", () => setConnected(false));
 
-    socket.on("spark:environment", (payload) => {
-      let data = payload;
-      // PySpark to_json returns strings sometimes, parse if needed
-      if (typeof payload === 'string') {
-        try { data = JSON.parse(payload); } catch (e) { return; }
-      }
+    socket.on("spark:environment", (payload: unknown) => {
+      const data = parseSparkPayload<SparkEnvironmentData>(payload);
+      if (!data) return;
       setEnvData(prev => {
         const newData = [...prev];
         const idx = newData.findIndex(d => d.district === data.district);
@@ -53,11 +62,9 @@ const SparkInsights = memo(() => {
       });
     });
 
-    socket.on("spark:water", (payload) => {
-      let data = payload;
-      if (typeof payload === 'string') {
-        try { data = JSON.parse(payload); } catch (e) { return; }
-      }
+    socket.on("spark:water", (payload: unknown) => {
+      const data = parseSparkPayload<SparkWaterData>(payload);
+      if (!data) return;
       setWaterData(prev => {
         const newData = [...prev];
         const idx = newData.findIndex(d => d.district === data.district);
@@ -67,11 +74,9 @@ const SparkInsights = memo(() => {
       });
     });
 
-    socket.on("spark:traffic", (payload) => {
-      let data = payload;
-      if (typeof payload === 'string') {
-        try { data = JSON.parse(payload); } catch (e) { return; }
-      }
+    socket.on("spark:traffic", (payload: unknown) => {
+      const data = parseSparkPayload<SparkTrafficData>(payload);
+      if (!data) return;
       setTrafficData(prev => {
         const newData = [...prev];
         const idx = newData.findIndex(d => d.route_id === data.route_id);
@@ -104,8 +109,11 @@ const SparkInsights = memo(() => {
     <div className="p-4 mt-4 flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <h3 className="text-md font-bold text-gray-800 flex flex-col items-start gap-2">
-          <img src={"/images/logos/spark.png"} className="h-12 w-auto" />
+          <Image src="/images/logos/spark.png" alt="Apache Spark" width={96} height={48} className="h-12 w-auto" />
           <span>Analyses Apache Spark</span>
+          <span className={`text-[9px] uppercase ${connected ? "text-emerald-500" : "text-gray-400"}`}>
+            {connected ? "Connecté" : "Hors ligne"}
+          </span>
         </h3>
       </div>
       
@@ -169,5 +177,7 @@ const SparkInsights = memo(() => {
     </div>
   );
 });
+
+SparkInsights.displayName = "SparkInsights";
 
 export default SparkInsights;

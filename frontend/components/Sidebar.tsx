@@ -10,7 +10,7 @@ import {
   Star,
   Loader,
 } from "lucide-react";
-import Image from "next/image";
+import type { LucideIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const navItems = [
@@ -47,7 +47,7 @@ function SidebarItem({
   href,
 }: {
   label: string;
-  Icon: any;
+  Icon: LucideIcon;
   href: string;
 }) {
   const pathname = usePathname();
@@ -56,7 +56,8 @@ function SidebarItem({
 
   // Reset loading state when navigation finishes (pathname changes)
   useEffect(() => {
-    setIsclicked(false);
+    const timeout = window.setTimeout(() => setIsclicked(false), 0);
+    return () => window.clearTimeout(timeout);
   }, [pathname]);
 
   return (

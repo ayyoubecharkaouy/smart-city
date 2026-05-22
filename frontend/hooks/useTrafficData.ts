@@ -86,7 +86,9 @@ export function useTrafficData(enabled: boolean = true) {
   useEffect(() => {
     if (!enabled) return;
 
-    fetchInitialData();
+    const fetchTimeout = window.setTimeout(() => {
+      void fetchInitialData();
+    }, 0);
     const socket = getSocket();
 
     socket.on("connect", () => setConnected(true));
@@ -109,6 +111,7 @@ export function useTrafficData(enabled: boolean = true) {
       socket.off("traffic:new");
       socket.off("connect");
       socket.off("disconnect");
+      window.clearTimeout(fetchTimeout);
     };
   }, [fetchInitialData, enabled]);
 

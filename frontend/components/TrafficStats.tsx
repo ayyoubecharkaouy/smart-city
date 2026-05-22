@@ -8,7 +8,6 @@ import {
   Wifi,
   WifiOff,
   TrendingUp,
-  AlertTriangle,
 } from "lucide-react";
 import type { RouteTrafficStats } from "@/lib/types";
 import { getTrafficStatusColor, getTrafficStatusLabel } from "@/lib/types";

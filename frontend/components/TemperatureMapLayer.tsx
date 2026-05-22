@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import { GeoJSON } from "react-leaflet";
 import type { FeatureCollection, Feature } from "geojson";
 import type { Layer } from "leaflet";

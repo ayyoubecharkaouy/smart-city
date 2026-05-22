@@ -16,9 +16,6 @@ import {
   RadialBarChart,
   RadialBar,
   Legend,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
 } from "recharts";
 import { Loader } from "lucide-react";
 
@@ -30,9 +27,11 @@ export type ChartType =
   | "gauge"
   | "line";
 
+export type ChartDatum = Record<string, string | number>;
+
 interface AnalyticsChartProps {
   type: ChartType;
-  data: any[];
+  data: ChartDatum[];
   loading: boolean;
   color?: string;
   label?: string;
@@ -173,7 +172,7 @@ export default function AnalyticsChart({
                 radius={[8, 8, 0, 0]}
                 animationDuration={1500}
               >
-                {data.map((entry, index) => (
+                {data.map((_, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={COLORS[index % COLORS.length]}
@@ -219,7 +218,7 @@ export default function AnalyticsChart({
                 stroke="#ffffff"
                 strokeWidth={3}
               >
-                {data.map((entry, index) => (
+                {data.map((_, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={`url(#pieGradient-${index % COLORS.length})`}
@@ -274,9 +273,11 @@ export default function AnalyticsChart({
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                outerRadius={(entry: any) =>
+                outerRadius={(entry: ChartDatum) =>
                   60 +
-                  (entry.value / Math.max(...data.map((d) => d.value))) * 60
+                  (Number(entry[yAxisKey]) /
+                    Math.max(...data.map((d) => Number(d[yAxisKey])))) *
+                    60
                 }
                 dataKey={yAxisKey}
                 nameKey={xAxisKey}
@@ -285,7 +286,7 @@ export default function AnalyticsChart({
                   `${name} ${(percent ?? 0 * 100).toFixed(0)}%`
                 }
               >
-                {data.map((entry, index) => (
+                {data.map((_, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={COLORS[index % COLORS.length]}
@@ -301,7 +302,6 @@ export default function AnalyticsChart({
         );
 
       case "gauge":
-        const maxVal = Math.max(...data.map((d) => d.value)) * 1.2 || 100;
         const gaugeData = data.slice(0, 5).map((d, i) => ({
           name: d[xAxisKey],
           value: d[yAxisKey],

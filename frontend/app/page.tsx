@@ -9,6 +9,7 @@ import {
   ArrowDownRight,
   Loader,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useTemperatureData } from "@/hooks/useTemperatureData";
 import { useWaterData } from "@/hooks/useWaterData";
 import { useTrafficData } from "@/hooks/useTrafficData";
@@ -20,7 +21,14 @@ function MetricCard({
   icon: Icon,
   trend,
   colorClass,
-}: any) {
+}: {
+  title: string;
+  value: string | number;
+  unit: string;
+  icon: LucideIcon;
+  trend: number;
+  colorClass: string;
+}) {
   return (
     <div className="bg-white p-6 rounded-3xl border border-gray-100 hover:shadow-md transition-all duration-300">
       <div className="flex items-center justify-between mb-4">
@@ -58,22 +66,27 @@ export default function Overview() {
   const { districtStats: waterStats, history: waterHistory, loading: waterLoading } = useWaterData();
   const { routeStats: trafficStats, history: trafficHistory, loading: trafficLoading } = useTrafficData();
 
-  // if (envLoading || waterLoading || trafficLoading) {
-  if (true) {
+  if (envLoading || waterLoading || trafficLoading) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center h-[80vh]">
         <Loader className="w-8 h-8 text-gray-600 animate-spin mb-4" />
-        <h2 className="text-2xl font-black text-gray-900">Préparation de la vue d'ensemble</h2>
+        <h2 className="text-2xl font-black text-gray-900">Préparation de la vue d&apos;ensemble</h2>
         <p className="text-gray-500 font-medium mt-2">Synchronisation avec les flux Big Data...</p>
       </div>
     );
   }
 
-  const calculateTrend = (current: number, history: any[], key: string) => {
+  const calculateTrend = (
+    current: number,
+    history: Array<Record<string, number | string>>,
+    key: string,
+  ) => {
     if (history.length < 2) return 0;
     const previous = history[0][key];
     if (!previous) return 0;
-    return parseFloat((((current - previous) / previous) * 100).toFixed(1));
+    const previousValue = Number(previous);
+    if (!previousValue) return 0;
+    return parseFloat((((current - previousValue) / previousValue) * 100).toFixed(1));
   };
 
   // Calculate global averages
@@ -111,7 +124,7 @@ export default function Overview() {
     <div className="p-8 max-w-7xl mx-auto w-full">
       <header className="mb-10">
         <h2 className="text-3xl font-black text-gray-900 mb-2">
-          Vue d'ensemble
+          Vue d&apos;ensemble
         </h2>
       </header>
 

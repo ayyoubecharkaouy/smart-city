@@ -1,11 +1,11 @@
 "use client";
 
-import { Activity, Thermometer } from "lucide-react";
 import { SMART_CITY_DOMAINS } from "@/data/domains";
+import type { DomainId } from "@/data/domains";
 
 interface ControlsProps {
-  mode: string;
-  onModeChange: (mode: string) => void;
+  mode: DomainId;
+  onModeChange: (mode: DomainId) => void;
   kafkaConnected: boolean;
   districtCount: number;
   sensorCount: number;
@@ -14,9 +14,6 @@ interface ControlsProps {
 export default function Controls({
   mode,
   onModeChange,
-  kafkaConnected,
-  districtCount,
-  sensorCount,
 }: ControlsProps) {
   return (
     <div className="w-full flex flex-col bg-white rounded-4xl  py-12 h-max">

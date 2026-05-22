@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import type { ReactNode } from "react";
 import {
   BarChart as BarIcon,
   LineChart as LineIcon,
@@ -27,34 +28,31 @@ export default function AnalyticsPage() {
   const [chartType, setChartType] = useState<ChartType>("line");
   const [metric, setMetric] = useState<MetricType>("temperature");
   const [isRealtime, setIsRealtime] = useState(false);
+  const [time, setTime] = useState<string>(() => new Date().toLocaleTimeString());
 
   // Data Hooks
   const {
-    latestReadings: envReadings,
     districtStats: envStats,
     history: envHistory,
     loading: envLoading,
   } = useTemperatureData();
   const {
-    latestReadings: waterReadings,
     districtStats: waterStats,
     history: waterHistory,
     loading: waterLoading,
   } = useWaterData();
   const {
-    latestReadings: trafficReadings,
     routeStats: trafficStats,
     history: trafficHistory,
     loading: trafficLoading,
   } = useTrafficData();
 
   const loading = envLoading || waterLoading || trafficLoading;
-  const [time, setTime] = useState<string | null>(null);
 
   const chartConfig = useMemo(() => {
-    let rawData: any[] = [];
+    let rawData: Record<string, string | number>[] = [];
     let xAxis = "time";
-    let yAxis = "value";
+    const yAxis = "value";
     let color = "#3b82f6";
     let label = "Valeur";
     let unit = "";
@@ -141,7 +139,7 @@ export default function AnalyticsPage() {
     trafficHistory,
   ]);
 
-  const chartTypes: { id: ChartType; icon: any; label: string }[] = [
+  const chartTypes: { id: ChartType; icon: ReactNode; label: string }[] = [
     { id: "line", icon: <LineIcon />, label: "Lignes" },
     { id: "column", icon: <BarIcon />, label: "Colonnes" },
     { id: "pie", icon: <PieIcon />, label: "Secteurs" },
@@ -154,7 +152,7 @@ export default function AnalyticsPage() {
     { id: "table", icon: <TableIcon />, label: "Tableau" },
   ];
 
-  const metrics: { id: MetricType; icon: any; label: string; color: string }[] =
+  const metrics: { id: MetricType; icon: ReactNode; label: string; color: string }[] =
     [
       {
         id: "temperature",
@@ -183,7 +181,10 @@ export default function AnalyticsPage() {
     ];
 
   useEffect(() => {
-    setTime(new Date().toLocaleTimeString());
+    const interval = window.setInterval(() => {
+      setTime(new Date().toLocaleTimeString());
+    }, 1000);
+    return () => window.clearInterval(interval);
   }, []);
 
   return (
