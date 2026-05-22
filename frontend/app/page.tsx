@@ -58,10 +58,11 @@ export default function Overview() {
   const { districtStats: waterStats, history: waterHistory, loading: waterLoading } = useWaterData();
   const { routeStats: trafficStats, history: trafficHistory, loading: trafficLoading } = useTrafficData();
 
-  if (envLoading || waterLoading || trafficLoading) {
+  // if (envLoading || waterLoading || trafficLoading) {
+  if (true) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center h-[80vh]">
-        <Loader className="w-12 h-12 text-blue-600 animate-spin mb-6" />
+        <Loader className="w-8 h-8 text-gray-600 animate-spin mb-4" />
         <h2 className="text-2xl font-black text-gray-900">Préparation de la vue d'ensemble</h2>
         <p className="text-gray-500 font-medium mt-2">Synchronisation avec les flux Big Data...</p>
       </div>

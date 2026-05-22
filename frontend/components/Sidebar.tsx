@@ -22,19 +22,10 @@ const navItems = [
 ];
 
 export default function Sidebar() {
-  const pathname = usePathname();
 
   return (
-    <aside className="w-64 border-r border-gray-200 flex flex-col h-screen shrink-0">
+    <aside className="w-64 flex flex-col h-screen shrink-0">
       <div className="p-2">
-        <Image
-          src="/images/logos/eljadida.png"
-          alt="Logo"
-          width={200}
-          height={200}
-          className="mx-auto"
-        />
-
         <nav className="space-y-1">
           {navItems.map((item) => (
             <SidebarItem
@@ -73,7 +64,7 @@ function SidebarItem({
       href={href}
       className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 group ${
         isActive
-          ? "bg-[#bfb693] text-white shadow-[#bfb693]/20"
+          ? "bg-[#e85d04] text-white"
           : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
       }`}
       onClick={() => {
