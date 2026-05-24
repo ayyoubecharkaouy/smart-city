@@ -76,15 +76,14 @@ def write_stream_to_kafka(
     # Kafka attend une colonne "value" contenant le message en chaîne de caractères (JSON)
     kafka_df = df.select(to_json(struct("*")).alias("value"))
 
-    writer = kafka_df \
+    final_query_name = query_name or topic_name.replace(".", "_")
+
+    return kafka_df \
         .writeStream \
         .format("kafka") \
         .option("kafka.bootstrap.servers", kafka_servers) \
         .option("topic", topic_name) \
         .option("checkpointLocation", checkpoint_dir) \
-        .outputMode(output_mode)
-
-    if query_name:
-        writer = writer.queryName(query_name)
-
-    return writer.start()
+        .outputMode(output_mode) \
+        .queryName(final_query_name) \
+        .start()

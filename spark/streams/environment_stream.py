@@ -25,7 +25,7 @@ def process_environment_stream(spark):
         config.KAFKA_BOOTSTRAP_SERVERS,
         config.CHECKPOINT_PATHS["ENVIRONMENT_ERRORS"],
         output_mode="append",
-        query_name="environment_json_errors"
+        query_name="environment_errors_stream"
     )
 
     # 3. Traitement : Calculer la température et qualité de l'air moyenne par quartier sur une fenêtre temporelle
@@ -48,5 +48,5 @@ def process_environment_stream(spark):
         config.SPARK_TOPICS["ENVIRONMENT"], 
         config.KAFKA_BOOTSTRAP_SERVERS, 
         checkpoint_path,
-        query_name="environment_aggregations"
+        query_name="environment_stream"
     )

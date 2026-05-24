@@ -24,7 +24,7 @@ def process_traffic_stream(spark):
         config.KAFKA_BOOTSTRAP_SERVERS,
         config.CHECKPOINT_PATHS["TRAFFIC_ERRORS"],
         output_mode="append",
-        query_name="traffic_json_errors"
+        query_name="traffic_errors_stream"
     )
 
     # Calculer la vitesse moyenne et la congestion max par route sur une fenêtre
@@ -45,5 +45,5 @@ def process_traffic_stream(spark):
         config.SPARK_TOPICS["TRAFFIC"], 
         config.KAFKA_BOOTSTRAP_SERVERS, 
         checkpoint_path,
-        query_name="traffic_aggregations"
+        query_name="traffic_stream"
     )

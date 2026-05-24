@@ -34,7 +34,7 @@ def process_water_stream(spark):
         config.KAFKA_BOOTSTRAP_SERVERS,
         config.CHECKPOINT_PATHS["WATER_ERRORS"],
         output_mode="append",
-        query_name="water_json_errors"
+        query_name="water_errors_stream"
     )
 
     # Aplatir les champs imbriqués
@@ -62,5 +62,5 @@ def process_water_stream(spark):
         config.SPARK_TOPICS["WATER"], 
         config.KAFKA_BOOTSTRAP_SERVERS, 
         checkpoint_path,
-        query_name="water_aggregations"
+        query_name="water_stream"
     )
