@@ -72,7 +72,7 @@ const SparkInsights = memo(() => {
             <AlertTriangle className="w-3 h-3" /> Alertes Spark
           </h4>
           <div className="space-y-2">
-            {sparkAlerts.map((item, i) => (
+            {sparkAlerts.slice(0, 5).map((item, i) => (
               <div key={`${item.processed_at}-${i}`} className="flex items-center justify-between gap-2 border-b border-amber-100 pb-2 last:border-0 last:pb-0">
                 <div className="min-w-0">
                   <p className="truncate text-xs font-bold text-amber-900">
@@ -98,7 +98,7 @@ const SparkInsights = memo(() => {
             <AlertTriangle className="w-3 h-3" /> Erreurs JSON Spark
           </h4>
           <div className="space-y-2">
-            {sparkErrors.map((item, i) => (
+            {sparkErrors.slice(0, 5).map((item, i) => (
               <div key={`${item.processed_at}-${i}`} className="border-b border-red-100 pb-2 last:border-0 last:pb-0">
                 <div className="flex items-center justify-between gap-2 text-[10px] font-bold uppercase text-red-700">
                   <span>{item.stream}</span>

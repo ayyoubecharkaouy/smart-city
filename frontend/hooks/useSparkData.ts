@@ -82,13 +82,13 @@ export function useSparkData() {
     const handleError = (payload: unknown) => {
       const data = parseSparkPayload<SparkErrorData>(payload);
       if (!data) return;
-      setSparkErrors(prev => [data, ...prev].slice(0, 5));
+      setSparkErrors(prev => [data, ...prev].slice(0, 50));
     };
 
     const handleAlert = (payload: unknown) => {
       const data = parseSparkPayload<SparkAlertData>(payload);
       if (!data) return;
-      setSparkAlerts(prev => [data, ...prev].slice(0, 5));
+      setSparkAlerts(prev => [data, ...prev].slice(0, 100));
     };
 
     const connectedTimeout = window.setTimeout(() => {
