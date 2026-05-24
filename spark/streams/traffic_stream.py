@@ -35,7 +35,7 @@ def process_traffic_stream(spark):
             max("congestion_index").alias("max_congestion")
         )
 
-    checkpoint_path = "/tmp/spark-checkpoints/traffic"
+    checkpoint_path = config.CHECKPOINT_PATHS["TRAFFIC"]
     return write_stream_to_kafka(
         aggregated_df, 
         config.SPARK_TOPICS["TRAFFIC"], 

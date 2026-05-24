@@ -52,7 +52,7 @@ def process_water_stream(spark):
             avg("turbidity").alias("avg_turbidity")
         )
 
-    checkpoint_path = "/tmp/spark-checkpoints/water"
+    checkpoint_path = config.CHECKPOINT_PATHS["WATER"]
     return write_stream_to_kafka(
         aggregated_df, 
         config.SPARK_TOPICS["WATER"], 

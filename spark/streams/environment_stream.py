@@ -41,7 +41,7 @@ def process_environment_stream(spark):
         )
 
     # 4. Envoyer le résultat à Kafka
-    checkpoint_path = "/tmp/spark-checkpoints/environment"
+    checkpoint_path = config.CHECKPOINT_PATHS["ENVIRONMENT"]
     return write_stream_to_kafka(
         aggregated_df, 
         config.SPARK_TOPICS["ENVIRONMENT"], 
