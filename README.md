@@ -29,36 +29,26 @@ ou, selon votre version de Docker :
 ```bash
 docker-compose up -d
 ```
-## Création du topic Kafka pour l' Environment
+## Création des topics Kafka
 
-Créez un topic Kafka pour la eneverenement avec la commande suivante :
+Créez tous les topics Kafka nécessaires avec le script du projet :
 
 ```bash
-sudo docker exec -it kafka-smartcity /opt/kafka/bin/kafka-topics.sh \
-  --create \
-  --topic smartcity.environment.readings \
-  --bootstrap-server localhost:9092 \
-  --partitions 3 \
-  --replication-factor 1
+cd backend/kafka
+./create-topics.sh
 ```
 
-Remplacez `NOM_CONTENEUR_KAFKA` par le nom du conteneur Kafka obtenu avec la commande suivante :
+Le script crée les topics d'entrée et les topics produits par Spark :
 
-```bash
-docker ps
-```
-
-##  Création du topic Kafka pour la qaulite d'eau
-
-Créez un topic Kafka pour la gestion d'eau avec la commande suivante :
-
-```bash
-sudo docker exec -it kafka-smartcity /opt/kafka/bin/kafka-topics.sh \
-  --create \
-  --topic smartcity.water.readings \
-  --bootstrap-server localhost:9092 \
-  --partitions 1 \
-  --replication-factor 1
+```text
+smartcity.environment.readings
+smartcity.water.readings
+smartcity.traffic.readings
+smartcity.spark.environment
+smartcity.spark.water
+smartcity.spark.traffic
+smartcity.spark.errors
+smartcity.spark.alerts
 ```
 
 ## 2. Démarrer Node-RED
