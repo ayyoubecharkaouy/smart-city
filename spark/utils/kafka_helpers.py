@@ -48,6 +48,36 @@ def parse_kafka_json_records(df, element_schema, stream_name: str):
 def parse_kafka_json_array(df, element_schema, stream_name: str):
     return parse_kafka_json_records(df, element_schema, stream_name)
 
+def create_validated_kafka_json_stream(
+    spark: SparkSession,
+    input_topic: str,
+    kafka_servers: str,
+    element_schema,
+    stream_name: str,
+    error_topic: str,
+    error_checkpoint_dir: str,
+    error_query_name: str
+):
+    """
+    Lit un topic Kafka, parse les messages JSON et publie les erreurs de parsing.
+    """
+    df = create_kafka_stream(spark, input_topic, kafka_servers)
+    parsed_df, invalid_df = parse_kafka_json_records(df, element_schema, stream_name)
+
+    write_stream_to_kafka(
+        invalid_df,
+        error_topic,
+        kafka_servers,
+        error_checkpoint_dir,
+        output_mode="append",
+        query_name=error_query_name
+    )
+
+    return parsed_df
+
+def with_event_time_watermark(df, timestamp_col: str, delay: str):
+    return df.withWatermark(timestamp_col, delay)
+
 def write_stream_to_console(df, query_name: str):
     """
     Écrit le résultat d'un DataFrame agrégé dans la console.

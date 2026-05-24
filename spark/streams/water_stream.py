@@ -1,6 +1,6 @@
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, TimestampType
 from pyspark.sql.functions import abs as spark_abs, avg, col, current_timestamp, greatest, least, lit, max_by, min_by, sum as spark_sum, when, window
-from utils.kafka_helpers import create_kafka_stream, parse_kafka_json_records, write_stream_to_kafka
+from utils.kafka_helpers import create_validated_kafka_json_stream, with_event_time_watermark, write_stream_to_kafka
 import config
 
 def process_water_stream(spark):
@@ -24,17 +24,15 @@ def process_water_stream(spark):
         StructField("timestamp", TimestampType(), True)
     ])
     
-    df = create_kafka_stream(spark, config.TOPICS["WATER"], config.KAFKA_BOOTSTRAP_SERVERS)
-
-    parsed_df, invalid_df = parse_kafka_json_records(df, element_schema, "water")
-
-    write_stream_to_kafka(
-        invalid_df,
-        config.SPARK_TOPICS["ERRORS"],
+    parsed_df = create_validated_kafka_json_stream(
+        spark,
+        config.TOPICS["WATER"],
         config.KAFKA_BOOTSTRAP_SERVERS,
+        element_schema,
+        "water",
+        config.SPARK_TOPICS["ERRORS"],
         config.CHECKPOINT_PATHS["WATER_ERRORS"],
-        output_mode="append",
-        query_name="water_errors_stream"
+        "water_errors_stream"
     )
 
     # Aplatir les champs imbriqués
@@ -93,8 +91,7 @@ def process_water_stream(spark):
     )
 
     # Agréger par quartier
-    aggregated_df = flat_df \
-        .withWatermark("timestamp", config.WATERMARK_DELAY) \
+    aggregated_df = with_event_time_watermark(flat_df, "timestamp", config.WATERMARK_DELAY) \
         .groupBy(
             window(col("timestamp"), config.WINDOW_DURATION, config.SLIDING_INTERVAL),
             col("district")

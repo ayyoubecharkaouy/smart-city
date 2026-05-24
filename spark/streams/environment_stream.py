@@ -1,6 +1,6 @@
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, TimestampType
 from pyspark.sql.functions import avg, col, current_timestamp, lit, max as spark_max, max_by, min as spark_min, min_by, when, window
-from utils.kafka_helpers import create_kafka_stream, parse_kafka_json_records, write_stream_to_kafka
+from utils.kafka_helpers import create_validated_kafka_json_stream, with_event_time_watermark, write_stream_to_kafka
 import config
 
 def process_environment_stream(spark):
@@ -13,19 +13,15 @@ def process_environment_stream(spark):
         StructField("timestamp", TimestampType(), True)
     ])
     
-    # 1. Lire le flux Kafka
-    df = create_kafka_stream(spark, config.TOPICS["ENVIRONMENT"], config.KAFKA_BOOTSTRAP_SERVERS)
-
-    # 2. Convertir la valeur Kafka en String, puis parser un objet JSON ou un tableau JSON
-    parsed_df, invalid_df = parse_kafka_json_records(df, element_schema, "environment")
-
-    write_stream_to_kafka(
-        invalid_df,
-        config.SPARK_TOPICS["ERRORS"],
+    parsed_df = create_validated_kafka_json_stream(
+        spark,
+        config.TOPICS["ENVIRONMENT"],
         config.KAFKA_BOOTSTRAP_SERVERS,
+        element_schema,
+        "environment",
+        config.SPARK_TOPICS["ERRORS"],
         config.CHECKPOINT_PATHS["ENVIRONMENT_ERRORS"],
-        output_mode="append",
-        query_name="environment_errors_stream"
+        "environment_errors_stream"
     )
 
     alert_df = parsed_df \
@@ -54,8 +50,7 @@ def process_environment_stream(spark):
 
     # 3. Traitement : Calculer la température et qualité de l'air moyenne par quartier sur une fenêtre temporelle
     # watermark permet de gérer les données arrivant en retard
-    aggregated_df = parsed_df \
-        .withWatermark("timestamp", config.WATERMARK_DELAY) \
+    aggregated_df = with_event_time_watermark(parsed_df, "timestamp", config.WATERMARK_DELAY) \
         .groupBy(
             window(col("timestamp"), config.WINDOW_DURATION, config.SLIDING_INTERVAL),
             col("district")

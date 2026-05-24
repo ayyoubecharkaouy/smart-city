@@ -1,6 +1,6 @@
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, IntegerType, TimestampType
 from pyspark.sql.functions import avg, col, current_timestamp, lit, max as spark_max, min as spark_min, when, window
-from utils.kafka_helpers import create_kafka_stream, parse_kafka_json_records, write_stream_to_kafka
+from utils.kafka_helpers import create_validated_kafka_json_stream, with_event_time_watermark, write_stream_to_kafka
 import config
 
 def process_traffic_stream(spark):
@@ -14,17 +14,15 @@ def process_traffic_stream(spark):
         StructField("timestamp", TimestampType(), True)
     ])
     
-    df = create_kafka_stream(spark, config.TOPICS["TRAFFIC"], config.KAFKA_BOOTSTRAP_SERVERS)
-
-    parsed_df, invalid_df = parse_kafka_json_records(df, element_schema, "traffic")
-
-    write_stream_to_kafka(
-        invalid_df,
-        config.SPARK_TOPICS["ERRORS"],
+    parsed_df = create_validated_kafka_json_stream(
+        spark,
+        config.TOPICS["TRAFFIC"],
         config.KAFKA_BOOTSTRAP_SERVERS,
+        element_schema,
+        "traffic",
+        config.SPARK_TOPICS["ERRORS"],
         config.CHECKPOINT_PATHS["TRAFFIC_ERRORS"],
-        output_mode="append",
-        query_name="traffic_errors_stream"
+        "traffic_errors_stream"
     )
 
     alert_df = parsed_df \
@@ -52,8 +50,7 @@ def process_traffic_stream(spark):
     )
 
     # Calculer la vitesse moyenne et la congestion max par route sur une fenêtre
-    aggregated_df = parsed_df \
-        .withWatermark("timestamp", config.WATERMARK_DELAY) \
+    aggregated_df = with_event_time_watermark(parsed_df, "timestamp", config.WATERMARK_DELAY) \
         .groupBy(
             window(col("timestamp"), config.WINDOW_DURATION, config.SLIDING_INTERVAL),
             col("route_id")
