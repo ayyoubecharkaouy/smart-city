@@ -1,5 +1,5 @@
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, TimestampType
-from pyspark.sql.functions import col, current_timestamp, lit, window, avg
+from pyspark.sql.functions import avg, col, current_timestamp, lit, max as spark_max, max_by, min as spark_min, min_by, when, window
 from utils.kafka_helpers import create_kafka_stream, parse_kafka_json_records, write_stream_to_kafka
 import config
 
@@ -62,7 +62,19 @@ def process_environment_stream(spark):
         ) \
         .agg(
             avg("temperature").alias("avg_temperature"),
-            avg("air_quality").alias("avg_air_quality")
+            spark_min("temperature").alias("min_temperature"),
+            spark_max("temperature").alias("max_temperature"),
+            avg("air_quality").alias("avg_air_quality"),
+            spark_max("air_quality").alias("max_air_quality"),
+            min_by(col("temperature"), col("timestamp")).alias("first_temperature"),
+            max_by(col("temperature"), col("timestamp")).alias("last_temperature")
+        ) \
+        .withColumn("temperature_delta", col("last_temperature") - col("first_temperature")) \
+        .withColumn(
+            "temperature_trend",
+            when(col("temperature_delta") > config.TEMPERATURE_TREND_THRESHOLD, lit("warming"))
+            .when(col("temperature_delta") < -config.TEMPERATURE_TREND_THRESHOLD, lit("cooling"))
+            .otherwise(lit("stable"))
         )
 
     # 4. Envoyer le résultat à Kafka

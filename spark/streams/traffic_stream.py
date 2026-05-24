@@ -1,5 +1,5 @@
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, IntegerType, TimestampType
-from pyspark.sql.functions import col, current_timestamp, lit, window, avg, max
+from pyspark.sql.functions import avg, col, current_timestamp, lit, max as spark_max, min as spark_min, when, window
 from utils.kafka_helpers import create_kafka_stream, parse_kafka_json_records, write_stream_to_kafka
 import config
 
@@ -60,8 +60,18 @@ def process_traffic_stream(spark):
         ) \
         .agg(
             avg("average_speed_kmh").alias("avg_speed"),
-            max("congestion_index").alias("max_congestion")
-        )
+            spark_min("average_speed_kmh").alias("min_speed"),
+            avg("vehicle_count").alias("avg_vehicle_count"),
+            spark_max("vehicle_count").alias("max_vehicle_count"),
+            spark_max("congestion_index").alias("max_congestion")
+        ) \
+        .withColumn(
+            "congestion_level",
+            when(col("max_congestion") > config.CONGESTION_ALERT_THRESHOLD, lit("high"))
+            .when(col("max_congestion") > config.CONGESTION_ALERT_THRESHOLD * 0.7, lit("medium"))
+            .otherwise(lit("normal"))
+        ) \
+        .withColumn("is_congested_route", col("max_congestion") > config.CONGESTION_ALERT_THRESHOLD)
 
     checkpoint_path = config.CHECKPOINT_PATHS["TRAFFIC"]
     return write_stream_to_kafka(

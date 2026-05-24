@@ -1,5 +1,5 @@
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, TimestampType
-from pyspark.sql.functions import col, current_timestamp, lit, when, window, avg
+from pyspark.sql.functions import abs as spark_abs, avg, col, current_timestamp, greatest, least, lit, max_by, min_by, sum as spark_sum, when, window
 from utils.kafka_helpers import create_kafka_stream, parse_kafka_json_records, write_stream_to_kafka
 import config
 
@@ -101,8 +101,25 @@ def process_water_stream(spark):
         ) \
         .agg(
             avg("flow_rate").alias("avg_flow_rate"),
+            spark_sum("flow_rate").alias("total_flow_rate"),
             avg("ph").alias("avg_ph"),
-            avg("turbidity").alias("avg_turbidity")
+            avg("turbidity").alias("avg_turbidity"),
+            min_by(col("flow_rate"), col("timestamp")).alias("first_flow_rate"),
+            max_by(col("flow_rate"), col("timestamp")).alias("last_flow_rate")
+        ) \
+        .withColumn("flow_drop", col("first_flow_rate") - col("last_flow_rate")) \
+        .withColumn("sudden_flow_drop", col("flow_drop") > config.WATER_FLOW_DROP_THRESHOLD) \
+        .withColumn(
+            "water_quality_score",
+            least(
+                lit(100.0),
+                greatest(
+                    lit(0.0),
+                    lit(100.0)
+                    - (spark_abs(col("avg_ph") - lit(7.0)) * lit(12.0))
+                    - (col("avg_turbidity") * lit(6.0))
+                )
+            )
         )
 
     checkpoint_path = config.CHECKPOINT_PATHS["WATER"]
