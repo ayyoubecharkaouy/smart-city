@@ -12,9 +12,10 @@ chmod +x create-topics.sh
 ./create-topics.sh
 ```
 
-Le script crée les topics nécessaires au projet, dont le topic des erreurs Spark :
+Le script crée les topics nécessaires au projet, dont les topics Spark :
 
 ```text
+smartcity.spark.alerts
 smartcity.spark.errors
 ```
 

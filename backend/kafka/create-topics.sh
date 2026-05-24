@@ -27,6 +27,7 @@ create_topic "smartcity.spark.environment" 1
 create_topic "smartcity.spark.water" 1
 create_topic "smartcity.spark.traffic" 1
 create_topic "smartcity.spark.errors" 1
+create_topic "smartcity.spark.alerts" 1
 
 docker exec "$KAFKA_CONTAINER" "$KAFKA_TOPICS_SCRIPT" \
   --list \
