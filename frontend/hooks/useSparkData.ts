@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getSocket } from "@/lib/socket";
 import type {
   SparkAlertData,
@@ -9,6 +9,8 @@ import type {
   SparkTrafficData,
   SparkWaterData,
 } from "@/lib/types";
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
 
 function parseSparkPayload<T>(payload: unknown): T | null {
   if (typeof payload === "string") {
@@ -21,6 +23,20 @@ function parseSparkPayload<T>(payload: unknown): T | null {
   return payload as T;
 }
 
+function latestByKey<T>(items: T[], getKey: (item: T) => string | undefined): T[] {
+  const seen = new Set<string>();
+  const result: T[] = [];
+
+  items.forEach(item => {
+    const key = getKey(item);
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    result.push(item);
+  });
+
+  return result;
+}
+
 export function useSparkData() {
   const [envData, setEnvData] = useState<SparkEnvironmentData[]>([]);
   const [waterData, setWaterData] = useState<SparkWaterData[]>([]);
@@ -30,7 +46,50 @@ export function useSparkData() {
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchInitialData = useCallback(async (signal?: AbortSignal) => {
+    setError(null);
+
+    try {
+      const [aggregationsRes, alertsRes] = await Promise.all([
+        fetch(`${BACKEND_URL}/api/spark/aggregations?limit=150`, { signal }),
+        fetch(`${BACKEND_URL}/api/spark/alerts?limit=100`, { signal }),
+      ]);
+
+      if (!aggregationsRes.ok || !alertsRes.ok) {
+        throw new Error("Erreur lors de la recuperation de l'historique Spark");
+      }
+
+      const aggregations = await aggregationsRes.json();
+      const alerts = await alertsRes.json();
+      if (signal?.aborted) return;
+
+      const items = Array.isArray(aggregations) ? aggregations : [];
+      setEnvData(latestByKey(
+        items.filter((item): item is SparkEnvironmentData => item?.type === "environment"),
+        item => item.district,
+      ));
+      setWaterData(latestByKey(
+        items.filter((item): item is SparkWaterData => item?.type === "water"),
+        item => item.district,
+      ));
+      setTrafficData(latestByKey(
+        items.filter((item): item is SparkTrafficData => item?.type === "traffic"),
+        item => item.route_id,
+      ));
+      setSparkAlerts(Array.isArray(alerts) ? alerts : []);
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
+      const msg = err instanceof Error ? err.message : "Erreur inconnue";
+      setError(msg);
+      console.error("[useSparkData] Fetch error:", msg);
+    }
+  }, []);
+
   useEffect(() => {
+    const controller = new AbortController();
+    const fetchTimeout = window.setTimeout(() => {
+      void fetchInitialData(controller.signal);
+    }, 0);
     const socket = getSocket();
 
     const handleConnect = () => {
@@ -105,6 +164,7 @@ export function useSparkData() {
     socket.on("spark:alert", handleAlert);
 
     return () => {
+      controller.abort();
       socket.off("connect", handleConnect);
       socket.off("disconnect", handleDisconnect);
       socket.off("connect_error", handleConnectError);
@@ -113,9 +173,10 @@ export function useSparkData() {
       socket.off("spark:traffic", handleTraffic);
       socket.off("spark:error", handleError);
       socket.off("spark:alert", handleAlert);
+      window.clearTimeout(fetchTimeout);
       window.clearTimeout(connectedTimeout);
     };
-  }, []);
+  }, [fetchInitialData]);
 
   return {
     envData,
