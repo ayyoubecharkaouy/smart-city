@@ -1,5 +1,6 @@
 const { Kafka } = require("kafkajs");
 const SparkAggregation = require("../models/SparkAggregation");
+const SparkAlert = require("../models/SparkAlert");
 
 const kafka = new Kafka({
   clientId: "smartcity-multi-service",
@@ -118,6 +119,20 @@ async function startKafkaConsumer(io) {
           io.emit("spark:error", value);
         }
         else if (topic === SPARK_TOPICS.ALERTS) {
+          const entry = new SparkAlert({
+            type: value.type,
+            alert_type: value.alert_type,
+            severity: value.severity,
+            sensor_id: value.sensor_id,
+            district: value.district,
+            route_id: value.route_id,
+            value: value.value,
+            operator: value.operator,
+            threshold: value.threshold,
+            timestamp: value.timestamp,
+            processed_at: value.processed_at
+          });
+          await entry.save();
           console.warn("[Spark Alert]", value);
           io.emit("spark:alert", value);
         }

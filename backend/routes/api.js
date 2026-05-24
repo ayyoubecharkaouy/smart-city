@@ -4,6 +4,7 @@ const EnvironmentReading = require("../models/EnvironmentReading");
 const WaterReading = require("../models/WaterReading");
 const TrafficReading = require("../models/TrafficReading");
 const SparkAggregation = require("../models/SparkAggregation");
+const SparkAlert = require("../models/SparkAlert");
 
 const DEFAULT_LATEST_LIMIT = 100;
 const MAX_LATEST_LIMIT = 500;
@@ -70,6 +71,68 @@ const trafficProjection = {
   traffic_status: 1,
   timestamp: 1
 };
+
+function buildSparkAggregationPayload(item) {
+  return {
+    type: item.type,
+    district: item.district,
+    route_id: item.route_id,
+    window: {
+      start: item.window_start,
+      end: item.window_end
+    },
+    ...(item.data || {}),
+    timestamp: item.timestamp
+  };
+}
+
+function buildSparkAlertPayload(item) {
+  return {
+    type: item.type,
+    alert_type: item.alert_type,
+    severity: item.severity,
+    sensor_id: item.sensor_id,
+    district: item.district,
+    route_id: item.route_id,
+    value: item.value,
+    operator: item.operator,
+    threshold: item.threshold,
+    timestamp: item.timestamp,
+    processed_at: item.processed_at
+  };
+}
+
+function parseSparkType(value) {
+  return ["environment", "water", "traffic"].includes(value) ? value : null;
+}
+
+// ── SPARK ENDPOINTS ──
+
+router.get("/spark/aggregations", asyncRoute(async (req, res) => {
+  setShortCache(res);
+  const type = parseSparkType(req.query.type);
+  const query = type ? { type } : {};
+
+  const data = await SparkAggregation.find(query)
+    .sort({ timestamp: -1 })
+    .limit(parseLimit(req.query.limit, 100))
+    .lean();
+
+  res.json(data.map(buildSparkAggregationPayload));
+}));
+
+router.get("/spark/alerts", asyncRoute(async (req, res) => {
+  setShortCache(res);
+  const type = parseSparkType(req.query.type);
+  const query = type ? { type } : {};
+
+  const data = await SparkAlert.find(query)
+    .sort({ created_at: -1 })
+    .limit(parseLimit(req.query.limit, 100))
+    .lean();
+
+  res.json(data.map(buildSparkAlertPayload));
+}));
 
 // ── ENVIRONMENT ENDPOINTS ──
 
