@@ -64,7 +64,8 @@ async function startKafkaConsumer(io) {
               first_temperature: value.first_temperature,
               last_temperature: value.last_temperature,
               temperature_delta: value.temperature_delta,
-              temperature_trend: value.temperature_trend
+              temperature_trend: value.temperature_trend,
+              processed_at: value.processed_at
             }
           });
           await entry.save();
@@ -85,7 +86,8 @@ async function startKafkaConsumer(io) {
               last_flow_rate: value.last_flow_rate,
               flow_drop: value.flow_drop,
               sudden_flow_drop: value.sudden_flow_drop,
-              water_quality_score: value.water_quality_score
+              water_quality_score: value.water_quality_score,
+              processed_at: value.processed_at
             }
           });
           await entry.save();
@@ -104,7 +106,8 @@ async function startKafkaConsumer(io) {
               max_vehicle_count: value.max_vehicle_count,
               max_congestion: value.max_congestion,
               congestion_level: value.congestion_level,
-              is_congested_route: value.is_congested_route
+              is_congested_route: value.is_congested_route,
+              processed_at: value.processed_at
             }
           });
           await entry.save();
