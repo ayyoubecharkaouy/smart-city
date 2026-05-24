@@ -35,6 +35,20 @@ interface SparkErrorData {
   processed_at: string;
 }
 
+interface SparkAlertData {
+  type: string;
+  alert_type: string;
+  severity: string;
+  sensor_id?: string;
+  district?: string;
+  route_id?: string;
+  value: number;
+  operator: string;
+  threshold: number;
+  timestamp: string;
+  processed_at: string;
+}
+
 function parseSparkPayload<T>(payload: unknown): T | null {
   if (typeof payload === "string") {
     try {
@@ -51,6 +65,7 @@ const SparkInsights = memo(() => {
   const [waterData, setWaterData] = useState<SparkWaterData[]>([]);
   const [trafficData, setTrafficData] = useState<SparkTrafficData[]>([]);
   const [sparkErrors, setSparkErrors] = useState<SparkErrorData[]>([]);
+  const [sparkAlerts, setSparkAlerts] = useState<SparkAlertData[]>([]);
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -109,16 +124,23 @@ const SparkInsights = memo(() => {
       setSparkErrors(prev => [data, ...prev].slice(0, 5));
     });
 
+    socket.on("spark:alert", (payload: unknown) => {
+      const data = parseSparkPayload<SparkAlertData>(payload);
+      if (!data) return;
+      setSparkAlerts(prev => [data, ...prev].slice(0, 5));
+    });
+
     return () => {
       socket.off("spark:environment");
       socket.off("spark:water");
       socket.off("spark:traffic");
       socket.off("spark:error");
+      socket.off("spark:alert");
       socket.off("connect_error");
     };
   }, []);
 
-  if (envData.length === 0 && waterData.length === 0 && trafficData.length === 0 && sparkErrors.length === 0) {
+  if (envData.length === 0 && waterData.length === 0 && trafficData.length === 0 && sparkErrors.length === 0 && sparkAlerts.length === 0) {
     return (
       <div className="p-4 mt-4">
         {error ? (
@@ -154,6 +176,32 @@ const SparkInsights = memo(() => {
       <p className="text-[10px] uppercase text-gray-400 font-bold tracking-wider mb-2">
         Moyennes glissantes (Temps Réel)
       </p>
+
+      {/* Spark Alerts */}
+      {sparkAlerts.length > 0 && (
+        <div className="rounded-4xl p-3 border border-amber-100 bg-amber-50">
+          <h4 className="font-bold text-amber-700 flex items-center gap-1 mb-2">
+            <AlertTriangle className="w-3 h-3" /> Alertes Spark
+          </h4>
+          <div className="space-y-2">
+            {sparkAlerts.map((item, i) => (
+              <div key={`${item.processed_at}-${i}`} className="flex items-center justify-between gap-2 border-b border-amber-100 pb-2 last:border-0 last:pb-0">
+                <div className="min-w-0">
+                  <p className="truncate text-xs font-bold text-amber-900">
+                    {item.type} / {item.alert_type}
+                  </p>
+                  <p className="truncate text-[10px] text-amber-700">
+                    {item.district || item.route_id || item.sensor_id}
+                  </p>
+                </div>
+                <span className="shrink-0 text-[10px] font-black text-amber-800">
+                  {Number(item.value).toFixed(1)} {item.operator} {Number(item.threshold).toFixed(1)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Spark JSON Errors */}
       {sparkErrors.length > 0 && (
