@@ -329,3 +329,70 @@ export function getTrafficStatusLevelColor(level: number): string {
   const colors = ["#22c55e", "#f59e0b", "#f97316", "#ef4444"];
   return colors[level] || colors[0];
 }
+
+// ── SPARK TYPES ──
+
+export interface SparkWindow {
+  start: string;
+  end: string;
+}
+
+export interface SparkEnvironmentData {
+  district: string;
+  avg_temperature: number;
+  min_temperature: number;
+  max_temperature: number;
+  avg_air_quality: number;
+  max_air_quality: number;
+  temperature_delta: number;
+  temperature_trend: string;
+  processed_at: string;
+  window: SparkWindow;
+}
+
+export interface SparkWaterData {
+  district: string;
+  avg_flow_rate: number;
+  total_flow_rate: number;
+  avg_ph: number;
+  avg_turbidity: number;
+  flow_drop: number;
+  sudden_flow_drop: boolean;
+  water_quality_score: number;
+  processed_at: string;
+  window: SparkWindow;
+}
+
+export interface SparkTrafficData {
+  route_id: string;
+  avg_speed: number;
+  min_speed: number;
+  avg_vehicle_count: number;
+  max_vehicle_count: number;
+  max_congestion: number;
+  congestion_level: string;
+  is_congested_route: boolean;
+  processed_at: string;
+  window: SparkWindow;
+}
+
+export interface SparkErrorData {
+  stream: string;
+  error_reason: string;
+  raw_value: string;
+  processed_at: string;
+}
+
+export interface SparkAlertData {
+  type: string;
+  alert_type: string;
+  severity: string;
+  sensor_id?: string;
+  district?: string;
+  route_id?: string;
+  value: number;
+  operator: string;
+  threshold: number;
+  timestamp: string;
+  processed_at: string;
+}

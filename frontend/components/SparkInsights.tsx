@@ -5,66 +5,13 @@ import { getSocket } from "@/lib/socket";
 import { Activity, AlertTriangle, Droplet } from "lucide-react";
 import Image from "next/image";
 import StateNotice from "./StateNotice";
-
-interface SparkEnvironmentData {
-  district: string;
-  avg_temperature: number;
-  min_temperature: number;
-  max_temperature: number;
-  avg_air_quality: number;
-  max_air_quality: number;
-  temperature_delta: number;
-  temperature_trend: string;
-  processed_at: string;
-  window: { start: string; end: string };
-}
-
-interface SparkWaterData {
-  district: string;
-  avg_flow_rate: number;
-  total_flow_rate: number;
-  avg_ph: number;
-  avg_turbidity: number;
-  flow_drop: number;
-  sudden_flow_drop: boolean;
-  water_quality_score: number;
-  processed_at: string;
-  window: { start: string; end: string };
-}
-
-interface SparkTrafficData {
-  route_id: string;
-  avg_speed: number;
-  min_speed: number;
-  avg_vehicle_count: number;
-  max_vehicle_count: number;
-  max_congestion: number;
-  congestion_level: string;
-  is_congested_route: boolean;
-  processed_at: string;
-  window: { start: string; end: string };
-}
-
-interface SparkErrorData {
-  stream: string;
-  error_reason: string;
-  raw_value: string;
-  processed_at: string;
-}
-
-interface SparkAlertData {
-  type: string;
-  alert_type: string;
-  severity: string;
-  sensor_id?: string;
-  district?: string;
-  route_id?: string;
-  value: number;
-  operator: string;
-  threshold: number;
-  timestamp: string;
-  processed_at: string;
-}
+import type {
+  SparkAlertData,
+  SparkEnvironmentData,
+  SparkErrorData,
+  SparkTrafficData,
+  SparkWaterData,
+} from "@/lib/types";
 
 function parseSparkPayload<T>(payload: unknown): T | null {
   if (typeof payload === "string") {
