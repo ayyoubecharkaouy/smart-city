@@ -9,22 +9,36 @@ import StateNotice from "./StateNotice";
 interface SparkEnvironmentData {
   district: string;
   avg_temperature: number;
+  min_temperature: number;
+  max_temperature: number;
   avg_air_quality: number;
+  max_air_quality: number;
+  temperature_delta: number;
+  temperature_trend: string;
   window: { start: string; end: string };
 }
 
 interface SparkWaterData {
   district: string;
   avg_flow_rate: number;
+  total_flow_rate: number;
   avg_ph: number;
   avg_turbidity: number;
+  flow_drop: number;
+  sudden_flow_drop: boolean;
+  water_quality_score: number;
   window: { start: string; end: string };
 }
 
 interface SparkTrafficData {
   route_id: string;
   avg_speed: number;
+  min_speed: number;
+  avg_vehicle_count: number;
+  max_vehicle_count: number;
   max_congestion: number;
+  congestion_level: string;
+  is_congested_route: boolean;
   window: { start: string; end: string };
 }
 
@@ -232,11 +246,17 @@ const SparkInsights = memo(() => {
             <Activity className="w-3 h-3" /> Trafic
           </h4>
           {trafficData.map((t, i) => (
-            <div key={i} className="flex justify-between items-center py-1 border-b border-gray-100 last:border-0">
+            <div key={i} className="flex flex-wrap justify-between items-center gap-2 py-1 border-b border-gray-100 last:border-0">
               <span className="truncate w-24 text-gray-700">{t.route_id}</span>
               <span className="font-semibold text-blue-600">{t.avg_speed ? t.avg_speed.toFixed(1) : 0} km/h</span>
               <span className="text-[9px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded">
                 Congestion max: {t.max_congestion ? t.max_congestion.toFixed(1) : 0}
+              </span>
+              <span className="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
+                Véhicules moy.: {t.avg_vehicle_count ? t.avg_vehicle_count.toFixed(0) : 0}
+              </span>
+              <span className="text-[9px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">
+                Min: {t.min_speed ? t.min_speed.toFixed(1) : 0} km/h
               </span>
             </div>
           ))}
@@ -250,11 +270,17 @@ const SparkInsights = memo(() => {
             <Activity className="w-3 h-3" /> Environnement
           </h4>
           {envData.map((e, i) => (
-            <div key={i} className="flex justify-between items-center  py-1 border-b border-gray-100 last:border-0">
+            <div key={i} className="flex flex-wrap justify-between items-center gap-2 py-1 border-b border-gray-100 last:border-0">
               <span className="truncate w-24 text-gray-700">{e.district}</span>
               <span className="font-semibold text-orange-500">{e.avg_temperature ? e.avg_temperature.toFixed(1) : 0}°C</span>
               <span className="text-[9px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
                 AQI: {e.avg_air_quality ? e.avg_air_quality.toFixed(0) : 0}
+              </span>
+              <span className="text-[9px] bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">
+                {e.min_temperature ? e.min_temperature.toFixed(1) : 0}-{e.max_temperature ? e.max_temperature.toFixed(1) : 0}°C
+              </span>
+              <span className="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
+                {e.temperature_trend || "stable"}
               </span>
             </div>
           ))}
@@ -268,11 +294,17 @@ const SparkInsights = memo(() => {
             <Droplet className="w-3 h-3" /> Eau
           </h4>
           {waterData.map((w, i) => (
-            <div key={i} className="flex justify-between items-center  py-1 border-b border-gray-100 last:border-0">
+            <div key={i} className="flex flex-wrap justify-between items-center gap-2 py-1 border-b border-gray-100 last:border-0">
               <span className="truncate w-24 text-gray-700">{w.district}</span>
               <span className="font-semibold text-blue-500">{w.avg_flow_rate ? w.avg_flow_rate.toFixed(1) : 0} L/m</span>
               <span className="text-[9px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">
                 pH: {w.avg_ph ? w.avg_ph.toFixed(1) : 0}
+              </span>
+              <span className="text-[9px] bg-cyan-100 text-cyan-700 px-1.5 py-0.5 rounded">
+                Total: {w.total_flow_rate ? w.total_flow_rate.toFixed(1) : 0}
+              </span>
+              <span className={`text-[9px] px-1.5 py-0.5 rounded ${w.sudden_flow_drop ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700"}`}>
+                Score: {w.water_quality_score ? w.water_quality_score.toFixed(0) : 0}
               </span>
             </div>
           ))}
