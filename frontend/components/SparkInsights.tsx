@@ -1,28 +1,10 @@
 "use client";
 
-import { memo, useEffect, useState } from "react";
-import { getSocket } from "@/lib/socket";
+import { memo } from "react";
+import { useSparkData } from "@/hooks/useSparkData";
 import { Activity, AlertTriangle, Droplet } from "lucide-react";
 import Image from "next/image";
 import StateNotice from "./StateNotice";
-import type {
-  SparkAlertData,
-  SparkEnvironmentData,
-  SparkErrorData,
-  SparkTrafficData,
-  SparkWaterData,
-} from "@/lib/types";
-
-function parseSparkPayload<T>(payload: unknown): T | null {
-  if (typeof payload === "string") {
-    try {
-      return JSON.parse(payload) as T;
-    } catch {
-      return null;
-    }
-  }
-  return payload as T;
-}
 
 function formatTime(value?: string): string {
   if (!value) return "--:--:--";
@@ -44,84 +26,7 @@ function formatLatency(processedAt?: string, sourceAt?: string): string {
 }
 
 const SparkInsights = memo(() => {
-  const [envData, setEnvData] = useState<SparkEnvironmentData[]>([]);
-  const [waterData, setWaterData] = useState<SparkWaterData[]>([]);
-  const [trafficData, setTrafficData] = useState<SparkTrafficData[]>([]);
-  const [sparkErrors, setSparkErrors] = useState<SparkErrorData[]>([]);
-  const [sparkAlerts, setSparkAlerts] = useState<SparkAlertData[]>([]);
-  const [connected, setConnected] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const socket = getSocket();
-
-    socket.on("connect", () => {
-      setConnected(true);
-      setError(null);
-    });
-    socket.on("disconnect", () => setConnected(false));
-    socket.on("connect_error", () => {
-      setConnected(false);
-      setError("Impossible de joindre le backend Socket.IO");
-    });
-
-    socket.on("spark:environment", (payload: unknown) => {
-      const data = parseSparkPayload<SparkEnvironmentData>(payload);
-      if (!data) return;
-      setEnvData(prev => {
-        const newData = [...prev];
-        const idx = newData.findIndex(d => d.district === data.district);
-        if (idx >= 0) newData[idx] = data;
-        else newData.push(data);
-        return newData;
-      });
-    });
-
-    socket.on("spark:water", (payload: unknown) => {
-      const data = parseSparkPayload<SparkWaterData>(payload);
-      if (!data) return;
-      setWaterData(prev => {
-        const newData = [...prev];
-        const idx = newData.findIndex(d => d.district === data.district);
-        if (idx >= 0) newData[idx] = data;
-        else newData.push(data);
-        return newData;
-      });
-    });
-
-    socket.on("spark:traffic", (payload: unknown) => {
-      const data = parseSparkPayload<SparkTrafficData>(payload);
-      if (!data) return;
-      setTrafficData(prev => {
-        const newData = [...prev];
-        const idx = newData.findIndex(d => d.route_id === data.route_id);
-        if (idx >= 0) newData[idx] = data;
-        else newData.push(data);
-        return newData;
-      });
-    });
-
-    socket.on("spark:error", (payload: unknown) => {
-      const data = parseSparkPayload<SparkErrorData>(payload);
-      if (!data) return;
-      setSparkErrors(prev => [data, ...prev].slice(0, 5));
-    });
-
-    socket.on("spark:alert", (payload: unknown) => {
-      const data = parseSparkPayload<SparkAlertData>(payload);
-      if (!data) return;
-      setSparkAlerts(prev => [data, ...prev].slice(0, 5));
-    });
-
-    return () => {
-      socket.off("spark:environment");
-      socket.off("spark:water");
-      socket.off("spark:traffic");
-      socket.off("spark:error");
-      socket.off("spark:alert");
-      socket.off("connect_error");
-    };
-  }, []);
+  const { envData, waterData, trafficData, sparkErrors, sparkAlerts, connected, error } = useSparkData();
 
   if (envData.length === 0 && waterData.length === 0 && trafficData.length === 0 && sparkErrors.length === 0 && sparkAlerts.length === 0) {
     return (
