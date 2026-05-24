@@ -2,6 +2,7 @@
 
 import { SMART_CITY_DOMAINS } from "@/data/domains";
 import type { DomainId } from "@/data/domains";
+import { memo } from "react";
 
 interface ControlsProps {
   mode: DomainId;
@@ -11,7 +12,7 @@ interface ControlsProps {
   sensorCount: number;
 }
 
-export default function Controls({
+function Controls({
   mode,
   onModeChange,
 }: ControlsProps) {
@@ -54,3 +55,5 @@ export default function Controls({
     </div>
   );
 }
+
+export default memo(Controls);

@@ -1,6 +1,7 @@
 "use client";
 
 import { GeoJSON } from "react-leaflet";
+import { memo, useCallback, useMemo } from "react";
 import type { FeatureCollection, Feature } from "geojson";
 import type { Layer } from "leaflet";
 import { zonesGeoJSON } from "@/data/zones";
@@ -68,14 +69,17 @@ const buildPopup = (district: string, stats: DistrictTemperature, mode: string) 
   );
 };
 
-export default function EnvironmentMapLayer({
+function EnvironmentMapLayer({
   districtStats,
   visible,
   mode,
 }: EnvironmentMapLayerProps) {
-  const geoData = zonesGeoJSON as unknown as FeatureCollection;
+  const geoData = useMemo(
+    () => zonesGeoJSON as unknown as FeatureCollection,
+    [],
+  );
 
-  const styleFn = (feature?: Feature) => {
+  const styleFn = useCallback((feature?: Feature) => {
     if (!feature) return {};
     const stats = findDistrictData(feature, districtStats);
 
@@ -99,9 +103,9 @@ export default function EnvironmentMapLayer({
       color: "#ffffff",
       className: "district-polygon",
     };
-  };
+  }, [districtStats, mode]);
 
-  const onEachFeature = (feature: Feature, layer: Layer) => {
+  const onEachFeature = useCallback((feature: Feature, layer: Layer) => {
     const stats = findDistrictData(feature, districtStats);
     if (stats) {
       layer.bindPopup(buildPopup(stats.district, stats, mode), {
@@ -119,7 +123,7 @@ export default function EnvironmentMapLayer({
         l.setStyle({ fillOpacity: 0.6, weight: 2 });
       },
     });
-  };
+  }, [districtStats, mode]);
 
   if (!visible) return null;
 
@@ -133,3 +137,5 @@ export default function EnvironmentMapLayer({
     />
   );
 }
+
+export default memo(EnvironmentMapLayer);

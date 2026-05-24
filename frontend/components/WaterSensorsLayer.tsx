@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { Marker, Tooltip, useMap } from "react-leaflet";
 import L from "leaflet";
 import type { WaterReading } from "@/lib/types";
@@ -13,10 +13,18 @@ interface WaterSensorsLayerProps {
   mode: "water_consumption" | "water_quality";
 }
 
-export default function WaterSensorsLayer({ latestReadings, visible, mode }: WaterSensorsLayerProps) {
+function WaterSensorsLayer({ latestReadings, visible, mode }: WaterSensorsLayerProps) {
   const map = useMap();
   const [zoom, setZoom] = useState(map.getZoom());
   const [animatingSensors, setAnimatingSensors] = useState<Set<string>>(new Set());
+
+  const readingsBySensor = useMemo(() => {
+    const map = new Map<string, WaterReading>();
+    latestReadings.forEach((reading) => {
+      if (reading.sensor_id) map.set(reading.sensor_id, reading);
+    });
+    return map;
+  }, [latestReadings]);
 
   useEffect(() => {
     const onZoom = () => setZoom(map.getZoom());
@@ -55,7 +63,7 @@ export default function WaterSensorsLayer({ latestReadings, visible, mode }: Wat
   return (
     <>
       {waterSensorsData.map((sensor) => {
-        const reading = latestReadings.find(r => r.sensor_id === sensor.id);
+        const reading = readingsBySensor.get(sensor.id);
         const isAnimating = animatingSensors.has(sensor.id);
 
         let color = "#9ca3af";
@@ -102,3 +110,5 @@ export default function WaterSensorsLayer({ latestReadings, visible, mode }: Wat
     </>
   );
 }
+
+export default memo(WaterSensorsLayer);

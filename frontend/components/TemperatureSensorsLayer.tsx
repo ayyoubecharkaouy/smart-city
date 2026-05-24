@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { Marker, Tooltip, useMap } from "react-leaflet";
 import L from "leaflet";
 import type { TemperatureReading } from "@/lib/types";
@@ -13,7 +13,7 @@ interface EnvironmentSensorsLayerProps {
   mode: "temperature" | "air_quality";
 }
 
-export default function EnvironmentSensorsLayer({
+function EnvironmentSensorsLayer({
   latestReadings,
   visible,
   mode,
@@ -23,6 +23,14 @@ export default function EnvironmentSensorsLayer({
   const [animatingSensors, setAnimatingSensors] = useState<Set<string>>(
     new Set(),
   );
+
+  const readingsBySensor = useMemo(() => {
+    const map = new Map<string, TemperatureReading>();
+    latestReadings.forEach((reading) => {
+      if (reading.sensor_id) map.set(reading.sensor_id, reading);
+    });
+    return map;
+  }, [latestReadings]);
 
   // Track map zoom
   useEffect(() => {
@@ -78,7 +86,7 @@ export default function EnvironmentSensorsLayer({
   return (
     <>
       {sensorsData.map((sensor) => {
-        const reading = latestReadings?.find((r) => r.sensor_id === sensor.id);
+        const reading = readingsBySensor.get(sensor.id);
         const isAnimating = animatingSensors.has(sensor.id);
 
         let color = "#9ca3af"; // Gray for no data
@@ -152,3 +160,5 @@ export default function EnvironmentSensorsLayer({
     </>
   );
 }
+
+export default memo(EnvironmentSensorsLayer);

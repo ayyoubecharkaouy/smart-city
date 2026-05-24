@@ -1,7 +1,14 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useMemo, useState, useCallback } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from "react";
 import {
   MapContainer,
   TileLayer,
@@ -11,7 +18,12 @@ import {
   Pane,
 } from "react-leaflet";
 import { trafficRoutes } from "@/data/routes";
-import type { DistrictTemperature, DistrictWater, RouteTrafficStats, TrafficStatus } from "@/lib/types";
+import type {
+  DistrictTemperature,
+  DistrictWater,
+  RouteTrafficStats,
+  TrafficStatus,
+} from "@/lib/types";
 import { getTrafficStatusColor, getTrafficStatusLabel } from "@/lib/types";
 import { SMART_CITY_DOMAINS } from "@/data/domains";
 import type { DomainId } from "@/data/domains";
@@ -45,16 +57,19 @@ const WaterSensorsLayer = dynamic(() => import("./WaterSensorsLayer"), {
 });
 
 /* ── Invalidate map size when dimensions change ── */
-function MapResizer({ dimensions }: { dimensions: { rightWidth: number } }) {
+function MapResizer({ rightWidth }: { rightWidth: number }) {
   const map = useMap();
   useEffect(() => {
-    map.invalidateSize();
-  }, [map, dimensions]);
+    const frame = window.requestAnimationFrame(() => {
+      map.invalidateSize({ animate: false });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [map, rightWidth]);
   return null;
 }
 
 /* ── Routes overlay with zoom-adaptive weight ── */
-function RoutesOverlay({
+const RoutesOverlay = memo(function RoutesOverlay({
   mode,
   trafficStats,
 }: {
@@ -178,7 +193,7 @@ function RoutesOverlay({
       })}
     </>
   );
-}
+});
 
 import Modal from "./Modal";
 import { Menu } from "lucide-react";
@@ -186,6 +201,7 @@ import { Menu } from "lucide-react";
 export default function Map() {
   const [mode, setMode] = useState<DomainId>("temperature");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [, startTransition] = useTransition();
 
   // Sidebar State
   const [rightWidth, setRightWidth] = useState(620);
@@ -267,6 +283,15 @@ export default function Map() {
 
   // Resizing Logic
   const startResizingRight = useCallback(() => setIsResizingRight(true), []);
+  const openModal = useCallback(() => setIsModalOpen(true), []);
+  const closeModal = useCallback(() => setIsModalOpen(false), []);
+  const handleModeChange = useCallback((newMode: DomainId) => {
+    closeModal();
+    startTransition(() => {
+      setMode(newMode);
+    });
+  }, [closeModal, startTransition]);
+
   const stopResizing = useCallback(() => {
     setIsResizingRight(false);
   }, []);
@@ -299,23 +324,22 @@ export default function Map() {
       className={`flex flex-row-reverse h-full w-full bg-gray-50 overflow-hidden select-none ${isResizingRight ? "cursor-col-resize" : ""}`}
     >
       {/* Menu Modal */}
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <Controls
-          mode={mode}
-          onModeChange={(newMode) => {
-            setMode(newMode);
-            setIsModalOpen(false);
-          }}
-          kafkaConnected={currentConnected}
-          districtCount={currentStats.size}
-          sensorCount={totalSensors}
-        />
-      </Modal>
+      {isModalOpen && (
+        <Modal isOpen={isModalOpen} onClose={closeModal}>
+          <Controls
+            mode={mode}
+            onModeChange={handleModeChange}
+            kafkaConnected={currentConnected}
+            districtCount={currentStats.size}
+            sensorCount={totalSensors}
+          />
+        </Modal>
+      )}
 
       {/* Map Area */}
       <div className="flex-1 relative h-full min-w-0">
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={openModal}
           className="absolute bottom-6 left-6 z-1001 cursor-pointer bg-white p-4 rounded-4xl border-2 border-gray-500 flex items-center gap-3"
         >
           <Menu className="w-6 h-6 text-black" />
@@ -328,41 +352,47 @@ export default function Map() {
           className="w-full h-full"
           zoomControl={false}
         >
-          <MapResizer dimensions={{ rightWidth }} />
+          <MapResizer rightWidth={rightWidth} />
           <TileLayer
             attribution="&copy; OpenStreetMap"
             url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
           />
 
           {/* Environmental Layers */}
-          <TemperatureMapLayer
-            districtStats={envStats}
-            visible={isEnvMode}
-            mode={mode as "temperature" | "air_quality"}
-          />
-          <Pane name="envSensorsPane" style={{ zIndex: 460 }}>
-            <TemperatureSensorsLayer
-              latestReadings={envReadings}
-              visible={isEnvMode}
-              mode={mode as "temperature" | "air_quality"}
-            />
-          </Pane>
+          {isEnvMode && (
+            <>
+              <TemperatureMapLayer
+                districtStats={envStats}
+                visible
+                mode={mode as "temperature" | "air_quality"}
+              />
+              <Pane name="envSensorsPane" style={{ zIndex: 460 }}>
+                <TemperatureSensorsLayer
+                  latestReadings={envReadings}
+                  visible
+                  mode={mode as "temperature" | "air_quality"}
+                />
+              </Pane>
+            </>
+          )}
 
-          {/* Water Layers */}
-          <WaterMapLayer
-            districtStats={waterStats}
-            visible={isWaterMode}
-            mode={mode as "water_consumption" | "water_quality"}
-          />
-          <Pane name="waterSensorsPane" style={{ zIndex: 460 }}>
-            <WaterSensorsLayer
-              latestReadings={waterReadings}
-              visible={isWaterMode}
-              mode={mode as "water_consumption" | "water_quality"}
-            />
-          </Pane>
+          {isWaterMode && (
+            <>
+              <WaterMapLayer
+                districtStats={waterStats}
+                visible
+                mode={mode as "water_consumption" | "water_quality"}
+              />
+              <Pane name="waterSensorsPane" style={{ zIndex: 460 }}>
+                <WaterSensorsLayer
+                  latestReadings={waterReadings}
+                  visible
+                  mode={mode as "water_consumption" | "water_quality"}
+                />
+              </Pane>
+            </>
+          )}
 
-          {/* Traffic routes */}
           <Pane name="routesPane" style={{ zIndex: 450 }}>
             <RoutesOverlay mode={mode} trafficStats={trafficRouteStats} />
           </Pane>

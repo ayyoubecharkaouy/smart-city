@@ -1,6 +1,7 @@
 "use client";
 
 import { GeoJSON } from "react-leaflet";
+import { memo, useCallback, useMemo } from "react";
 import type { FeatureCollection, Feature } from "geojson";
 import type { Layer } from "leaflet";
 import { zonesGeoJSON as zonesData } from "@/data/zones"; 
@@ -56,10 +57,10 @@ const buildPopup = (district: string, stats: DistrictWater, mode: string) => {
   );
 };
 
-export default function WaterMapLayer({ districtStats, visible, mode }: WaterMapLayerProps) {
-  const geoData = zonesData as unknown as FeatureCollection;
+function WaterMapLayer({ districtStats, visible, mode }: WaterMapLayerProps) {
+  const geoData = useMemo(() => zonesData as unknown as FeatureCollection, []);
 
-  const styleFn = (feature?: Feature) => {
+  const styleFn = useCallback((feature?: Feature) => {
     if (!feature) return {};
     const stats = findDistrictData(feature, districtStats);
 
@@ -76,14 +77,14 @@ export default function WaterMapLayer({ districtStats, visible, mode }: WaterMap
       color: "#ffffff",
       className: "district-polygon",
     };
-  };
+  }, [districtStats, mode]);
 
-  const onEachFeature = (feature: Feature, layer: Layer) => {
+  const onEachFeature = useCallback((feature: Feature, layer: Layer) => {
     const stats = findDistrictData(feature, districtStats);
     if (stats) {
       layer.bindPopup(buildPopup(stats.district, stats, mode), { className: "custom-popup" });
     }
-  };
+  }, [districtStats, mode]);
 
   if (!visible) return null;
 
@@ -96,3 +97,5 @@ export default function WaterMapLayer({ districtStats, visible, mode }: WaterMap
     />
   );
 }
+
+export default memo(WaterMapLayer);
