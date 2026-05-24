@@ -1,5 +1,6 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, current_timestamp, explode, from_json, lit
+from pyspark.sql.functions import array, col, current_timestamp, explode, from_json, lit, when
+from pyspark.sql.types import ArrayType
 
 def create_kafka_stream(spark: SparkSession, topic_name: str, kafka_servers: str):
     """
@@ -13,12 +14,20 @@ def create_kafka_stream(spark: SparkSession, topic_name: str, kafka_servers: str
         .option("startingOffsets", "latest") \
         .load()
 
-def parse_kafka_json_array(df, array_schema, stream_name: str):
+def parse_kafka_json_records(df, element_schema, stream_name: str):
     """
-    Parse les messages Kafka en tableau JSON et sépare les messages invalides.
+    Parse les messages Kafka en objet JSON ou tableau JSON et sépare les messages invalides.
     """
+    array_schema = ArrayType(element_schema)
+
     parsed = df.selectExpr("CAST(value AS STRING) AS raw_value") \
-        .withColumn("data", from_json(col("raw_value"), array_schema))
+        .withColumn("array_data", from_json(col("raw_value"), array_schema)) \
+        .withColumn("object_data", from_json(col("raw_value"), element_schema)) \
+        .withColumn(
+            "data",
+            when(col("array_data").isNotNull(), col("array_data"))
+            .when(col("object_data").isNotNull(), array(col("object_data")))
+        )
 
     valid_df = parsed \
         .filter(col("data").isNotNull()) \
@@ -29,12 +38,15 @@ def parse_kafka_json_array(df, array_schema, stream_name: str):
         .filter(col("raw_value").isNotNull() & col("data").isNull()) \
         .select(
             lit(stream_name).alias("stream"),
-            lit("invalid_json_array").alias("error_reason"),
+            lit("invalid_json").alias("error_reason"),
             col("raw_value"),
             current_timestamp().alias("processed_at")
         )
 
     return valid_df, invalid_df
+
+def parse_kafka_json_array(df, element_schema, stream_name: str):
+    return parse_kafka_json_records(df, element_schema, stream_name)
 
 def write_stream_to_console(df, query_name: str):
     """

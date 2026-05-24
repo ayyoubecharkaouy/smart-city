@@ -1,6 +1,6 @@
-from pyspark.sql.types import StructType, StructField, StringType, DoubleType, IntegerType, TimestampType, ArrayType
+from pyspark.sql.types import StructType, StructField, StringType, DoubleType, IntegerType, TimestampType
 from pyspark.sql.functions import col, window, avg, max
-from utils.kafka_helpers import create_kafka_stream, parse_kafka_json_array, write_stream_to_kafka
+from utils.kafka_helpers import create_kafka_stream, parse_kafka_json_records, write_stream_to_kafka
 import config
 
 def process_traffic_stream(spark):
@@ -14,11 +14,9 @@ def process_traffic_stream(spark):
         StructField("timestamp", TimestampType(), True)
     ])
     
-    array_schema = ArrayType(element_schema)
-
     df = create_kafka_stream(spark, config.TOPICS["TRAFFIC"], config.KAFKA_BOOTSTRAP_SERVERS)
 
-    parsed_df, invalid_df = parse_kafka_json_array(df, array_schema, "traffic")
+    parsed_df, invalid_df = parse_kafka_json_records(df, element_schema, "traffic")
 
     write_stream_to_kafka(
         invalid_df,

@@ -1,6 +1,6 @@
-from pyspark.sql.types import StructType, StructField, StringType, DoubleType, TimestampType, ArrayType
+from pyspark.sql.types import StructType, StructField, StringType, DoubleType, TimestampType
 from pyspark.sql.functions import col, window, avg
-from utils.kafka_helpers import create_kafka_stream, parse_kafka_json_array, write_stream_to_kafka
+from utils.kafka_helpers import create_kafka_stream, parse_kafka_json_records, write_stream_to_kafka
 import config
 
 def process_environment_stream(spark):
@@ -13,15 +13,11 @@ def process_environment_stream(spark):
         StructField("timestamp", TimestampType(), True)
     ])
     
-    # Puisque les données Kafka peuvent être un tableau d'objets ou un seul objet, 
-    # on suppose ici un tableau JSON
-    array_schema = ArrayType(element_schema)
-
     # 1. Lire le flux Kafka
     df = create_kafka_stream(spark, config.TOPICS["ENVIRONMENT"], config.KAFKA_BOOTSTRAP_SERVERS)
 
-    # 2. Convertir la valeur binaire Kafka en String, puis parser le JSON et "éclater" le tableau
-    parsed_df, invalid_df = parse_kafka_json_array(df, array_schema, "environment")
+    # 2. Convertir la valeur Kafka en String, puis parser un objet JSON ou un tableau JSON
+    parsed_df, invalid_df = parse_kafka_json_records(df, element_schema, "environment")
 
     write_stream_to_kafka(
         invalid_df,
