@@ -15,6 +15,7 @@ interface SparkEnvironmentData {
   max_air_quality: number;
   temperature_delta: number;
   temperature_trend: string;
+  processed_at: string;
   window: { start: string; end: string };
 }
 
@@ -27,6 +28,7 @@ interface SparkWaterData {
   flow_drop: number;
   sudden_flow_drop: boolean;
   water_quality_score: number;
+  processed_at: string;
   window: { start: string; end: string };
 }
 
@@ -39,6 +41,7 @@ interface SparkTrafficData {
   max_congestion: number;
   congestion_level: string;
   is_congested_route: boolean;
+  processed_at: string;
   window: { start: string; end: string };
 }
 
@@ -72,6 +75,25 @@ function parseSparkPayload<T>(payload: unknown): T | null {
     }
   }
   return payload as T;
+}
+
+function formatTime(value?: string): string {
+  if (!value) return "--:--:--";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "--:--:--";
+  return date.toLocaleTimeString("fr-FR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+}
+
+function formatLatency(processedAt?: string, sourceAt?: string): string {
+  if (!processedAt || !sourceAt) return "Latence: --";
+  const processedTime = new Date(processedAt).getTime();
+  const sourceTime = new Date(sourceAt).getTime();
+  if (Number.isNaN(processedTime) || Number.isNaN(sourceTime)) return "Latence: --";
+  return `Latence: ${Math.max(0, (processedTime - sourceTime) / 1000).toFixed(1)}s`;
 }
 
 const SparkInsights = memo(() => {
@@ -258,6 +280,12 @@ const SparkInsights = memo(() => {
               <span className="text-[9px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">
                 Min: {t.min_speed ? t.min_speed.toFixed(1) : 0} km/h
               </span>
+              <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
+                Spark: {formatTime(t.processed_at)}
+              </span>
+              <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
+                {formatLatency(t.processed_at, t.window?.end)}
+              </span>
             </div>
           ))}
         </div>
@@ -282,6 +310,12 @@ const SparkInsights = memo(() => {
               <span className="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
                 {e.temperature_trend || "stable"}
               </span>
+              <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
+                Spark: {formatTime(e.processed_at)}
+              </span>
+              <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
+                {formatLatency(e.processed_at, e.window?.end)}
+              </span>
             </div>
           ))}
         </div>
@@ -305,6 +339,12 @@ const SparkInsights = memo(() => {
               </span>
               <span className={`text-[9px] px-1.5 py-0.5 rounded ${w.sudden_flow_drop ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700"}`}>
                 Score: {w.water_quality_score ? w.water_quality_score.toFixed(0) : 0}
+              </span>
+              <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
+                Spark: {formatTime(w.processed_at)}
+              </span>
+              <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
+                {formatLatency(w.processed_at, w.window?.end)}
               </span>
             </div>
           ))}
