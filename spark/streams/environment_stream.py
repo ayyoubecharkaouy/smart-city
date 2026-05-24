@@ -75,7 +75,8 @@ def process_environment_stream(spark):
             when(col("temperature_delta") > config.TEMPERATURE_TREND_THRESHOLD, lit("warming"))
             .when(col("temperature_delta") < -config.TEMPERATURE_TREND_THRESHOLD, lit("cooling"))
             .otherwise(lit("stable"))
-        )
+        ) \
+        .withColumn("processed_at", current_timestamp())
 
     # 4. Envoyer le résultat à Kafka
     checkpoint_path = config.CHECKPOINT_PATHS["ENVIRONMENT"]

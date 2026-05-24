@@ -120,7 +120,8 @@ def process_water_stream(spark):
                     - (col("avg_turbidity") * lit(6.0))
                 )
             )
-        )
+        ) \
+        .withColumn("processed_at", current_timestamp())
 
     checkpoint_path = config.CHECKPOINT_PATHS["WATER"]
     return write_stream_to_kafka(

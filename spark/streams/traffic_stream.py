@@ -71,7 +71,8 @@ def process_traffic_stream(spark):
             .when(col("max_congestion") > config.CONGESTION_ALERT_THRESHOLD * 0.7, lit("medium"))
             .otherwise(lit("normal"))
         ) \
-        .withColumn("is_congested_route", col("max_congestion") > config.CONGESTION_ALERT_THRESHOLD)
+        .withColumn("is_congested_route", col("max_congestion") > config.CONGESTION_ALERT_THRESHOLD) \
+        .withColumn("processed_at", current_timestamp())
 
     checkpoint_path = config.CHECKPOINT_PATHS["TRAFFIC"]
     return write_stream_to_kafka(
