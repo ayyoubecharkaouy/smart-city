@@ -19,7 +19,8 @@ const TOPICS = {
 const SPARK_TOPICS = {
   ENVIRONMENT: "smartcity.spark.environment",
   WATER: "smartcity.spark.water",
-  TRAFFIC: "smartcity.spark.traffic"
+  TRAFFIC: "smartcity.spark.traffic",
+  ERRORS: "smartcity.spark.errors"
 };
 
 async function startKafkaConsumer(io) {
@@ -89,6 +90,10 @@ async function startKafkaConsumer(io) {
           });
           await entry.save();
           io.emit("spark:traffic", value);
+        }
+        else if (topic === SPARK_TOPICS.ERRORS) {
+          console.warn("[Spark JSON Error]", value);
+          io.emit("spark:error", value);
         }
       } catch (error) {
         console.error(`[Kafka] Error processing topic ${topic}:`, error);
