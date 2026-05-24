@@ -1,6 +1,6 @@
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, TimestampType, ArrayType
-from pyspark.sql.functions import from_json, col, window, avg, explode
-from utils.kafka_helpers import create_kafka_stream, write_stream_to_kafka
+from pyspark.sql.functions import col, window, avg
+from utils.kafka_helpers import create_kafka_stream, parse_kafka_json_array, write_stream_to_kafka
 import config
 
 def process_water_stream(spark):
@@ -28,10 +28,16 @@ def process_water_stream(spark):
 
     df = create_kafka_stream(spark, config.TOPICS["WATER"], config.KAFKA_BOOTSTRAP_SERVERS)
 
-    parsed_df = df.selectExpr("CAST(value AS STRING)") \
-        .select(from_json(col("value"), array_schema).alias("data")) \
-        .select(explode(col("data")).alias("reading")) \
-        .select("reading.*")
+    parsed_df, invalid_df = parse_kafka_json_array(df, array_schema, "water")
+
+    write_stream_to_kafka(
+        invalid_df,
+        config.SPARK_TOPICS["ERRORS"],
+        config.KAFKA_BOOTSTRAP_SERVERS,
+        config.CHECKPOINT_PATHS["WATER_ERRORS"],
+        output_mode="append",
+        query_name="water_json_errors"
+    )
 
     # Aplatir les champs imbriqués
     flat_df = parsed_df \
@@ -57,5 +63,6 @@ def process_water_stream(spark):
         aggregated_df, 
         config.SPARK_TOPICS["WATER"], 
         config.KAFKA_BOOTSTRAP_SERVERS, 
-        checkpoint_path
+        checkpoint_path,
+        query_name="water_aggregations"
     )

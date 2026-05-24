@@ -1,6 +1,6 @@
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, IntegerType, TimestampType, ArrayType
-from pyspark.sql.functions import from_json, col, window, avg, max, explode
-from utils.kafka_helpers import create_kafka_stream, write_stream_to_kafka
+from pyspark.sql.functions import col, window, avg, max
+from utils.kafka_helpers import create_kafka_stream, parse_kafka_json_array, write_stream_to_kafka
 import config
 
 def process_traffic_stream(spark):
@@ -18,10 +18,16 @@ def process_traffic_stream(spark):
 
     df = create_kafka_stream(spark, config.TOPICS["TRAFFIC"], config.KAFKA_BOOTSTRAP_SERVERS)
 
-    parsed_df = df.selectExpr("CAST(value AS STRING)") \
-        .select(from_json(col("value"), array_schema).alias("data")) \
-        .select(explode(col("data")).alias("reading")) \
-        .select("reading.*")
+    parsed_df, invalid_df = parse_kafka_json_array(df, array_schema, "traffic")
+
+    write_stream_to_kafka(
+        invalid_df,
+        config.SPARK_TOPICS["ERRORS"],
+        config.KAFKA_BOOTSTRAP_SERVERS,
+        config.CHECKPOINT_PATHS["TRAFFIC_ERRORS"],
+        output_mode="append",
+        query_name="traffic_json_errors"
+    )
 
     # Calculer la vitesse moyenne et la congestion max par route sur une fenêtre
     aggregated_df = parsed_df \
@@ -40,5 +46,6 @@ def process_traffic_stream(spark):
         aggregated_df, 
         config.SPARK_TOPICS["TRAFFIC"], 
         config.KAFKA_BOOTSTRAP_SERVERS, 
-        checkpoint_path
+        checkpoint_path,
+        query_name="traffic_aggregations"
     )

@@ -24,7 +24,8 @@ TOPICS = {
 SPARK_TOPICS = {
     "ENVIRONMENT": env("SPARK_TOPIC_ENVIRONMENT", "smartcity.spark.environment"),
     "WATER": env("SPARK_TOPIC_WATER", "smartcity.spark.water"),
-    "TRAFFIC": env("SPARK_TOPIC_TRAFFIC", "smartcity.spark.traffic")
+    "TRAFFIC": env("SPARK_TOPIC_TRAFFIC", "smartcity.spark.traffic"),
+    "ERRORS": env("SPARK_TOPIC_ERRORS", "smartcity.spark.errors")
 }
 
 # Configuration du Watermarking (pour gérer les données en retard)
@@ -40,5 +41,8 @@ CHECKPOINT_BASE_DIR = env("SPARK_CHECKPOINT_BASE_DIR", str(BASE_DIR / "checkpoin
 CHECKPOINT_PATHS = {
     "ENVIRONMENT": str(Path(CHECKPOINT_BASE_DIR) / "environment"),
     "WATER": str(Path(CHECKPOINT_BASE_DIR) / "water"),
-    "TRAFFIC": str(Path(CHECKPOINT_BASE_DIR) / "traffic")
+    "TRAFFIC": str(Path(CHECKPOINT_BASE_DIR) / "traffic"),
+    "ENVIRONMENT_ERRORS": str(Path(CHECKPOINT_BASE_DIR) / "environment-errors"),
+    "WATER_ERRORS": str(Path(CHECKPOINT_BASE_DIR) / "water-errors"),
+    "TRAFFIC_ERRORS": str(Path(CHECKPOINT_BASE_DIR) / "traffic-errors")
 }
