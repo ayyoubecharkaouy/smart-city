@@ -1,5 +1,5 @@
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, IntegerType, TimestampType
-from pyspark.sql.functions import col, window, avg, max
+from pyspark.sql.functions import col, current_timestamp, lit, window, avg, max
 from utils.kafka_helpers import create_kafka_stream, parse_kafka_json_records, write_stream_to_kafka
 import config
 
@@ -25,6 +25,30 @@ def process_traffic_stream(spark):
         config.CHECKPOINT_PATHS["TRAFFIC_ERRORS"],
         output_mode="append",
         query_name="traffic_errors_stream"
+    )
+
+    alert_df = parsed_df \
+        .filter(col("congestion_index") > config.CONGESTION_ALERT_THRESHOLD) \
+        .select(
+            lit("traffic").alias("type"),
+            lit("high_congestion").alias("alert_type"),
+            lit("warning").alias("severity"),
+            col("sensor_id"),
+            col("route_id"),
+            col("congestion_index").alias("value"),
+            lit(">").alias("operator"),
+            lit(config.CONGESTION_ALERT_THRESHOLD).alias("threshold"),
+            col("timestamp"),
+            current_timestamp().alias("processed_at")
+        )
+
+    write_stream_to_kafka(
+        alert_df,
+        config.SPARK_TOPICS["ALERTS"],
+        config.KAFKA_BOOTSTRAP_SERVERS,
+        config.CHECKPOINT_PATHS["TRAFFIC_ALERTS"],
+        output_mode="append",
+        query_name="traffic_alerts_stream"
     )
 
     # Calculer la vitesse moyenne et la congestion max par route sur une fenêtre

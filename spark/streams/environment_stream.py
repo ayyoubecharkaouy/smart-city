@@ -1,5 +1,5 @@
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, TimestampType
-from pyspark.sql.functions import col, window, avg
+from pyspark.sql.functions import col, current_timestamp, lit, window, avg
 from utils.kafka_helpers import create_kafka_stream, parse_kafka_json_records, write_stream_to_kafka
 import config
 
@@ -26,6 +26,30 @@ def process_environment_stream(spark):
         config.CHECKPOINT_PATHS["ENVIRONMENT_ERRORS"],
         output_mode="append",
         query_name="environment_errors_stream"
+    )
+
+    alert_df = parsed_df \
+        .filter(col("air_quality") > config.AIR_QUALITY_ALERT_THRESHOLD) \
+        .select(
+            lit("environment").alias("type"),
+            lit("high_air_quality").alias("alert_type"),
+            lit("warning").alias("severity"),
+            col("sensor_id"),
+            col("district"),
+            col("air_quality").alias("value"),
+            lit(">").alias("operator"),
+            lit(config.AIR_QUALITY_ALERT_THRESHOLD).alias("threshold"),
+            col("timestamp"),
+            current_timestamp().alias("processed_at")
+        )
+
+    write_stream_to_kafka(
+        alert_df,
+        config.SPARK_TOPICS["ALERTS"],
+        config.KAFKA_BOOTSTRAP_SERVERS,
+        config.CHECKPOINT_PATHS["ENVIRONMENT_ALERTS"],
+        output_mode="append",
+        query_name="environment_alerts_stream"
     )
 
     # 3. Traitement : Calculer la température et qualité de l'air moyenne par quartier sur une fenêtre temporelle

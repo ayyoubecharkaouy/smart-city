@@ -8,6 +8,10 @@ def env(name: str, default: str) -> str:
     return os.getenv(name, default)
 
 
+def env_float(name: str, default: float) -> float:
+    return float(os.getenv(name, default))
+
+
 BASE_DIR = Path(__file__).resolve().parent
 
 # Adresse du broker Kafka
@@ -25,7 +29,8 @@ SPARK_TOPICS = {
     "ENVIRONMENT": env("SPARK_TOPIC_ENVIRONMENT", "smartcity.spark.environment"),
     "WATER": env("SPARK_TOPIC_WATER", "smartcity.spark.water"),
     "TRAFFIC": env("SPARK_TOPIC_TRAFFIC", "smartcity.spark.traffic"),
-    "ERRORS": env("SPARK_TOPIC_ERRORS", "smartcity.spark.errors")
+    "ERRORS": env("SPARK_TOPIC_ERRORS", "smartcity.spark.errors"),
+    "ALERTS": env("SPARK_TOPIC_ALERTS", "smartcity.spark.alerts")
 }
 
 # Configuration du Watermarking (pour gérer les données en retard)
@@ -44,5 +49,15 @@ CHECKPOINT_PATHS = {
     "TRAFFIC": str(Path(CHECKPOINT_BASE_DIR) / "traffic"),
     "ENVIRONMENT_ERRORS": str(Path(CHECKPOINT_BASE_DIR) / "environment-errors"),
     "WATER_ERRORS": str(Path(CHECKPOINT_BASE_DIR) / "water-errors"),
-    "TRAFFIC_ERRORS": str(Path(CHECKPOINT_BASE_DIR) / "traffic-errors")
+    "TRAFFIC_ERRORS": str(Path(CHECKPOINT_BASE_DIR) / "traffic-errors"),
+    "ENVIRONMENT_ALERTS": str(Path(CHECKPOINT_BASE_DIR) / "environment-alerts"),
+    "WATER_ALERTS": str(Path(CHECKPOINT_BASE_DIR) / "water-alerts"),
+    "TRAFFIC_ALERTS": str(Path(CHECKPOINT_BASE_DIR) / "traffic-alerts")
 }
+
+# Seuils des alertes Spark
+AIR_QUALITY_ALERT_THRESHOLD = env_float("AIR_QUALITY_ALERT_THRESHOLD", 150.0)
+CONGESTION_ALERT_THRESHOLD = env_float("CONGESTION_ALERT_THRESHOLD", 0.75)
+WATER_PH_MIN = env_float("WATER_PH_MIN", 6.5)
+WATER_PH_MAX = env_float("WATER_PH_MAX", 8.5)
+WATER_TURBIDITY_ALERT_THRESHOLD = env_float("WATER_TURBIDITY_ALERT_THRESHOLD", 5.0)

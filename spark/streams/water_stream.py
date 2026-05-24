@@ -1,5 +1,5 @@
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, TimestampType
-from pyspark.sql.functions import col, window, avg
+from pyspark.sql.functions import col, current_timestamp, lit, when, window, avg
 from utils.kafka_helpers import create_kafka_stream, parse_kafka_json_records, write_stream_to_kafka
 import config
 
@@ -42,6 +42,55 @@ def process_water_stream(spark):
         .withColumn("flow_rate", col("water_flow.flow_rate_l_min")) \
         .withColumn("ph", col("water_quality.ph")) \
         .withColumn("turbidity", col("water_quality.turbidity"))
+
+    alert_df = flat_df \
+        .filter(
+            (col("ph") < config.WATER_PH_MIN) |
+            (col("ph") > config.WATER_PH_MAX) |
+            (col("turbidity") > config.WATER_TURBIDITY_ALERT_THRESHOLD)
+        ) \
+        .withColumn(
+            "alert_type",
+            when((col("ph") < config.WATER_PH_MIN) | (col("ph") > config.WATER_PH_MAX), lit("abnormal_ph"))
+            .otherwise(lit("high_turbidity"))
+        ) \
+        .withColumn(
+            "value",
+            when((col("ph") < config.WATER_PH_MIN) | (col("ph") > config.WATER_PH_MAX), col("ph"))
+            .otherwise(col("turbidity"))
+        ) \
+        .withColumn(
+            "threshold",
+            when(col("ph") < config.WATER_PH_MIN, lit(config.WATER_PH_MIN))
+            .when(col("ph") > config.WATER_PH_MAX, lit(config.WATER_PH_MAX))
+            .otherwise(lit(config.WATER_TURBIDITY_ALERT_THRESHOLD))
+        ) \
+        .withColumn(
+            "operator",
+            when(col("ph") < config.WATER_PH_MIN, lit("<"))
+            .otherwise(lit(">"))
+        ) \
+        .select(
+            lit("water").alias("type"),
+            col("alert_type"),
+            lit("warning").alias("severity"),
+            col("sensor_id"),
+            col("district"),
+            col("value"),
+            col("operator"),
+            col("threshold"),
+            col("timestamp"),
+            current_timestamp().alias("processed_at")
+        )
+
+    write_stream_to_kafka(
+        alert_df,
+        config.SPARK_TOPICS["ALERTS"],
+        config.KAFKA_BOOTSTRAP_SERVERS,
+        config.CHECKPOINT_PATHS["WATER_ALERTS"],
+        output_mode="append",
+        query_name="water_alerts_stream"
+    )
 
     # Agréger par quartier
     aggregated_df = flat_df \
