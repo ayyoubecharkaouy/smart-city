@@ -2,7 +2,7 @@
 
 import { memo, useEffect, useState } from "react";
 import { getSocket } from "@/lib/socket";
-import { Activity, Droplet } from "lucide-react";
+import { Activity, AlertTriangle, Droplet } from "lucide-react";
 import Image from "next/image";
 import StateNotice from "./StateNotice";
 
@@ -28,6 +28,13 @@ interface SparkTrafficData {
   window: { start: string; end: string };
 }
 
+interface SparkErrorData {
+  stream: string;
+  error_reason: string;
+  raw_value: string;
+  processed_at: string;
+}
+
 function parseSparkPayload<T>(payload: unknown): T | null {
   if (typeof payload === "string") {
     try {
@@ -43,6 +50,7 @@ const SparkInsights = memo(() => {
   const [envData, setEnvData] = useState<SparkEnvironmentData[]>([]);
   const [waterData, setWaterData] = useState<SparkWaterData[]>([]);
   const [trafficData, setTrafficData] = useState<SparkTrafficData[]>([]);
+  const [sparkErrors, setSparkErrors] = useState<SparkErrorData[]>([]);
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -95,15 +103,22 @@ const SparkInsights = memo(() => {
       });
     });
 
+    socket.on("spark:error", (payload: unknown) => {
+      const data = parseSparkPayload<SparkErrorData>(payload);
+      if (!data) return;
+      setSparkErrors(prev => [data, ...prev].slice(0, 5));
+    });
+
     return () => {
       socket.off("spark:environment");
       socket.off("spark:water");
       socket.off("spark:traffic");
+      socket.off("spark:error");
       socket.off("connect_error");
     };
   }, []);
 
-  if (envData.length === 0 && waterData.length === 0 && trafficData.length === 0) {
+  if (envData.length === 0 && waterData.length === 0 && trafficData.length === 0 && sparkErrors.length === 0) {
     return (
       <div className="p-4 mt-4">
         {error ? (
@@ -139,6 +154,28 @@ const SparkInsights = memo(() => {
       <p className="text-[10px] uppercase text-gray-400 font-bold tracking-wider mb-2">
         Moyennes glissantes (Temps Réel)
       </p>
+
+      {/* Spark JSON Errors */}
+      {sparkErrors.length > 0 && (
+        <div className="rounded-4xl p-3 border border-red-100 bg-red-50">
+          <h4 className="font-bold text-red-700 flex items-center gap-1 mb-2">
+            <AlertTriangle className="w-3 h-3" /> Erreurs JSON Spark
+          </h4>
+          <div className="space-y-2">
+            {sparkErrors.map((item, i) => (
+              <div key={`${item.processed_at}-${i}`} className="border-b border-red-100 pb-2 last:border-0 last:pb-0">
+                <div className="flex items-center justify-between gap-2 text-[10px] font-bold uppercase text-red-700">
+                  <span>{item.stream}</span>
+                  <span>{item.error_reason}</span>
+                </div>
+                <p className="mt-1 max-w-full truncate font-mono text-[10px] text-red-900" title={item.raw_value}>
+                  {item.raw_value}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Traffic Insights */}
       {trafficData.length > 0 && (
