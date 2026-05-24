@@ -42,17 +42,19 @@ SLIDING_INTERVAL = env("SLIDING_INTERVAL", "1 minute")
 
 # Répertoire persistant pour les checkpoints Spark Streaming
 CHECKPOINT_BASE_DIR = env("SPARK_CHECKPOINT_BASE_DIR", str(BASE_DIR / "checkpoints"))
+CHECKPOINT_VERSION = env("SPARK_CHECKPOINT_VERSION", "v2")
+CHECKPOINT_DIR = Path(CHECKPOINT_BASE_DIR) / CHECKPOINT_VERSION
 
 CHECKPOINT_PATHS = {
-    "ENVIRONMENT": str(Path(CHECKPOINT_BASE_DIR) / "environment"),
-    "WATER": str(Path(CHECKPOINT_BASE_DIR) / "water"),
-    "TRAFFIC": str(Path(CHECKPOINT_BASE_DIR) / "traffic"),
-    "ENVIRONMENT_ERRORS": str(Path(CHECKPOINT_BASE_DIR) / "environment-errors"),
-    "WATER_ERRORS": str(Path(CHECKPOINT_BASE_DIR) / "water-errors"),
-    "TRAFFIC_ERRORS": str(Path(CHECKPOINT_BASE_DIR) / "traffic-errors"),
-    "ENVIRONMENT_ALERTS": str(Path(CHECKPOINT_BASE_DIR) / "environment-alerts"),
-    "WATER_ALERTS": str(Path(CHECKPOINT_BASE_DIR) / "water-alerts"),
-    "TRAFFIC_ALERTS": str(Path(CHECKPOINT_BASE_DIR) / "traffic-alerts")
+    "ENVIRONMENT": str(CHECKPOINT_DIR / "environment"),
+    "WATER": str(CHECKPOINT_DIR / "water"),
+    "TRAFFIC": str(CHECKPOINT_DIR / "traffic"),
+    "ENVIRONMENT_ERRORS": str(CHECKPOINT_DIR / "environment-errors"),
+    "WATER_ERRORS": str(CHECKPOINT_DIR / "water-errors"),
+    "TRAFFIC_ERRORS": str(CHECKPOINT_DIR / "traffic-errors"),
+    "ENVIRONMENT_ALERTS": str(CHECKPOINT_DIR / "environment-alerts"),
+    "WATER_ALERTS": str(CHECKPOINT_DIR / "water-alerts"),
+    "TRAFFIC_ALERTS": str(CHECKPOINT_DIR / "traffic-alerts")
 }
 
 # Seuils des alertes Spark

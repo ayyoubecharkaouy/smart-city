@@ -9,6 +9,7 @@ def main():
     # 1. Initialiser la session Spark
     spark = SparkSession.builder \
         .appName("SmartCityStreaming") \
+        .config("spark.sql.adaptive.enabled", "false") \
         .getOrCreate()
         
     spark.sparkContext.setLogLevel("WARN")
