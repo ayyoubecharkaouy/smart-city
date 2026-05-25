@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import { useSparkData } from "@/hooks/useSparkData";
 import type {
   SparkAlertData,
@@ -23,6 +24,17 @@ import {
   WifiOff,
 } from "lucide-react";
 import Image from "next/image";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 type SparkTab = "environment" | "water" | "traffic" | "alerts" | "errors";
 
@@ -91,6 +103,82 @@ function EmptyState({ message }: { message: string }) {
       <Database className="mx-auto mb-3 h-8 w-8 text-gray-400" />
       <p className="font-bold text-gray-700">{message}</p>
     </div>
+  );
+}
+
+function SparkChartCard({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="rounded-2xl border border-gray-100 bg-white p-4">
+      <h3 className="mb-4 text-sm font-black text-gray-900">{title}</h3>
+      <div className="h-64 w-full">{children}</div>
+    </div>
+  );
+}
+
+function SparkBarChart({
+  data,
+  xKey,
+  yKey,
+  color,
+  unit = "",
+}: {
+  data: Record<string, string | number>[];
+  xKey: string;
+  yKey: string;
+  color: string;
+  unit?: string;
+}) {
+  if (data.length === 0) {
+    return <EmptyState message="Aucune donnee disponible pour ce graphique." />;
+  }
+
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <BarChart data={data} margin={{ top: 10, right: 12, left: 0, bottom: 8 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+        <XAxis dataKey={xKey} axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+        <YAxis axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 11 }} unit={unit} />
+        <Tooltip
+          cursor={{ fill: "#f8fafc" }}
+          contentStyle={{
+            border: "1px solid #e5e7eb",
+            borderRadius: "12px",
+            boxShadow: "0 10px 25px rgba(15, 23, 42, 0.08)",
+          }}
+        />
+        <Bar dataKey={yKey} fill={color} radius={[6, 6, 0, 0]} />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
+function SparkLatencyChart({ data }: { data: { time: string; latency: number }[] }) {
+  if (data.length === 0) {
+    return <EmptyState message="Aucune latence Spark disponible." />;
+  }
+
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <LineChart data={data} margin={{ top: 10, right: 16, left: 0, bottom: 8 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+        <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+        <YAxis axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 11 }} unit="s" />
+        <Tooltip
+          contentStyle={{
+            border: "1px solid #e5e7eb",
+            borderRadius: "12px",
+            boxShadow: "0 10px 25px rgba(15, 23, 42, 0.08)",
+          }}
+        />
+        <Line type="monotone" dataKey="latency" stroke="#2563eb" strokeWidth={3} dot={{ r: 3 }} />
+      </LineChart>
+    </ResponsiveContainer>
   );
 }
 
@@ -284,6 +372,44 @@ export default function SparkDataPage() {
     errors: sparkErrors.length,
   };
 
+  const temperatureChartData = envData.map(item => ({
+    name: item.district,
+    value: Number(item.avg_temperature) || 0,
+  }));
+
+  const aqiChartData = envData.map(item => ({
+    name: item.district,
+    value: Number(item.max_air_quality) || 0,
+  }));
+
+  const congestionChartData = trafficData.map(item => ({
+    name: item.route_id,
+    value: Number(item.max_congestion) || 0,
+  }));
+
+  const flowChartData = waterData.map(item => ({
+    name: item.district,
+    value: Number(item.avg_flow_rate) || 0,
+  }));
+
+  const waterScoreChartData = waterData.map(item => ({
+    name: item.district,
+    value: Number(item.water_quality_score) || 0,
+  }));
+
+  const latencyChartData = allWindows
+    .map(item => {
+      const latency = getLatencySeconds(item.processed_at, item.window?.end);
+      return latency === null
+        ? null
+        : {
+            time: formatTime(item.processed_at),
+            latency,
+          };
+    })
+    .filter((item): item is { time: string; latency: number } => item !== null)
+    .slice(-20);
+
   return (
     <div className="p-8 max-w-7xl mx-auto w-full">
       <header className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -338,6 +464,35 @@ export default function SparkDataPage() {
           </h3>
           <p className="text-lg font-black text-gray-900">{allWindows.length + sparkAlerts.length + sparkErrors.length > 0 ? "Messages recus" : "Aucun message"}</p>
           <p className="mt-1 text-sm font-medium text-gray-500">Statut infere depuis les flux Spark</p>
+        </div>
+      </div>
+
+      <div className="mb-6">
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="text-lg font-black text-gray-900">Graphiques Spark</h3>
+          <span className="rounded-full bg-blue-50 px-3 py-1 text-[10px] font-black uppercase text-blue-700">
+            Recharts
+          </span>
+        </div>
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+          <SparkChartCard title="Temperature moyenne par quartier">
+            <SparkBarChart data={temperatureChartData} xKey="name" yKey="value" color="#f97316" unit="°C" />
+          </SparkChartCard>
+          <SparkChartCard title="AQI max par quartier">
+            <SparkBarChart data={aqiChartData} xKey="name" yKey="value" color="#22c55e" />
+          </SparkChartCard>
+          <SparkChartCard title="Congestion max par route">
+            <SparkBarChart data={congestionChartData} xKey="name" yKey="value" color="#ef4444" />
+          </SparkChartCard>
+          <SparkChartCard title="Debit moyen par quartier">
+            <SparkBarChart data={flowChartData} xKey="name" yKey="value" color="#0ea5e9" />
+          </SparkChartCard>
+          <SparkChartCard title="Score qualite de l'eau">
+            <SparkBarChart data={waterScoreChartData} xKey="name" yKey="value" color="#10b981" />
+          </SparkChartCard>
+          <SparkChartCard title="Latence Spark dans le temps">
+            <SparkLatencyChart data={latencyChartData} />
+          </SparkChartCard>
         </div>
       </div>
 
