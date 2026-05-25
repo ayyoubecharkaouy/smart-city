@@ -16,24 +16,64 @@ import {
   Settings2,
   Maximize2,
   Gauge as GaugeIcon,
+  Filter,
+  RotateCcw,
 } from "lucide-react";
 import { useTemperatureData } from "@/hooks/useTemperatureData";
 import { useWaterData } from "@/hooks/useWaterData";
 import { useTrafficData } from "@/hooks/useTrafficData";
 import AnalyticsChart, { ChartType } from "@/components/AnalyticsChart";
 import StateNotice from "@/components/StateNotice";
+import {
+  PERIOD_OPTIONS,
+  SPARK_CHART_COLORS,
+  SPARK_THRESHOLDS,
+} from "@/lib/constants";
 
 type MetricType = "temperature" | "aqi" | "water" | "traffic";
+type PeriodFilter = "all" | "1h" | "6h" | "24h" | "7d";
+type CriticalFilter = "all" | "critical";
 
 function formatMetricValue(value: unknown): string {
   const numericValue = Number(value);
   return Number.isFinite(numericValue) ? numericValue.toFixed(2) : "0.00";
 }
 
+function isInPeriod(value: string | undefined, period: PeriodFilter): boolean {
+  if (period === "all") return true;
+  if (!value) return false;
+
+  const time = new Date(value).getTime();
+  if (Number.isNaN(time)) return false;
+
+  const hours: Record<Exclude<PeriodFilter, "all">, number> = {
+    "1h": 1,
+    "6h": 6,
+    "24h": 24,
+    "7d": 24 * 7,
+  };
+
+  return Date.now() - time <= hours[period] * 60 * 60 * 1000;
+}
+
+function isCriticalMetric(metric: MetricType, value: unknown): boolean {
+  const numericValue = Number(value);
+  if (!Number.isFinite(numericValue)) return false;
+
+  if (metric === "temperature") return numericValue >= SPARK_THRESHOLDS.criticalTemperature;
+  if (metric === "aqi") return numericValue >= SPARK_THRESHOLDS.criticalAqi;
+  if (metric === "water") return numericValue <= SPARK_THRESHOLDS.criticalLowFlow;
+  return numericValue >= SPARK_THRESHOLDS.criticalCongestion;
+}
+
 export default function AnalyticsPage() {
   const [chartType, setChartType] = useState<ChartType>("line");
   const [metric, setMetric] = useState<MetricType>("temperature");
   const [isRealtime, setIsRealtime] = useState(false);
+  const [periodFilter, setPeriodFilter] = useState<PeriodFilter>("24h");
+  const [districtFilter, setDistrictFilter] = useState("all");
+  const [routeFilter, setRouteFilter] = useState("all");
+  const [criticalFilter, setCriticalFilter] = useState<CriticalFilter>("all");
   const [time, setTime] = useState<string | null>(null);
 
   // Data Hooks
@@ -73,6 +113,32 @@ export default function AnalyticsPage() {
         ? trafficConnected
         : envConnected;
 
+  const districtOptions = useMemo(() => {
+    const districts = [
+      ...Array.from(envStats.values()).map((item) => item.district),
+      ...Array.from(waterStats.values()).map((item) => item.district),
+    ].filter(Boolean);
+    return Array.from(new Set(districts.sort()));
+  }, [envStats, waterStats]);
+
+  const routeOptions = useMemo(() => {
+    const routes = Array.from(trafficStats.values())
+      .map((item) => item.route_id)
+      .filter(Boolean)
+      .sort();
+    return Array.from(new Set(routes));
+  }, [trafficStats]);
+
+  const resetFilters = () => {
+    setPeriodFilter("24h");
+    setDistrictFilter("all");
+    setRouteFilter("all");
+    setCriticalFilter("all");
+  };
+
+  const selectedPeriodLabel =
+    PERIOD_OPTIONS.find((option) => option.value === periodFilter)?.label || "24 dernieres heures";
+
   const chartConfig = useMemo(() => {
     let rawData: Record<string, string | number>[] = [];
     let xAxis = "time";
@@ -83,78 +149,102 @@ export default function AnalyticsPage() {
 
     switch (metric) {
       case "temperature":
-        color = "#f97316";
+        color = SPARK_CHART_COLORS.temperature;
         label = "Température";
         unit = "°C";
         if (isRealtime) {
-          rawData = Array.from(envStats.values()).map((d) => ({
-            name: d.district,
-            value: formatMetricValue(d.avg_temperature),
-          }));
+          rawData = Array.from(envStats.values())
+            .filter((d) => districtFilter === "all" || d.district === districtFilter)
+            .map((d) => ({
+              name: d.district,
+              value: formatMetricValue(d.avg_temperature),
+            }));
           xAxis = "name";
         } else {
-          rawData = envHistory.map((h) => ({
-            time: new Date(h.time).getHours() + "h",
-            value: formatMetricValue(h.temperature),
-          }));
+          rawData = envHistory
+            .filter((h) => isInPeriod(h.time, periodFilter))
+            .map((h) => ({
+              time: new Date(h.time).getHours() + "h",
+              value: formatMetricValue(h.temperature),
+            }));
         }
         break;
       case "aqi":
-        color = "#10b981";
+        color = SPARK_CHART_COLORS.aqi;
         label = "Qualité Air (AQI)";
         if (isRealtime) {
-          rawData = Array.from(envStats.values()).map((d) => ({
-            name: d.district,
-            value: formatMetricValue(d.avg_aqi),
-          }));
+          rawData = Array.from(envStats.values())
+            .filter((d) => districtFilter === "all" || d.district === districtFilter)
+            .map((d) => ({
+              name: d.district,
+              value: formatMetricValue(d.avg_aqi),
+            }));
           xAxis = "name";
         } else {
-          rawData = envHistory.map((h) => ({
-            time: new Date(h.time).getHours() + "h",
-            value: formatMetricValue(h.aqi),
-          }));
+          rawData = envHistory
+            .filter((h) => isInPeriod(h.time, periodFilter))
+            .map((h) => ({
+              time: new Date(h.time).getHours() + "h",
+              value: formatMetricValue(h.aqi),
+            }));
         }
         break;
       case "water":
-        color = "#3b82f6";
+        color = SPARK_CHART_COLORS.flow;
         label = "Débit d'Eau";
         unit = "L/min";
         if (isRealtime) {
-          rawData = Array.from(waterStats.values()).map((d) => ({
-            name: d.district,
-            value: formatMetricValue(d.avg_flow),
-          }));
+          rawData = Array.from(waterStats.values())
+            .filter((d) => districtFilter === "all" || d.district === districtFilter)
+            .map((d) => ({
+              name: d.district,
+              value: formatMetricValue(d.avg_flow),
+            }));
           xAxis = "name";
         } else {
-          rawData = waterHistory.map((h) => ({
-            time: new Date(h.time).getHours() + "h",
-            value: formatMetricValue(h.flow),
-          }));
+          rawData = waterHistory
+            .filter((h) => isInPeriod(h.time, periodFilter))
+            .map((h) => ({
+              time: new Date(h.time).getHours() + "h",
+              value: formatMetricValue(h.flow),
+            }));
         }
         break;
       case "traffic":
-        color = "#8b5cf6";
+        color = SPARK_CHART_COLORS.congestion;
         label = "Congestion";
         unit = "%";
         if (isRealtime) {
-          rawData = Array.from(trafficStats.values()).map((r) => ({
-            name: r.route_id,
-            value: formatMetricValue(r.avg_congestion),
-          }));
+          rawData = Array.from(trafficStats.values())
+            .filter((r) => routeFilter === "all" || r.route_id === routeFilter)
+            .map((r) => ({
+              name: r.route_id,
+              value: formatMetricValue(r.avg_congestion),
+            }));
           xAxis = "name";
         } else {
-          rawData = trafficHistory.map((h) => ({
-            time: new Date(h.time).getHours() + "h",
-            value: formatMetricValue(h.avg_congestion),
-          }));
+          rawData = trafficHistory
+            .filter((h) => isInPeriod(h.time, periodFilter))
+            .map((h) => ({
+              time: new Date(h.time).getHours() + "h",
+              value: formatMetricValue(h.avg_congestion),
+            }));
         }
         break;
+    }
+
+    if (criticalFilter === "critical") {
+      rawData = rawData.filter((item) => isCriticalMetric(metric, item.value));
     }
 
     return { data: rawData, xAxis, yAxis, color, label, unit };
   }, [
     metric,
     isRealtime,
+    periodFilter,
+    districtFilter,
+    routeFilter,
+    criticalFilter,
     envStats,
     envHistory,
     waterStats,
@@ -230,7 +320,7 @@ export default function AnalyticsPage() {
         {/* Metric Selection */}
         <section className="mb-8">
           <label className="text-xs font-black text-gray-700 uppercase tracking-widest mb-4 block">
-            Source de Données
+            Type de Métrique
           </label>
           <div className="grid grid-cols-1 gap-2">
             {metrics.map((m) => (
@@ -329,7 +419,7 @@ export default function AnalyticsPage() {
                   —{" "}
                   {isRealtime
                     ? "Flux de données Live"
-                    : "Analyse Historique (24h)"}
+                    : `Analyse Historique (${selectedPeriodLabel})`}
                 </span>
               </h1>
               <p className="text-sm font-medium text-gray-500 mt-1">
@@ -343,6 +433,88 @@ export default function AnalyticsPage() {
             </button>
           </div>
         </header>
+
+        <section className="mb-4 rounded-3xl border border-gray-100 bg-white p-3 shadow-sm">
+          <div className="mb-3 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gray-900 text-white">
+                <Filter className="h-4 w-4" />
+              </div>
+              <div>
+                <h3 className="text-sm font-black uppercase text-gray-900">
+                  Filtres globaux
+                </h3>
+                <p className="text-xs font-medium text-gray-500">
+                  Période, zone et criticité appliquées au graphique
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={resetFilters}
+              className="flex w-fit items-center gap-2 rounded-2xl border border-gray-200 px-3 py-2 text-xs font-black uppercase text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900"
+            >
+              <RotateCcw className="h-4 w-4" />
+              Réinitialiser
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_auto]">
+            <label className="space-y-1">
+              <span className="text-[10px] font-black uppercase text-gray-400">Période</span>
+              <select
+                value={periodFilter}
+                onChange={(event) => setPeriodFilter(event.target.value as PeriodFilter)}
+                className="h-11 w-full rounded-2xl border border-gray-200 bg-gray-50 px-3 text-sm font-bold text-gray-700 outline-none transition-colors focus:border-gray-900 focus:bg-white"
+              >
+                {PERIOD_OPTIONS.filter(option => option.value !== "all").map(option => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            </label>
+
+            <label className="space-y-1">
+              <span className="text-[10px] font-black uppercase text-gray-400">District</span>
+              <select
+                value={districtFilter}
+                onChange={(event) => setDistrictFilter(event.target.value)}
+                disabled={metric === "traffic"}
+                className="h-11 w-full rounded-2xl border border-gray-200 bg-gray-50 px-3 text-sm font-bold text-gray-700 outline-none transition-colors focus:border-gray-900 focus:bg-white disabled:bg-gray-100 disabled:text-gray-400"
+              >
+                <option value="all">Tous les districts</option>
+                {districtOptions.map(district => (
+                  <option key={district} value={district}>{district}</option>
+                ))}
+              </select>
+            </label>
+
+            <label className="space-y-1">
+              <span className="text-[10px] font-black uppercase text-gray-400">Route</span>
+              <select
+                value={routeFilter}
+                onChange={(event) => setRouteFilter(event.target.value)}
+                disabled={metric !== "traffic"}
+                className="h-11 w-full rounded-2xl border border-gray-200 bg-gray-50 px-3 text-sm font-bold text-gray-700 outline-none transition-colors focus:border-gray-900 focus:bg-white disabled:bg-gray-100 disabled:text-gray-400"
+              >
+                <option value="all">Toutes les routes</option>
+                {routeOptions.map(route => (
+                  <option key={route} value={route}>{route}</option>
+                ))}
+              </select>
+            </label>
+
+            <label className="flex h-full min-h-11 items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-3 xl:mt-4">
+              <span className="text-xs font-black uppercase text-gray-600">
+                Critiques
+              </span>
+              <input
+                type="checkbox"
+                checked={criticalFilter === "critical"}
+                onChange={(event) => setCriticalFilter(event.target.checked ? "critical" : "all")}
+                className="h-5 w-5 rounded border-gray-300 text-gray-900"
+              />
+            </label>
+          </div>
+        </section>
 
         {/* Main Chart Card */}
         <div className="flex-1 p-2 flex flex-col relative overflow-hidden">

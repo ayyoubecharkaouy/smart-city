@@ -55,6 +55,7 @@ export const SPARK_THRESHOLDS = {
   criticalTemperature: 35,
   criticalAqi: 150,
   criticalWaterScore: 70,
+  criticalLowFlow: 5,
   minSafePh: 6.5,
   maxSafePh: 8.5,
   criticalCongestion: 0.7,
@@ -92,6 +93,7 @@ export const PERIOD_OPTIONS = [
   { value: "1h", label: "Derniere heure" },
   { value: "6h", label: "6 dernieres heures" },
   { value: "24h", label: "24 dernieres heures" },
+  { value: "7d", label: "7 derniers jours" },
 ] as const;
 
 export const SPARK_CHART_COLORS = {

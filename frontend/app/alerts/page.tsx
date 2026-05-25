@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 
 type AlertDomain = "all" | "environment" | "traffic" | "water";
-type PeriodFilter = "all" | "1h" | "6h" | "24h";
+type PeriodFilter = "all" | "1h" | "6h" | "24h" | "7d";
 type CriticalFilter = "all" | "critical";
 
 const domainOptions: { value: AlertDomain; label: string }[] = [
@@ -74,6 +74,7 @@ function isInPeriod(value: string | undefined, period: PeriodFilter): boolean {
     "1h": 1,
     "6h": 6,
     "24h": 24,
+    "7d": 24 * 7,
   };
 
   return Date.now() - time <= hours[period] * 60 * 60 * 1000;
