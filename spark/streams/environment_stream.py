@@ -4,12 +4,23 @@ from utils.kafka_helpers import create_validated_kafka_json_stream, with_event_t
 import config
 
 def process_environment_stream(spark):
+    air_quality_schema = StructType([
+        StructField("aqi", DoubleType(), True),
+        StructField("status", StringType(), True),
+        StructField("main_pollutant", StringType(), True),
+        StructField("pm25", DoubleType(), True),
+        StructField("pm10", DoubleType(), True),
+        StructField("no2", DoubleType(), True),
+        StructField("co", DoubleType(), True),
+        StructField("o3", DoubleType(), True)
+    ])
+
     # Schéma des données d'environnement
     element_schema = StructType([
         StructField("sensor_id", StringType(), True),
         StructField("district", StringType(), True),
         StructField("temperature", DoubleType(), True),
-        StructField("air_quality", DoubleType(), True),
+        StructField("air_quality", air_quality_schema, True),
         StructField("timestamp", TimestampType(), True)
     ])
     
@@ -24,15 +35,18 @@ def process_environment_stream(spark):
         "environment_errors_stream"
     )
 
-    alert_df = parsed_df \
-        .filter(col("air_quality") > config.AIR_QUALITY_ALERT_THRESHOLD) \
+    enriched_df = parsed_df \
+        .withColumn("air_quality_value", col("air_quality.aqi"))
+
+    alert_df = enriched_df \
+        .filter(col("air_quality_value") > config.AIR_QUALITY_ALERT_THRESHOLD) \
         .select(
             lit("environment").alias("type"),
             lit("high_air_quality").alias("alert_type"),
             lit("warning").alias("severity"),
             col("sensor_id"),
             col("district"),
-            col("air_quality").alias("value"),
+            col("air_quality_value").alias("value"),
             lit(">").alias("operator"),
             lit(config.AIR_QUALITY_ALERT_THRESHOLD).alias("threshold"),
             col("timestamp"),
@@ -50,7 +64,7 @@ def process_environment_stream(spark):
 
     # 3. Traitement : Calculer la température et qualité de l'air moyenne par quartier sur une fenêtre temporelle
     # watermark permet de gérer les données arrivant en retard
-    aggregated_df = with_event_time_watermark(parsed_df, "timestamp", config.WATERMARK_DELAY) \
+    aggregated_df = with_event_time_watermark(enriched_df, "timestamp", config.WATERMARK_DELAY) \
         .groupBy(
             window(col("timestamp"), config.WINDOW_DURATION, config.SLIDING_INTERVAL),
             col("district")
@@ -59,8 +73,8 @@ def process_environment_stream(spark):
             avg("temperature").alias("avg_temperature"),
             spark_min("temperature").alias("min_temperature"),
             spark_max("temperature").alias("max_temperature"),
-            avg("air_quality").alias("avg_air_quality"),
-            spark_max("air_quality").alias("max_air_quality"),
+            avg("air_quality_value").alias("avg_air_quality"),
+            spark_max("air_quality_value").alias("max_air_quality"),
             min_by(col("temperature"), col("timestamp")).alias("first_temperature"),
             max_by(col("temperature"), col("timestamp")).alias("last_temperature")
         ) \

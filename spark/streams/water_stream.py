@@ -12,7 +12,8 @@ def process_water_stream(spark):
     # Schéma imbriqué pour la qualité
     quality_schema = StructType([
         StructField("ph", DoubleType(), True),
-        StructField("turbidity", DoubleType(), True)
+        StructField("turbidity", DoubleType(), True),
+        StructField("turbidity_ntu", DoubleType(), True)
     ])
 
     # Schéma principal
@@ -39,7 +40,11 @@ def process_water_stream(spark):
     flat_df = parsed_df \
         .withColumn("flow_rate", col("water_flow.flow_rate_l_min")) \
         .withColumn("ph", col("water_quality.ph")) \
-        .withColumn("turbidity", col("water_quality.turbidity"))
+        .withColumn(
+            "turbidity",
+            when(col("water_quality.turbidity").isNotNull(), col("water_quality.turbidity"))
+            .otherwise(col("water_quality.turbidity_ntu"))
+        )
 
     alert_df = flat_df \
         .filter(
