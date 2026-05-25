@@ -88,6 +88,22 @@ export const TRAFFIC_LEVEL_LABELS = {
   critical: "Critique",
 } as const;
 
+export const SPARK_CHART_COLORS = {
+  temperature: UI_COLORS.orange,
+  aqi: UI_COLORS.success,
+  congestion: UI_COLORS.danger,
+  flow: UI_COLORS.sky,
+  waterScore: UI_COLORS.emerald,
+  latency: "#2563eb",
+} as const;
+
+export const PERIOD_HOURS = {
+  "1h": 1,
+  "6h": 6,
+  "24h": 24,
+  "7d": 24 * 7,
+} as const;
+
 export const PERIOD_OPTIONS = [
   { value: "all", label: "Toute la periode" },
   { value: "1h", label: "Derniere heure" },
@@ -96,11 +112,35 @@ export const PERIOD_OPTIONS = [
   { value: "7d", label: "7 derniers jours" },
 ] as const;
 
-export const SPARK_CHART_COLORS = {
-  temperature: UI_COLORS.orange,
-  aqi: UI_COLORS.success,
-  congestion: UI_COLORS.danger,
-  flow: UI_COLORS.sky,
-  waterScore: UI_COLORS.emerald,
-  latency: "#2563eb",
+export const ANALYTICS_DEFAULT_PERIOD = "24h";
+
+export const ANALYTICS_METRICS = {
+  temperature: {
+    label: "Température",
+    chartLabel: "Température",
+    color: SPARK_CHART_COLORS.temperature,
+    accentClass: "bg-orange-500",
+    unit: "°C",
+  },
+  aqi: {
+    label: "Qualité Air",
+    chartLabel: "Qualité Air (AQI)",
+    color: SPARK_CHART_COLORS.aqi,
+    accentClass: "bg-emerald-500",
+    unit: "",
+  },
+  water: {
+    label: "Eau Potable",
+    chartLabel: "Débit d'Eau",
+    color: SPARK_CHART_COLORS.flow,
+    accentClass: "bg-blue-500",
+    unit: "L/min",
+  },
+  traffic: {
+    label: "Trafic Routier",
+    chartLabel: "Congestion",
+    color: SPARK_CHART_COLORS.congestion,
+    accentClass: "bg-violet-500",
+    unit: "%",
+  },
 } as const;

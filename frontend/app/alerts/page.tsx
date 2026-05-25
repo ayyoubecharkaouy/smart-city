@@ -5,6 +5,7 @@ import { useSparkData } from "@/hooks/useSparkData";
 import { useTemperatureData } from "@/hooks/useTemperatureData";
 import {
   PERIOD_OPTIONS,
+  PERIOD_HOURS,
   SPARK_ALERT_LABELS,
   SPARK_DOMAIN_LABELS,
 } from "@/lib/constants";
@@ -26,7 +27,7 @@ import {
 } from "lucide-react";
 
 type AlertDomain = "all" | "environment" | "traffic" | "water";
-type PeriodFilter = "all" | "1h" | "6h" | "24h" | "7d";
+type PeriodFilter = "all" | keyof typeof PERIOD_HOURS;
 type CriticalFilter = "all" | "critical";
 
 const domainOptions: { value: AlertDomain; label: string }[] = [
@@ -70,14 +71,7 @@ function isInPeriod(value: string | undefined, period: PeriodFilter): boolean {
   const time = new Date(value).getTime();
   if (Number.isNaN(time)) return false;
 
-  const hours: Record<Exclude<PeriodFilter, "all">, number> = {
-    "1h": 1,
-    "6h": 6,
-    "24h": 24,
-    "7d": 24 * 7,
-  };
-
-  return Date.now() - time <= hours[period] * 60 * 60 * 1000;
+  return Date.now() - time <= PERIOD_HOURS[period] * 60 * 60 * 1000;
 }
 
 function isCriticalSparkAlert(alert: SparkAlertData): boolean {

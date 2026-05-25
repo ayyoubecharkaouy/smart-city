@@ -25,13 +25,15 @@ import { useTrafficData } from "@/hooks/useTrafficData";
 import AnalyticsChart, { ChartType } from "@/components/AnalyticsChart";
 import StateNotice from "@/components/StateNotice";
 import {
+  ANALYTICS_DEFAULT_PERIOD,
+  ANALYTICS_METRICS,
   PERIOD_OPTIONS,
-  SPARK_CHART_COLORS,
+  PERIOD_HOURS,
   SPARK_THRESHOLDS,
 } from "@/lib/constants";
 
-type MetricType = "temperature" | "aqi" | "water" | "traffic";
-type PeriodFilter = "all" | "1h" | "6h" | "24h" | "7d";
+type MetricType = keyof typeof ANALYTICS_METRICS;
+type PeriodFilter = "all" | keyof typeof PERIOD_HOURS;
 type CriticalFilter = "all" | "critical";
 
 function formatMetricValue(value: unknown): string {
@@ -46,14 +48,7 @@ function isInPeriod(value: string | undefined, period: PeriodFilter): boolean {
   const time = new Date(value).getTime();
   if (Number.isNaN(time)) return false;
 
-  const hours: Record<Exclude<PeriodFilter, "all">, number> = {
-    "1h": 1,
-    "6h": 6,
-    "24h": 24,
-    "7d": 24 * 7,
-  };
-
-  return Date.now() - time <= hours[period] * 60 * 60 * 1000;
+  return Date.now() - time <= PERIOD_HOURS[period] * 60 * 60 * 1000;
 }
 
 function isCriticalMetric(metric: MetricType, value: unknown): boolean {
@@ -70,7 +65,7 @@ export default function AnalyticsPage() {
   const [chartType, setChartType] = useState<ChartType>("line");
   const [metric, setMetric] = useState<MetricType>("temperature");
   const [isRealtime, setIsRealtime] = useState(false);
-  const [periodFilter, setPeriodFilter] = useState<PeriodFilter>("24h");
+  const [periodFilter, setPeriodFilter] = useState<PeriodFilter>(ANALYTICS_DEFAULT_PERIOD);
   const [districtFilter, setDistrictFilter] = useState("all");
   const [routeFilter, setRouteFilter] = useState("all");
   const [criticalFilter, setCriticalFilter] = useState<CriticalFilter>("all");
@@ -130,7 +125,7 @@ export default function AnalyticsPage() {
   }, [trafficStats]);
 
   const resetFilters = () => {
-    setPeriodFilter("24h");
+    setPeriodFilter(ANALYTICS_DEFAULT_PERIOD);
     setDistrictFilter("all");
     setRouteFilter("all");
     setCriticalFilter("all");
@@ -143,15 +138,13 @@ export default function AnalyticsPage() {
     let rawData: Record<string, string | number>[] = [];
     let xAxis = "time";
     const yAxis = "value";
-    let color = "#3b82f6";
-    let label = "Valeur";
-    let unit = "";
+    const metricConfig = ANALYTICS_METRICS[metric];
+    const color = metricConfig.color;
+    const label = metricConfig.chartLabel;
+    const unit = metricConfig.unit;
 
     switch (metric) {
       case "temperature":
-        color = SPARK_CHART_COLORS.temperature;
-        label = "Température";
-        unit = "°C";
         if (isRealtime) {
           rawData = Array.from(envStats.values())
             .filter((d) => districtFilter === "all" || d.district === districtFilter)
@@ -170,8 +163,6 @@ export default function AnalyticsPage() {
         }
         break;
       case "aqi":
-        color = SPARK_CHART_COLORS.aqi;
-        label = "Qualité Air (AQI)";
         if (isRealtime) {
           rawData = Array.from(envStats.values())
             .filter((d) => districtFilter === "all" || d.district === districtFilter)
@@ -190,9 +181,6 @@ export default function AnalyticsPage() {
         }
         break;
       case "water":
-        color = SPARK_CHART_COLORS.flow;
-        label = "Débit d'Eau";
-        unit = "L/min";
         if (isRealtime) {
           rawData = Array.from(waterStats.values())
             .filter((d) => districtFilter === "all" || d.district === districtFilter)
@@ -211,9 +199,6 @@ export default function AnalyticsPage() {
         }
         break;
       case "traffic":
-        color = SPARK_CHART_COLORS.congestion;
-        label = "Congestion";
-        unit = "%";
         if (isRealtime) {
           rawData = Array.from(trafficStats.values())
             .filter((r) => routeFilter === "all" || r.route_id === routeFilter)
@@ -271,26 +256,26 @@ export default function AnalyticsPage() {
       {
         id: "temperature",
         icon: <Thermometer />,
-        label: "Température",
-        color: "bg-orange-500",
+        label: ANALYTICS_METRICS.temperature.label,
+        color: ANALYTICS_METRICS.temperature.accentClass,
       },
       {
         id: "aqi",
         icon: <Wind />,
-        label: "Qualité Air",
-        color: "bg-emerald-500",
+        label: ANALYTICS_METRICS.aqi.label,
+        color: ANALYTICS_METRICS.aqi.accentClass,
       },
       {
         id: "water",
         icon: <Droplets />,
-        label: "Eau Potable",
-        color: "bg-blue-500",
+        label: ANALYTICS_METRICS.water.label,
+        color: ANALYTICS_METRICS.water.accentClass,
       },
       {
         id: "traffic",
         icon: <Car />,
-        label: "Trafic Routier",
-        color: "bg-violet-500",
+        label: ANALYTICS_METRICS.traffic.label,
+        color: ANALYTICS_METRICS.traffic.accentClass,
       },
     ];
 
