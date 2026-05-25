@@ -12,6 +12,7 @@ import {
 import type { RouteTrafficStats } from "@/lib/types";
 import { getTrafficStatusColor, getTrafficStatusLabel } from "@/lib/types";
 import TrendChart from "./TrendChart";
+import AnimatedNumber from "@/components/AnimatedNumber";
 
 interface TrafficStatsProps {
   routeStats: Map<string, RouteTrafficStats>;
@@ -78,7 +79,7 @@ export default function TrafficStats({
             Vitesse Moyenne 24h
           </h3>
           <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full uppercase">
-            {speedHistory.length} Points
+            <AnimatedNumber value={speedHistory.length} /> Points
           </span>
         </div>
         <TrendChart
@@ -119,7 +120,7 @@ export default function TrafficStats({
                   Vitesse Moy.
                 </span>
                 <span className="text-xl font-black text-emerald-800">
-                  {globalAvgSpeed.toFixed(1)}
+                  <AnimatedNumber value={globalAvgSpeed} decimals={1} />
                 </span>
                 <span className="text-[10px] text-emerald-600 ml-1">km/h</span>
               </div>
@@ -128,7 +129,7 @@ export default function TrafficStats({
                   Véhicules
                 </span>
                 <span className="text-xl font-black text-blue-800">
-                  {totalVehicles.toLocaleString()}
+                  <AnimatedNumber value={totalVehicles} />
                 </span>
               </div>
               <div
@@ -142,7 +143,7 @@ export default function TrafficStats({
                 <span
                   className={`text-xl font-black ${congestionRoutes > 0 ? "text-red-800" : "text-green-800"}`}
                 >
-                  {congestionRoutes}
+                  <AnimatedNumber value={congestionRoutes} />
                 </span>
                 <span
                   className={`text-[10px] ml-1 ${congestionRoutes > 0 ? "text-red-600" : "text-green-600"}`}
@@ -188,17 +189,17 @@ export default function TrafficStats({
                         <div className="flex items-center gap-3">
                           <span className="flex items-center gap-1">
                             <Gauge className="w-3 h-3" />
-                            {r.avg_speed.toFixed(1)} km/h
+                            <AnimatedNumber value={r.avg_speed} decimals={1} suffix=" km/h" />
                           </span>
                           <span className="flex items-center gap-1">
                             <Car className="w-3 h-3" />
-                            {r.total_vehicles} véh
+                            <AnimatedNumber value={r.total_vehicles} /> véh
                           </span>
                         </div>
                         <div className="flex items-center gap-1.5 px-2 py-0.5 bg-gray-50 rounded-full border border-gray-100">
                           <Activity className="w-3 h-3 text-gray-400" />
                           <span className="text-[10px] font-bold text-gray-500 uppercase">
-                            {r.sensor_count} capteurs
+                            <AnimatedNumber value={r.sensor_count} /> capteurs
                           </span>
                         </div>
                       </div>

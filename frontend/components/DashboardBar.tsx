@@ -34,6 +34,7 @@ import {
   Gauge,
   Loader,
 } from "lucide-react";
+import AnimatedNumber from "@/components/AnimatedNumber";
 
 interface DashboardBarProps {
   mode: string;
@@ -487,7 +488,7 @@ const DashboardBar = memo(
                     ) : (
                       <>
                         <span className="text-2xl font-black text-gray-900 tabular-nums">
-                          {kpi.value}
+                          <AnimatedNumber value={kpi.value} decimals={String(kpi.value).includes(".") ? String(kpi.value).split(".")[1].length : 0} />
                         </span>
                         <span className="text-[10px] font-bold text-gray-500">
                           {kpi.unit}

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { useSparkData } from "@/hooks/useSparkData";
+import AnimatedNumber from "@/components/AnimatedNumber";
 import type {
   SparkAlertData,
   SparkEnvironmentData,
@@ -77,10 +78,6 @@ function getLatencySeconds(processedAt?: string, sourceAt?: string): number | nu
   return Math.max(0, (processedTime - sourceTime) / 1000);
 }
 
-function formatLatency(value: number | null): string {
-  return value === null ? "--" : `${value.toFixed(1)}s`;
-}
-
 function chartValue(value: unknown): number | null {
   const numericValue = Number(value);
   return Number.isFinite(numericValue) ? numericValue : null;
@@ -119,11 +116,15 @@ function StatCard({
   icon: Icon,
   label,
   value,
+  decimals,
+  suffix,
   tone,
 }: {
   icon: typeof Activity;
   label: string;
-  value: string;
+  value: number | null;
+  decimals?: number;
+  suffix?: string;
   tone: string;
 }) {
   return (
@@ -131,7 +132,9 @@ function StatCard({
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-[10px] font-black uppercase text-gray-400">{label}</p>
-          <p className="mt-1 text-2xl font-black text-gray-900">{value}</p>
+          <p className="mt-1 text-2xl font-black text-gray-900">
+            {value === null ? "--" : <AnimatedNumber value={value} decimals={decimals} suffix={suffix} />}
+          </p>
         </div>
         <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${tone}`}>
           <Icon className="h-5 w-5" />
@@ -249,12 +252,14 @@ function EnvironmentTable({ data }: { data: SparkEnvironmentData[] }) {
             return (
               <tr key={`${item.district}-${item.processed_at}`} className="border-b border-gray-50">
                 <td className="py-3 font-bold text-gray-900">{item.district}</td>
-                <td className="py-3 text-orange-600 font-black">{Number(item.avg_temperature).toFixed(1)}°C</td>
-                <td className="py-3 text-gray-600">{Number(item.min_temperature).toFixed(1)} / {Number(item.max_temperature).toFixed(1)}°C</td>
-                <td className="py-3 text-gray-600">{Number(item.max_air_quality).toFixed(0)}</td>
+                <td className="py-3 text-orange-600 font-black"><AnimatedNumber value={item.avg_temperature} decimals={1} suffix="°C" /></td>
+                <td className="py-3 text-gray-600">
+                  <AnimatedNumber value={item.min_temperature} decimals={1} /> / <AnimatedNumber value={item.max_temperature} decimals={1} suffix="°C" />
+                </td>
+                <td className="py-3 text-gray-600"><AnimatedNumber value={item.max_air_quality} /></td>
                 <td className="py-3 text-gray-600">{item.temperature_trend}</td>
                 <td className="py-3 text-gray-500">{formatTime(item.processed_at)}</td>
-                <td className="py-3 font-bold text-blue-600">{formatLatency(latency)}</td>
+                <td className="py-3 font-bold text-blue-600">{latency === null ? "--" : <AnimatedNumber value={latency} decimals={1} suffix="s" />}</td>
               </tr>
             );
           })}
@@ -287,12 +292,12 @@ function WaterTable({ data }: { data: SparkWaterData[] }) {
             return (
               <tr key={`${item.district}-${item.processed_at}`} className="border-b border-gray-50">
                 <td className="py-3 font-bold text-gray-900">{item.district}</td>
-                <td className="py-3 text-blue-600 font-black">{Number(item.avg_flow_rate).toFixed(1)} L/m</td>
-                <td className="py-3 text-gray-600">{Number(item.total_flow_rate).toFixed(1)}</td>
-                <td className="py-3 text-gray-600">{Number(item.avg_ph).toFixed(1)}</td>
-                <td className="py-3 font-bold text-emerald-600">{Number(item.water_quality_score).toFixed(0)}</td>
+                <td className="py-3 text-blue-600 font-black"><AnimatedNumber value={item.avg_flow_rate} decimals={1} suffix=" L/m" /></td>
+                <td className="py-3 text-gray-600"><AnimatedNumber value={item.total_flow_rate} decimals={1} /></td>
+                <td className="py-3 text-gray-600"><AnimatedNumber value={item.avg_ph} decimals={1} /></td>
+                <td className="py-3 font-bold text-emerald-600"><AnimatedNumber value={item.water_quality_score} /></td>
                 <td className="py-3 text-gray-600">{item.sudden_flow_drop ? "Oui" : "Non"}</td>
-                <td className="py-3 font-bold text-blue-600">{formatLatency(latency)}</td>
+                <td className="py-3 font-bold text-blue-600">{latency === null ? "--" : <AnimatedNumber value={latency} decimals={1} suffix="s" />}</td>
               </tr>
             );
           })}
@@ -325,12 +330,12 @@ function TrafficTable({ data }: { data: SparkTrafficData[] }) {
             return (
               <tr key={`${item.route_id}-${item.processed_at}`} className="border-b border-gray-50">
                 <td className="py-3 font-bold text-gray-900">{item.route_id}</td>
-                <td className="py-3 text-blue-600 font-black">{Number(item.avg_speed).toFixed(1)} km/h</td>
-                <td className="py-3 text-gray-600">{Number(item.min_speed).toFixed(1)} km/h</td>
-                <td className="py-3 text-gray-600">{Number(item.avg_vehicle_count).toFixed(0)}</td>
-                <td className="py-3 text-red-600 font-bold">{Number(item.max_congestion).toFixed(2)}</td>
+                <td className="py-3 text-blue-600 font-black"><AnimatedNumber value={item.avg_speed} decimals={1} suffix=" km/h" /></td>
+                <td className="py-3 text-gray-600"><AnimatedNumber value={item.min_speed} decimals={1} suffix=" km/h" /></td>
+                <td className="py-3 text-gray-600"><AnimatedNumber value={item.avg_vehicle_count} /></td>
+                <td className="py-3 text-red-600 font-bold"><AnimatedNumber value={item.max_congestion} decimals={2} /></td>
                 <td className="py-3 text-gray-600">{item.congestion_level}</td>
-                <td className="py-3 font-bold text-blue-600">{formatLatency(latency)}</td>
+                <td className="py-3 font-bold text-blue-600">{latency === null ? "--" : <AnimatedNumber value={latency} decimals={1} suffix="s" />}</td>
               </tr>
             );
           })}
@@ -355,7 +360,7 @@ function AlertsTable({ data }: { data: SparkAlertData[] }) {
               </p>
             </div>
             <p className="font-black text-amber-900">
-              {Number(item.value).toFixed(1)} {item.operator} {Number(item.threshold).toFixed(1)}
+              <AnimatedNumber value={item.value} decimals={1} /> {item.operator} <AnimatedNumber value={item.threshold} decimals={1} />
             </p>
           </div>
         </div>
@@ -577,10 +582,10 @@ export default function SparkDataPage() {
       )}
 
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard icon={Database} label="Fenetres chargees" value={String(allWindows.length)} tone="bg-blue-50 text-blue-600" />
-        <StatCard icon={Gauge} label="Latence moyenne" value={formatLatency(averageLatency)} tone="bg-emerald-50 text-emerald-600" />
-        <StatCard icon={Bell} label="Alertes Spark" value={String(sparkAlerts.length)} tone="bg-amber-50 text-amber-600" />
-        <StatCard icon={AlertTriangle} label="Erreurs JSON" value={String(sparkErrors.length)} tone="bg-rose-50 text-rose-600" />
+        <StatCard icon={Database} label="Fenetres chargees" value={allWindows.length} tone="bg-blue-50 text-blue-600" />
+        <StatCard icon={Gauge} label="Latence moyenne" value={averageLatency} decimals={1} suffix="s" tone="bg-emerald-50 text-emerald-600" />
+        <StatCard icon={Bell} label="Alertes Spark" value={sparkAlerts.length} tone="bg-amber-50 text-amber-600" />
+        <StatCard icon={AlertTriangle} label="Erreurs JSON" value={sparkErrors.length} tone="bg-rose-50 text-rose-600" />
       </div>
 
       <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">

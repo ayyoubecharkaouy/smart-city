@@ -18,6 +18,7 @@ import {
   Legend,
 } from "recharts";
 import { Loader } from "lucide-react";
+import AnimatedNumber from "@/components/AnimatedNumber";
 
 export type ChartType =
   | "column"
@@ -391,7 +392,7 @@ export default function AnalyticsChart({
 
                       <td className="px-5 py-4 text-right">
                         <span className="font-mono text-sm font-extrabold tabular-nums text-slate-900">
-                          {Number(row[yAxisKey] ?? 0).toLocaleString()}
+                          <AnimatedNumber value={Number(row[yAxisKey] ?? 0)} decimals={2} />
                         </span>
 
                         {unit && (

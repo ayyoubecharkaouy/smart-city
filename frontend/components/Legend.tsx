@@ -2,6 +2,7 @@
 
 import { type MetricKey, METRICS, type ZoneProperties } from "@/data/zones";
 import { getTrafficColor, getTrafficLabel } from "@/data/routes";
+import AnimatedNumber from "@/components/AnimatedNumber";
 
 interface LegendProps {
   activeMetric: MetricKey;
@@ -47,13 +48,13 @@ export default function Legend({
         </div>
         <div className="flex justify-between mt-1">
           <span className="text-xs text-gray-500">
-            {min.toLocaleString("fr-FR")}
+            <AnimatedNumber value={min} />
           </span>
           <span className="text-xs text-gray-500">
-            {Math.round((min + max) / 2).toLocaleString("fr-FR")}
+            <AnimatedNumber value={(min + max) / 2} />
           </span>
           <span className="text-xs text-gray-500">
-            {max.toLocaleString("fr-FR")}
+            <AnimatedNumber value={max} />
           </span>
         </div>
       </div>

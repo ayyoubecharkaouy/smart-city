@@ -5,6 +5,7 @@ import type { DistrictTemperature } from "@/lib/types";
 import { getTemperatureLevel, getTemperatureLevelColor } from "@/lib/types";
 import TrendChart from "./TrendChart";
 import { useMemo } from "react";
+import AnimatedNumber from "@/components/AnimatedNumber";
 
 interface TemperatureStatsProps {
   districtStats: Map<string, DistrictTemperature>;
@@ -67,7 +68,7 @@ export default function TemperatureStats({
             Évolution 24h
           </h3>
           <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full uppercase">
-            {combinedHistory.length} Points
+            <AnimatedNumber value={combinedHistory.length} /> Points
           </span>
         </div>
         <TrendChart
@@ -109,12 +110,12 @@ export default function TemperatureStats({
           <>
             <div className="flex items-center justify-between text-sm text-gray-800 mb-4 px-4">
               <span className="font-medium text-gray-500">
-                {totalSensors} capteurs actifs
+                <AnimatedNumber value={totalSensors} /> capteurs actifs
               </span>
               {criticalZones > 0 && (
                 <span className="text-red-600 font-bold flex items-center gap-1">
                   <AlertTriangle className="w-4 h-4" />
-                  {criticalZones} zone{criticalZones > 1 ? "s" : ""} critique
+                  <AnimatedNumber value={criticalZones} /> zone{criticalZones > 1 ? "s" : ""} critique
                 </span>
               )}
             </div>
@@ -137,11 +138,11 @@ export default function TemperatureStats({
                         <span className="text-base font-semibold text-gray-900 truncate">
                         {d.district}
                       </span>
-                      <span className="text-xs text-gray-700">{d.sensor_count} capteurs</span>
+                      <span className="text-xs text-gray-700"><AnimatedNumber value={d.sensor_count} /> capteurs</span>
                       </div>
                       <div className="flex items-center gap-3">
                         <span className="text-xl font-black text-gray-900">
-                          {d.avg_temperature.toFixed(1)} <span className="text-sm text-gray-800">°C</span>
+                          <AnimatedNumber value={d.avg_temperature} decimals={1} /> <span className="text-sm text-gray-800">°C</span>
                         </span>
                       </div>
                     </div>

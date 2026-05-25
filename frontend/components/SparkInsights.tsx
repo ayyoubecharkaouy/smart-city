@@ -5,6 +5,7 @@ import { useSparkData } from "@/hooks/useSparkData";
 import { Activity, AlertTriangle, Droplet } from "lucide-react";
 import Image from "next/image";
 import StateNotice from "./StateNotice";
+import AnimatedNumber from "@/components/AnimatedNumber";
 
 function formatTime(value?: string): string {
   if (!value) return "--:--:--";
@@ -17,12 +18,12 @@ function formatTime(value?: string): string {
   });
 }
 
-function formatLatency(processedAt?: string, sourceAt?: string): string {
-  if (!processedAt || !sourceAt) return "Latence: --";
+function getLatencySeconds(processedAt?: string, sourceAt?: string): number | null {
+  if (!processedAt || !sourceAt) return null;
   const processedTime = new Date(processedAt).getTime();
   const sourceTime = new Date(sourceAt).getTime();
-  if (Number.isNaN(processedTime) || Number.isNaN(sourceTime)) return "Latence: --";
-  return `Latence: ${Math.max(0, (processedTime - sourceTime) / 1000).toFixed(1)}s`;
+  if (Number.isNaN(processedTime) || Number.isNaN(sourceTime)) return null;
+  return Math.max(0, (processedTime - sourceTime) / 1000);
 }
 
 const SparkInsights = memo(() => {
@@ -83,7 +84,7 @@ const SparkInsights = memo(() => {
                   </p>
                 </div>
                 <span className="shrink-0 text-[10px] font-black text-amber-800">
-                  {Number(item.value).toFixed(1)} {item.operator} {Number(item.threshold).toFixed(1)}
+                  <AnimatedNumber value={item.value} decimals={1} /> {item.operator} <AnimatedNumber value={item.threshold} decimals={1} />
                 </span>
               </div>
             ))}
@@ -122,21 +123,21 @@ const SparkInsights = memo(() => {
           {trafficData.map((t, i) => (
             <div key={i} className="flex flex-wrap justify-between items-center gap-2 py-1 border-b border-gray-100 last:border-0">
               <span className="truncate w-24 text-gray-700">{t.route_id}</span>
-              <span className="font-semibold text-blue-600">{t.avg_speed ? t.avg_speed.toFixed(1) : 0} km/h</span>
+              <span className="font-semibold text-blue-600"><AnimatedNumber value={t.avg_speed || 0} decimals={1} suffix=" km/h" /></span>
               <span className="text-[9px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded">
-                Congestion max: {t.max_congestion ? t.max_congestion.toFixed(1) : 0}
+                Congestion max: <AnimatedNumber value={t.max_congestion || 0} decimals={1} />
               </span>
               <span className="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
-                Véhicules moy.: {t.avg_vehicle_count ? t.avg_vehicle_count.toFixed(0) : 0}
+                Véhicules moy.: <AnimatedNumber value={t.avg_vehicle_count || 0} />
               </span>
               <span className="text-[9px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">
-                Min: {t.min_speed ? t.min_speed.toFixed(1) : 0} km/h
+                Min: <AnimatedNumber value={t.min_speed || 0} decimals={1} suffix=" km/h" />
               </span>
               <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
                 Spark: {formatTime(t.processed_at)}
               </span>
               <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
-                {formatLatency(t.processed_at, t.window?.end)}
+                Latence: {getLatencySeconds(t.processed_at, t.window?.end) === null ? "--" : <AnimatedNumber value={getLatencySeconds(t.processed_at, t.window?.end)} decimals={1} suffix="s" />}
               </span>
             </div>
           ))}
@@ -152,12 +153,12 @@ const SparkInsights = memo(() => {
           {envData.map((e, i) => (
             <div key={i} className="flex flex-wrap justify-between items-center gap-2 py-1 border-b border-gray-100 last:border-0">
               <span className="truncate w-24 text-gray-700">{e.district}</span>
-              <span className="font-semibold text-orange-500">{e.avg_temperature ? e.avg_temperature.toFixed(1) : 0}°C</span>
+              <span className="font-semibold text-orange-500"><AnimatedNumber value={e.avg_temperature || 0} decimals={1} suffix="°C" /></span>
               <span className="text-[9px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
-                AQI: {e.avg_air_quality ? e.avg_air_quality.toFixed(0) : 0}
+                AQI: <AnimatedNumber value={e.avg_air_quality || 0} />
               </span>
               <span className="text-[9px] bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">
-                {e.min_temperature ? e.min_temperature.toFixed(1) : 0}-{e.max_temperature ? e.max_temperature.toFixed(1) : 0}°C
+                <AnimatedNumber value={e.min_temperature || 0} decimals={1} />-<AnimatedNumber value={e.max_temperature || 0} decimals={1} suffix="°C" />
               </span>
               <span className="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
                 {e.temperature_trend || "stable"}
@@ -166,7 +167,7 @@ const SparkInsights = memo(() => {
                 Spark: {formatTime(e.processed_at)}
               </span>
               <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
-                {formatLatency(e.processed_at, e.window?.end)}
+                Latence: {getLatencySeconds(e.processed_at, e.window?.end) === null ? "--" : <AnimatedNumber value={getLatencySeconds(e.processed_at, e.window?.end)} decimals={1} suffix="s" />}
               </span>
             </div>
           ))}
@@ -182,21 +183,21 @@ const SparkInsights = memo(() => {
           {waterData.map((w, i) => (
             <div key={i} className="flex flex-wrap justify-between items-center gap-2 py-1 border-b border-gray-100 last:border-0">
               <span className="truncate w-24 text-gray-700">{w.district}</span>
-              <span className="font-semibold text-blue-500">{w.avg_flow_rate ? w.avg_flow_rate.toFixed(1) : 0} L/m</span>
+              <span className="font-semibold text-blue-500"><AnimatedNumber value={w.avg_flow_rate || 0} decimals={1} suffix=" L/m" /></span>
               <span className="text-[9px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">
-                pH: {w.avg_ph ? w.avg_ph.toFixed(1) : 0}
+                pH: <AnimatedNumber value={w.avg_ph || 0} decimals={1} />
               </span>
               <span className="text-[9px] bg-cyan-100 text-cyan-700 px-1.5 py-0.5 rounded">
-                Total: {w.total_flow_rate ? w.total_flow_rate.toFixed(1) : 0}
+                Total: <AnimatedNumber value={w.total_flow_rate || 0} decimals={1} />
               </span>
               <span className={`text-[9px] px-1.5 py-0.5 rounded ${w.sudden_flow_drop ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700"}`}>
-                Score: {w.water_quality_score ? w.water_quality_score.toFixed(0) : 0}
+                Score: <AnimatedNumber value={w.water_quality_score || 0} />
               </span>
               <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
                 Spark: {formatTime(w.processed_at)}
               </span>
               <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
-                {formatLatency(w.processed_at, w.window?.end)}
+                Latence: {getLatencySeconds(w.processed_at, w.window?.end) === null ? "--" : <AnimatedNumber value={getLatencySeconds(w.processed_at, w.window?.end)} decimals={1} suffix="s" />}
               </span>
             </div>
           ))}

@@ -24,6 +24,7 @@ import { useWaterData } from "@/hooks/useWaterData";
 import { useTrafficData } from "@/hooks/useTrafficData";
 import AnalyticsChart, { ChartType } from "@/components/AnalyticsChart";
 import StateNotice from "@/components/StateNotice";
+import AnimatedNumber from "@/components/AnimatedNumber";
 import {
   ANALYTICS_DEFAULT_PERIOD,
   ANALYTICS_METRICS,
@@ -557,7 +558,7 @@ export default function AnalyticsPage() {
                   Total Points
                 </span>
                 <span className="text-sm font-bold text-gray-700">
-                  {chartConfig.data.length} enregistrements
+                  <AnimatedNumber value={chartConfig.data.length} /> enregistrements
                 </span>
               </div>
               <div className="flex flex-col">

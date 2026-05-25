@@ -5,6 +5,7 @@ import { Wifi, WifiOff, TrendingUp, Activity } from "lucide-react";
 import type { DistrictWater } from "@/lib/types";
 import { getPhColor } from "@/lib/types";
 import TrendChart from "./TrendChart";
+import AnimatedNumber from "@/components/AnimatedNumber";
 
 interface WaterStatsProps {
   districtStats: Map<string, DistrictWater>;
@@ -86,7 +87,7 @@ export default function WaterStats({
                   Volume Total
                 </span>
                 <span className="text-xl font-black text-blue-800">
-                  {totalVolume.toFixed(1)} L
+                  <AnimatedNumber value={totalVolume} decimals={1} suffix=" L" />
                 </span>
               </div>
               <div className="bg-cyan-50 p-3 rounded-4xl text-center border border-cyan-100">
@@ -94,7 +95,7 @@ export default function WaterStats({
                   Débit Moyen
                 </span>
                 <span className="text-xl font-black text-cyan-800">
-                  {avgFlow.toFixed(1)}
+                  <AnimatedNumber value={avgFlow} decimals={1} />
                 </span>
               </div>
             </div>
@@ -116,7 +117,7 @@ export default function WaterStats({
                         <div className="flex items-center gap-1.5 px-2 py-0.5 bg-gray-50 rounded-full border border-gray-100">
                           <Activity className="w-3 h-3 text-gray-400" />
                           <span className="text-[10px] font-bold text-gray-500 uppercase">
-                            {d.sensor_count} Sensors
+                            <AnimatedNumber value={d.sensor_count} /> Sensors
                           </span>
                         </div>
                       </div>
@@ -127,12 +128,12 @@ export default function WaterStats({
                             style={{ backgroundColor: phColor }}
                           />
                           <span className="text-base font-black text-gray-500">
-                            <span className="text-sm">pH</span> {d.avg_ph.toFixed(2)}
+                            <span className="text-sm">pH</span> <AnimatedNumber value={d.avg_ph} decimals={2} />
                           </span>
                         </div>
                         <span>|</span>
                         <span className="text-base font-black text-blue-600">
-                          {d.avg_flow.toFixed(2)}{" "}
+                          <AnimatedNumber value={d.avg_flow} decimals={2} />{" "}
                           <span className="text-[10px]">L/min</span>
                         </span>
                       </div>

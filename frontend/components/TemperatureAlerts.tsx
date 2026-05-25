@@ -2,6 +2,7 @@
 
 import { AlertTriangle, Thermometer, Check } from "lucide-react";
 import type { TemperatureAlert } from "@/lib/types";
+import AnimatedNumber from "@/components/AnimatedNumber";
 
 interface TemperatureAlertsProps {
   alerts: TemperatureAlert[];
@@ -27,7 +28,7 @@ export default function TemperatureAlerts({
         </h3>
         {activeAlerts.length > 0 && (
           <span className="text-xs font-bold bg-red-500 text-white px-2 py-0.5 rounded-full animate-pulse">
-            {activeAlerts.length}
+            <AnimatedNumber value={activeAlerts.length} />
           </span>
         )}
       </div>
@@ -54,10 +55,9 @@ export default function TemperatureAlerts({
               <div className="min-w-0">
                 <p className="text-xs font-semibold text-gray-800 truncate">
                   {alert.district ?? "—"} —{" "}
-                  {alert.temperature != null
-                    ? alert.temperature.toFixed(1)
-                    : "N/A"}
-                  °C
+                  {alert.temperature != null ? (
+                    <AnimatedNumber value={alert.temperature} decimals={1} suffix="°C" />
+                  ) : "N/A"}
                 </p>
                 <p className="text-xs text-gray-500 truncate">
                   {alert.sensor_id} ·{" "}

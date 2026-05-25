@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useSparkData } from "@/hooks/useSparkData";
 import { useTemperatureData } from "@/hooks/useTemperatureData";
+import AnimatedNumber from "@/components/AnimatedNumber";
 import {
   PERIOD_OPTIONS,
   PERIOD_HOURS,
@@ -166,7 +167,13 @@ export default function AlertsPage() {
         </div>
         <div className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-bold ${connected ? "border-emerald-100 bg-emerald-50 text-emerald-700" : "border-amber-100 bg-amber-50 text-amber-700"}`}>
           {connected ? <Wifi className="w-4 h-4" /> : <WifiOff className="w-4 h-4" />}
-          {connected ? `Socket connecte · ${eventCount} evenements · ${lastEvent || "--"}` : reconnecting ? `Reconnexion ${reconnectAttempt}` : "Socket hors ligne"}
+          {connected ? (
+            <>
+              Socket connecte · <AnimatedNumber value={eventCount} /> evenements · {lastEvent || "--"}
+            </>
+          ) : reconnecting ? (
+            <>Reconnexion <AnimatedNumber value={reconnectAttempt} /></>
+          ) : "Socket hors ligne"}
         </div>
       </header>
 
@@ -185,7 +192,7 @@ export default function AlertsPage() {
                     onClick={() => setDomainFilter(option.value)}
                     className={`rounded-xl border px-3 py-2 text-xs font-black transition-colors ${domainFilter === option.value ? "border-gray-900 bg-gray-900 text-white" : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"}`}
                   >
-                    {option.label} ({domainCounts[option.value]})
+                    {option.label} (<AnimatedNumber value={domainCounts[option.value]} />)
                   </button>
                 ))}
               </div>
@@ -337,7 +344,7 @@ export default function AlertsPage() {
                             Valeur / seuil
                           </p>
                           <p className="text-lg font-black text-amber-900">
-                            {Number(alert.value).toFixed(1)} {alert.operator} {Number(alert.threshold).toFixed(1)}
+                            <AnimatedNumber value={alert.value} decimals={1} /> {alert.operator} <AnimatedNumber value={alert.threshold} decimals={1} />
                           </p>
                         </div>
                       </div>
@@ -372,7 +379,7 @@ export default function AlertsPage() {
                         </div>
                         <div>
                           <h4 className="text-lg font-bold text-gray-900">
-                            Temperature critique : {alert.temperature}°C
+                            Temperature critique : <AnimatedNumber value={alert.temperature} decimals={1} suffix="°C" />
                           </h4>
                           <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-gray-400 font-medium">
                             <span className="flex items-center gap-1">
@@ -411,19 +418,19 @@ export default function AlertsPage() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-bold text-gray-400">Total</span>
-                <span className="text-xl font-black">{domainCounts.all}</span>
+                <span className="text-xl font-black"><AnimatedNumber value={domainCounts.all} /></span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-bold text-gray-400">Pollution</span>
-                <span className="text-xl font-black">{domainCounts.environment}</span>
+                <span className="text-xl font-black"><AnimatedNumber value={domainCounts.environment} /></span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-bold text-gray-400">Congestion</span>
-                <span className="text-xl font-black">{domainCounts.traffic}</span>
+                <span className="text-xl font-black"><AnimatedNumber value={domainCounts.traffic} /></span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-bold text-gray-400">Eau</span>
-                <span className="text-xl font-black">{domainCounts.water}</span>
+                <span className="text-xl font-black"><AnimatedNumber value={domainCounts.water} /></span>
               </div>
             </div>
           </div>

@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { Wifi, WifiOff, TrendingUp } from "lucide-react";
 import type { DistrictTemperature } from "@/lib/types";
 import TrendChart from "./TrendChart";
+import AnimatedNumber from "@/components/AnimatedNumber";
 
 interface AirQualityStatsProps {
   districtStats: Map<string, DistrictTemperature>;
@@ -109,7 +110,7 @@ export default function AirQualityStats({
                     </span>
                     <div className="flex items-center gap-3">
                       <span className="text-base font-black text-gray-900">
-                        {Math.round(aqi)}
+                        <AnimatedNumber value={aqi} />
                       </span>
                       <span
                         className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase"

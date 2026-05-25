@@ -13,11 +13,13 @@ import { useTemperatureData } from "@/hooks/useTemperatureData";
 import { useWaterData } from "@/hooks/useWaterData";
 import { useTrafficData } from "@/hooks/useTrafficData";
 import StateNotice from "@/components/StateNotice";
+import AnimatedNumber from "@/components/AnimatedNumber";
 
 function MetricCard({
   title,
   value,
   unit,
+  decimals = 0,
   icon: Icon,
   trend,
   colorClass,
@@ -25,6 +27,7 @@ function MetricCard({
   title: string;
   value: string | number;
   unit: string;
+  decimals?: number;
   icon: LucideIcon;
   trend: number;
   colorClass: string;
@@ -44,7 +47,7 @@ function MetricCard({
             ) : (
               <ArrowDownRight className="w-4 h-4" />
             )}
-            {trend}%
+            <AnimatedNumber value={trend} decimals={1} suffix="%" />
           </div>
         )}
       </div>
@@ -53,7 +56,9 @@ function MetricCard({
           {title}
         </p>
         <div className="flex items-baseline gap-1">
-          <h3 className="text-3xl font-black text-gray-900">{value}</h3>
+          <h3 className="text-3xl font-black text-gray-900">
+            <AnimatedNumber value={value} decimals={decimals} />
+          </h3>
           <span className="text-sm font-bold text-gray-400">{unit}</span>
         </div>
       </div>
@@ -194,7 +199,8 @@ export default function Overview() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 mb-10">
         <MetricCard
           title="Température Moy."
-          value={avgTemp.toFixed(1)}
+          value={avgTemp}
+          decimals={1}
           unit="°C"
           icon={Thermometer}
           trend={tempTrend}
@@ -202,7 +208,7 @@ export default function Overview() {
         />
         <MetricCard
           title="Qualité de l'Air"
-          value={Math.round(avgAqi)}
+          value={avgAqi}
           unit="AQI"
           icon={Activity}
           trend={aqiTrend}
@@ -210,7 +216,7 @@ export default function Overview() {
         />
         <MetricCard
           title="Consommation Eau"
-          value={totalFlow.toFixed(0)}
+          value={totalFlow}
           unit="L/min"
           icon={Droplets}
           trend={flowTrend}
@@ -218,7 +224,7 @@ export default function Overview() {
         />
         <MetricCard
           title="Trafic Actuel"
-          value={totalVehicles.toLocaleString()}
+          value={totalVehicles}
           unit="véhicules"
           icon={Car}
           trend={trafficTrend}
