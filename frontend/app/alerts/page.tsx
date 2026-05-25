@@ -66,7 +66,7 @@ function formatDate(value?: string): string {
 export default function AlertsPage() {
   const [domainFilter, setDomainFilter] = useState<AlertDomain>("all");
   const { alerts, acknowledgeAlert } = useTemperatureData();
-  const { sparkAlerts, connected, error } = useSparkData();
+  const { sparkAlerts, connected, reconnecting, reconnectAttempt, lastEvent, eventCount, error } = useSparkData();
 
   const filteredSparkAlerts = useMemo(() => {
     if (domainFilter === "all") return sparkAlerts;
@@ -99,7 +99,7 @@ export default function AlertsPage() {
         </div>
         <div className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-bold ${connected ? "border-emerald-100 bg-emerald-50 text-emerald-700" : "border-amber-100 bg-amber-50 text-amber-700"}`}>
           {connected ? <Wifi className="w-4 h-4" /> : <WifiOff className="w-4 h-4" />}
-          {connected ? "Socket connecte" : "Socket hors ligne"}
+          {connected ? `Socket connecte · ${eventCount} evenements · ${lastEvent || "--"}` : reconnecting ? `Reconnexion ${reconnectAttempt}` : "Socket hors ligne"}
         </div>
       </header>
 

@@ -71,6 +71,11 @@ function formatLatency(value: number | null): string {
   return value === null ? "--" : `${value.toFixed(1)}s`;
 }
 
+function chartValue(value: unknown): number | null {
+  const numericValue = Number(value);
+  return Number.isFinite(numericValue) ? numericValue : null;
+}
+
 function StatCard({
   icon: Icon,
   label,
@@ -83,7 +88,7 @@ function StatCard({
   tone: string;
 }) {
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white p-4">
+    <div className="rounded-2xl border border-gray-100 p-4">
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-[10px] font-black uppercase text-gray-400">{label}</p>
@@ -114,7 +119,7 @@ function SparkChartCard({
   children: ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white p-4">
+    <div className="rounded-2xl border border-gray-100 p-4">
       <h3 className="mb-4 text-sm font-black text-gray-900">{title}</h3>
       <div className="h-64 w-full">{children}</div>
     </div>
@@ -342,7 +347,20 @@ function ErrorsTable({ data }: { data: SparkErrorData[] }) {
 
 export default function SparkDataPage() {
   const [activeTab, setActiveTab] = useState<SparkTab>("environment");
-  const { envData, waterData, trafficData, sparkAlerts, sparkErrors, connected, error } = useSparkData();
+  const {
+    envData,
+    waterData,
+    trafficData,
+    sparkAlerts,
+    sparkErrors,
+    connected,
+    reconnecting,
+    reconnectAttempt,
+    lastEvent,
+    eventCount,
+    socketError,
+    error,
+  } = useSparkData();
 
   const allWindows = useMemo(
     () => [...envData, ...waterData, ...trafficData],
@@ -377,10 +395,12 @@ export default function SparkDataPage() {
     value: Number(item.avg_temperature) || 0,
   }));
 
-  const aqiChartData = envData.map(item => ({
-    name: item.district,
-    value: Number(item.max_air_quality) || 0,
-  }));
+  const aqiChartData = envData
+    .map(item => {
+      const value = chartValue(item.max_air_quality);
+      return value === null ? null : { name: item.district, value };
+    })
+    .filter((item): item is { name: string; value: number } => item !== null);
 
   const congestionChartData = trafficData.map(item => ({
     name: item.route_id,
@@ -392,10 +412,12 @@ export default function SparkDataPage() {
     value: Number(item.avg_flow_rate) || 0,
   }));
 
-  const waterScoreChartData = waterData.map(item => ({
-    name: item.district,
-    value: Number(item.water_quality_score) || 0,
-  }));
+  const waterScoreChartData = waterData
+    .map(item => {
+      const value = chartValue(item.water_quality_score);
+      return value === null ? null : { name: item.district, value };
+    })
+    .filter((item): item is { name: string; value: number } => item !== null);
 
   const latencyChartData = allWindows
     .map(item => {
@@ -411,7 +433,7 @@ export default function SparkDataPage() {
     .slice(-20);
 
   return (
-    <div className="p-8 max-w-7xl mx-auto w-full">
+    <div className="p-2 mx-auto w-full">
       <header className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-3">
           <Image src="/images/logos/spark.png" alt="Spark" width={120} height={120} className="h-20 w-auto" />
@@ -426,7 +448,7 @@ export default function SparkDataPage() {
         </div>
         <div className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-bold ${connected ? "border-emerald-100 bg-emerald-50 text-emerald-700" : "border-amber-100 bg-amber-50 text-amber-700"}`}>
           {connected ? <Wifi className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />}
-          {connected ? "Backend temps reel connecte" : "Backend temps reel hors ligne"}
+          {connected ? "Backend temps reel connecte" : reconnecting ? `Reconnexion ${reconnectAttempt}` : "Backend temps reel hors ligne"}
         </div>
       </header>
 
@@ -444,26 +466,30 @@ export default function SparkDataPage() {
       </div>
 
       <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="rounded-2xl border border-gray-100 bg-white p-5">
+        <div className="rounded-2xl border border-gray-100 p-5">
           <h3 className="mb-3 flex items-center gap-2 text-sm font-black uppercase text-gray-400">
             <Cpu className="h-4 w-4" /> Spark
           </h3>
           <p className="text-lg font-black text-gray-900">{allWindows.length > 0 ? "Actif" : "En attente"}</p>
           <p className="mt-1 text-sm font-medium text-gray-500">Dernier traitement : {formatTime(latestProcessedAt)}</p>
         </div>
-        <div className="rounded-2xl border border-gray-100 bg-white p-5">
+        <div className="rounded-2xl border border-gray-100 p-5">
           <h3 className="mb-3 flex items-center gap-2 text-sm font-black uppercase text-gray-400">
             <Server className="h-4 w-4" /> Backend
           </h3>
           <p className="text-lg font-black text-gray-900">{connected ? "Connecte" : "Hors ligne"}</p>
-          <p className="mt-1 text-sm font-medium text-gray-500">Socket.IO et historique API</p>
+          <p className="mt-1 text-sm font-medium text-gray-500">
+            {socketError ? `Erreur: ${socketError}` : "Socket.IO et historique API"}
+          </p>
         </div>
-        <div className="rounded-2xl border border-gray-100 bg-white p-5">
+        <div className="rounded-2xl border border-gray-100 p-5">
           <h3 className="mb-3 flex items-center gap-2 text-sm font-black uppercase text-gray-400">
             <Wifi className="h-4 w-4" /> Kafka
           </h3>
           <p className="text-lg font-black text-gray-900">{allWindows.length + sparkAlerts.length + sparkErrors.length > 0 ? "Messages recus" : "Aucun message"}</p>
-          <p className="mt-1 text-sm font-medium text-gray-500">Statut infere depuis les flux Spark</p>
+          <p className="mt-1 text-sm font-medium text-gray-500">
+            {eventCount} evenements, dernier: {lastEvent || "--"}
+          </p>
         </div>
       </div>
 
@@ -496,7 +522,7 @@ export default function SparkDataPage() {
         </div>
       </div>
 
-      <div className="rounded-3xl border border-gray-100 bg-white">
+      <div className="rounded-3xl border border-gray-100">
         <div className="border-b border-gray-100 p-4">
           <div className="flex flex-wrap gap-2">
             {tabs.map(tab => {
@@ -505,7 +531,7 @@ export default function SparkDataPage() {
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-black transition-colors ${activeTab === tab.key ? "border-gray-900 bg-gray-900 text-white" : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"}`}
+                  className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-black transition-colors ${activeTab === tab.key ? "border-gray-900 bg-gray-900 text-white" : "border-gray-200 text-gray-600 hover:bg-gray-50"}`}
                 >
                   <Icon className="h-4 w-4" />
                   {tab.label}

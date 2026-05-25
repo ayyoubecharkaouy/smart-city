@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { getSocket } from "@/lib/socket";
+import { useSocketStatus } from "@/hooks/useSocketStatus";
 import type {
   SparkAlertData,
   SparkEnvironmentData,
@@ -43,8 +44,8 @@ export function useSparkData() {
   const [trafficData, setTrafficData] = useState<SparkTrafficData[]>([]);
   const [sparkErrors, setSparkErrors] = useState<SparkErrorData[]>([]);
   const [sparkAlerts, setSparkAlerts] = useState<SparkAlertData[]>([]);
-  const [connected, setConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const socketStatus = useSocketStatus();
 
   const fetchInitialData = useCallback(async (signal?: AbortSignal) => {
     setError(null);
@@ -91,16 +92,6 @@ export function useSparkData() {
       void fetchInitialData(controller.signal);
     }, 0);
     const socket = getSocket();
-
-    const handleConnect = () => {
-      setConnected(true);
-      setError(null);
-    };
-    const handleDisconnect = () => setConnected(false);
-    const handleConnectError = () => {
-      setConnected(false);
-      setError("Impossible de joindre le backend Socket.IO");
-    };
 
     const handleEnvironment = (payload: unknown) => {
       const data = parseSparkPayload<SparkEnvironmentData>(payload);
@@ -150,13 +141,6 @@ export function useSparkData() {
       setSparkAlerts(prev => [data, ...prev].slice(0, 100));
     };
 
-    const connectedTimeout = window.setTimeout(() => {
-      setConnected(socket.connected);
-    }, 0);
-
-    socket.on("connect", handleConnect);
-    socket.on("disconnect", handleDisconnect);
-    socket.on("connect_error", handleConnectError);
     socket.on("spark:environment", handleEnvironment);
     socket.on("spark:water", handleWater);
     socket.on("spark:traffic", handleTraffic);
@@ -165,16 +149,12 @@ export function useSparkData() {
 
     return () => {
       controller.abort();
-      socket.off("connect", handleConnect);
-      socket.off("disconnect", handleDisconnect);
-      socket.off("connect_error", handleConnectError);
       socket.off("spark:environment", handleEnvironment);
       socket.off("spark:water", handleWater);
       socket.off("spark:traffic", handleTraffic);
       socket.off("spark:error", handleError);
       socket.off("spark:alert", handleAlert);
       window.clearTimeout(fetchTimeout);
-      window.clearTimeout(connectedTimeout);
     };
   }, [fetchInitialData]);
 
@@ -184,7 +164,12 @@ export function useSparkData() {
     trafficData,
     sparkErrors,
     sparkAlerts,
-    connected,
-    error,
+    connected: socketStatus.connected,
+    reconnecting: socketStatus.reconnecting,
+    reconnectAttempt: socketStatus.reconnectAttempt,
+    lastEvent: socketStatus.lastEvent,
+    eventCount: socketStatus.eventCount,
+    socketError: socketStatus.error,
+    error: error ?? socketStatus.error,
   };
 }
