@@ -12,13 +12,14 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useState, useEffect } from "react";
+import { APP_ROUTES } from "@/lib/constants";
 
 const navItems = [
-  { label: "Vue d'ensemble", icon: LayoutDashboard, href: "/" },
-  { label: "Carte Interactive", icon: MapIcon, href: "/map" },
-  { label: "Données Spark", icon: Star, href: "/spark" },
-  { label: "Analytiques", icon: LineChart, href: "/analytics" },
-  { label: "Alertes", icon: Bell, href: "/alerts" },
+  { label: "Vue d'ensemble", icon: LayoutDashboard, href: APP_ROUTES.home },
+  { label: "Carte Interactive", icon: MapIcon, href: APP_ROUTES.map },
+  { label: "Données Spark", icon: Star, href: APP_ROUTES.spark },
+  { label: "Analytiques", icon: LineChart, href: APP_ROUTES.analytics },
+  { label: "Alertes", icon: Bell, href: APP_ROUTES.alerts },
 ];
 
 export default function Sidebar() {

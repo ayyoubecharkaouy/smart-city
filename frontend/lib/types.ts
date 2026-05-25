@@ -1,3 +1,5 @@
+import { UI_COLORS } from "@/lib/constants";
+
 /**
  * Raw temperature reading from a sensor (via Kafka → Backend → Socket.IO)
  */
@@ -64,13 +66,13 @@ export function getTemperatureLevel(temp: number): number {
 export function getTemperatureLevelColor(level: number): string {
   switch (level) {
     case 0:
-      return "#3b82f6"; // blue
+      return UI_COLORS.blue;
     case 1:
-      return "#f59e0b"; // amber
+      return UI_COLORS.warning;
     case 2:
-      return "#ef4444"; // red
+      return UI_COLORS.danger;
     default:
-      return "#3b82f6";
+      return UI_COLORS.blue;
   }
 }
 
@@ -111,9 +113,9 @@ export function getTemperatureFillColor(temp: number): string {
     { t: 10, c: "#93c5fd" }, // blue-300
     { t: 15, c: "#60a5fa" }, // blue-400
     { t: 20, c: "#fbbf24" }, // yellow-400
-    { t: 25, c: "#f59e0b" }, // amber-500
-    { t: 30, c: "#f97316" }, // orange-500
-    { t: 35, c: "#ef4444" }, // red-500
+    { t: 25, c: UI_COLORS.warning },
+    { t: 30, c: UI_COLORS.orange },
+    { t: 35, c: UI_COLORS.danger },
     { t: 40, c: "#dc2626" }, // red-600
   ];
 
@@ -134,13 +136,13 @@ export function getTemperatureFillColor(temp: number): string {
 
 export function getAqiFillColor(aqi: number): string {
   const stops = [
-    { t: 0, c: "#22c55e" },   // green-500 (Good)
-    { t: 50, c: "#84cc16" },  // lime-500
+    { t: 0, c: UI_COLORS.success },
+    { t: 50, c: UI_COLORS.lime },
     { t: 100, c: "#eab308" }, // yellow-500 (Moderate)
-    { t: 150, c: "#f97316" }, // orange-500 (Unhealthy for Sensitive)
-    { t: 200, c: "#ef4444" }, // red-500 (Unhealthy)
-    { t: 300, c: "#a855f7" }, // purple-500 (Very Unhealthy)
-    { t: 400, c: "#7f1d1d" }, // red-900 (Hazardous)
+    { t: 150, c: UI_COLORS.orange },
+    { t: 200, c: UI_COLORS.danger },
+    { t: 300, c: UI_COLORS.purple },
+    { t: 400, c: UI_COLORS.darkDanger },
   ];
 
   if (aqi <= stops[0].t) return stops[0].c;
@@ -168,7 +170,7 @@ export function getAqiLevel(aqi: number): number {
 }
 
 export function getAqiLevelColor(level: number): string {
-  const colors = ["#22c55e", "#84cc16", "#eab308", "#f97316", "#ef4444", "#7f1d1d"];
+  const colors = [UI_COLORS.success, UI_COLORS.lime, "#eab308", UI_COLORS.orange, UI_COLORS.danger, UI_COLORS.darkDanger];
   return colors[level] || colors[0];
 }
 
@@ -302,12 +304,12 @@ export interface RouteTrafficStats {
 
 export function getTrafficStatusColor(status: TrafficStatus): string {
   const map: Record<TrafficStatus, string> = {
-    fluide: "#22c55e",
-    dense: "#f59e0b",
-    congestion: "#f97316",
-    forte_congestion: "#ef4444",
+    fluide: UI_COLORS.success,
+    dense: UI_COLORS.warning,
+    congestion: UI_COLORS.orange,
+    forte_congestion: UI_COLORS.danger,
   };
-  return map[status] || "#22c55e";
+  return map[status] || UI_COLORS.success;
 }
 
 export function getTrafficStatusLabel(status: TrafficStatus): string {
@@ -326,7 +328,7 @@ export function getTrafficStatusLevel(status: TrafficStatus): number {
 }
 
 export function getTrafficStatusLevelColor(level: number): string {
-  const colors = ["#22c55e", "#f59e0b", "#f97316", "#ef4444"];
+  const colors = [UI_COLORS.success, UI_COLORS.warning, UI_COLORS.orange, UI_COLORS.danger];
   return colors[level] || colors[0];
 }
 

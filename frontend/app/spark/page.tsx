@@ -11,6 +11,11 @@ import type {
   SparkWaterData,
 } from "@/lib/types";
 import {
+  PERIOD_OPTIONS,
+  SPARK_CHART_COLORS,
+  SPARK_THRESHOLDS,
+} from "@/lib/constants";
+import {
   Activity,
   AlertTriangle,
   Bell,
@@ -18,7 +23,9 @@ import {
   Database,
   Droplet,
   Factory,
+  Filter,
   Gauge,
+  RotateCcw,
   Server,
   Wifi,
   WifiOff,
@@ -37,6 +44,8 @@ import {
 } from "recharts";
 
 type SparkTab = "environment" | "water" | "traffic" | "alerts" | "errors";
+type PeriodFilter = "all" | "1h" | "6h" | "24h";
+type CriticalFilter = "all" | "critical";
 
 const tabs: { key: SparkTab; label: string; icon: typeof Activity }[] = [
   { key: "environment", label: "Environnement", icon: Factory },
@@ -74,6 +83,41 @@ function formatLatency(value: number | null): string {
 function chartValue(value: unknown): number | null {
   const numericValue = Number(value);
   return Number.isFinite(numericValue) ? numericValue : null;
+}
+
+function isInPeriod(value: string | undefined, period: PeriodFilter): boolean {
+  if (period === "all") return true;
+  if (!value) return false;
+
+  const time = new Date(value).getTime();
+  if (Number.isNaN(time)) return false;
+
+  const hours: Record<Exclude<PeriodFilter, "all">, number> = {
+    "1h": 1,
+    "6h": 6,
+    "24h": 24,
+  };
+
+  return Date.now() - time <= hours[period] * 60 * 60 * 1000;
+}
+
+function isCriticalEnvironment(item: SparkEnvironmentData): boolean {
+  return Number(item.max_air_quality) >= SPARK_THRESHOLDS.criticalAqi || Number(item.max_temperature) >= SPARK_THRESHOLDS.criticalTemperature;
+}
+
+function isCriticalWater(item: SparkWaterData): boolean {
+  return item.sudden_flow_drop
+    || Number(item.water_quality_score) < SPARK_THRESHOLDS.criticalWaterScore
+    || Number(item.avg_ph) < SPARK_THRESHOLDS.minSafePh
+    || Number(item.avg_ph) > SPARK_THRESHOLDS.maxSafePh;
+}
+
+function isCriticalTraffic(item: SparkTrafficData): boolean {
+  return Boolean(item.is_congested_route) || Number(item.max_congestion) >= SPARK_THRESHOLDS.criticalCongestion || item.congestion_level === "high";
+}
+
+function isCriticalAlert(item: SparkAlertData): boolean {
+  return item.severity === "critical" || item.severity === "high";
 }
 
 function StatCard({
@@ -181,7 +225,7 @@ function SparkLatencyChart({ data }: { data: { time: string; latency: number }[]
             boxShadow: "0 10px 25px rgba(15, 23, 42, 0.08)",
           }}
         />
-        <Line type="monotone" dataKey="latency" stroke="#2563eb" strokeWidth={3} dot={{ r: 3 }} />
+        <Line type="monotone" dataKey="latency" stroke={SPARK_CHART_COLORS.latency} strokeWidth={3} dot={{ r: 3 }} />
       </LineChart>
     </ResponsiveContainer>
   );
@@ -347,6 +391,11 @@ function ErrorsTable({ data }: { data: SparkErrorData[] }) {
 
 export default function SparkDataPage() {
   const [activeTab, setActiveTab] = useState<SparkTab>("environment");
+  const [districtFilter, setDistrictFilter] = useState("all");
+  const [routeFilter, setRouteFilter] = useState("all");
+  const [alertTypeFilter, setAlertTypeFilter] = useState("all");
+  const [periodFilter, setPeriodFilter] = useState<PeriodFilter>("all");
+  const [criticalFilter, setCriticalFilter] = useState<CriticalFilter>("all");
   const {
     envData,
     waterData,
@@ -362,9 +411,75 @@ export default function SparkDataPage() {
     error,
   } = useSparkData();
 
+  const districtOptions = useMemo(() => {
+    const districts = [...envData, ...waterData]
+      .map(item => item.district)
+      .filter(Boolean)
+      .sort();
+    return Array.from(new Set(districts));
+  }, [envData, waterData]);
+
+  const routeOptions = useMemo(() => {
+    const routes = trafficData
+      .map(item => item.route_id)
+      .filter(Boolean)
+      .sort();
+    return Array.from(new Set(routes));
+  }, [trafficData]);
+
+  const alertTypeOptions = useMemo(() => {
+    const alertTypes = sparkAlerts
+      .map(item => item.alert_type)
+      .filter(Boolean)
+      .sort();
+    return Array.from(new Set(alertTypes));
+  }, [sparkAlerts]);
+
+  const filteredEnvData = useMemo(() => {
+    return envData.filter(item => {
+      if (districtFilter !== "all" && item.district !== districtFilter) return false;
+      if (!isInPeriod(item.processed_at || item.window?.end, periodFilter)) return false;
+      if (criticalFilter === "critical" && !isCriticalEnvironment(item)) return false;
+      return true;
+    });
+  }, [criticalFilter, districtFilter, envData, periodFilter]);
+
+  const filteredWaterData = useMemo(() => {
+    return waterData.filter(item => {
+      if (districtFilter !== "all" && item.district !== districtFilter) return false;
+      if (!isInPeriod(item.processed_at || item.window?.end, periodFilter)) return false;
+      if (criticalFilter === "critical" && !isCriticalWater(item)) return false;
+      return true;
+    });
+  }, [criticalFilter, districtFilter, periodFilter, waterData]);
+
+  const filteredTrafficData = useMemo(() => {
+    return trafficData.filter(item => {
+      if (routeFilter !== "all" && item.route_id !== routeFilter) return false;
+      if (!isInPeriod(item.processed_at || item.window?.end, periodFilter)) return false;
+      if (criticalFilter === "critical" && !isCriticalTraffic(item)) return false;
+      return true;
+    });
+  }, [criticalFilter, periodFilter, routeFilter, trafficData]);
+
+  const filteredSparkAlerts = useMemo(() => {
+    return sparkAlerts.filter(item => {
+      if (alertTypeFilter !== "all" && item.alert_type !== alertTypeFilter) return false;
+      if (districtFilter !== "all" && item.district && item.district !== districtFilter) return false;
+      if (routeFilter !== "all" && item.route_id && item.route_id !== routeFilter) return false;
+      if (!isInPeriod(item.timestamp || item.processed_at, periodFilter)) return false;
+      if (criticalFilter === "critical" && !isCriticalAlert(item)) return false;
+      return true;
+    });
+  }, [alertTypeFilter, criticalFilter, districtFilter, periodFilter, routeFilter, sparkAlerts]);
+
+  const filteredSparkErrors = useMemo(() => {
+    return sparkErrors.filter(item => isInPeriod(item.processed_at, periodFilter));
+  }, [periodFilter, sparkErrors]);
+
   const allWindows = useMemo(
-    () => [...envData, ...waterData, ...trafficData],
-    [envData, waterData, trafficData],
+    () => [...filteredEnvData, ...filteredWaterData, ...filteredTrafficData],
+    [filteredEnvData, filteredTrafficData, filteredWaterData],
   );
 
   const averageLatency = useMemo(() => {
@@ -383,36 +498,36 @@ export default function SparkDataPage() {
     .at(-1);
 
   const tabCounts: Record<SparkTab, number> = {
-    environment: envData.length,
-    water: waterData.length,
-    traffic: trafficData.length,
-    alerts: sparkAlerts.length,
-    errors: sparkErrors.length,
+    environment: filteredEnvData.length,
+    water: filteredWaterData.length,
+    traffic: filteredTrafficData.length,
+    alerts: filteredSparkAlerts.length,
+    errors: filteredSparkErrors.length,
   };
 
-  const temperatureChartData = envData.map(item => ({
+  const temperatureChartData = filteredEnvData.map(item => ({
     name: item.district,
     value: Number(item.avg_temperature) || 0,
   }));
 
-  const aqiChartData = envData
+  const aqiChartData = filteredEnvData
     .map(item => {
       const value = chartValue(item.max_air_quality);
       return value === null ? null : { name: item.district, value };
     })
     .filter((item): item is { name: string; value: number } => item !== null);
 
-  const congestionChartData = trafficData.map(item => ({
+  const congestionChartData = filteredTrafficData.map(item => ({
     name: item.route_id,
     value: Number(item.max_congestion) || 0,
   }));
 
-  const flowChartData = waterData.map(item => ({
+  const flowChartData = filteredWaterData.map(item => ({
     name: item.district,
     value: Number(item.avg_flow_rate) || 0,
   }));
 
-  const waterScoreChartData = waterData
+  const waterScoreChartData = filteredWaterData
     .map(item => {
       const value = chartValue(item.water_quality_score);
       return value === null ? null : { name: item.district, value };
@@ -431,6 +546,14 @@ export default function SparkDataPage() {
     })
     .filter((item): item is { time: string; latency: number } => item !== null)
     .slice(-20);
+
+  const resetFilters = () => {
+    setDistrictFilter("all");
+    setRouteFilter("all");
+    setAlertTypeFilter("all");
+    setPeriodFilter("all");
+    setCriticalFilter("all");
+  };
 
   return (
     <div className="p-2 mx-auto w-full">
@@ -493,6 +616,86 @@ export default function SparkDataPage() {
         </div>
       </div>
 
+      <section className="mb-6 rounded-3xl border border-gray-100 p-4">
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h3 className="flex items-center gap-2 text-sm font-black uppercase text-gray-500">
+            <Filter className="h-4 w-4" />
+            Filtres
+          </h3>
+          <button
+            onClick={resetFilters}
+            className="flex w-fit items-center gap-2 rounded-xl border border-gray-200 px-3 py-2 text-xs font-black text-gray-600 transition-colors hover:bg-gray-50"
+          >
+            <RotateCcw className="h-4 w-4" />
+            Reinitialiser
+          </button>
+        </div>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
+          <label className="space-y-1">
+            <span className="text-[10px] font-black uppercase text-gray-400">District</span>
+            <select
+              value={districtFilter}
+              onChange={event => setDistrictFilter(event.target.value)}
+              className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+            >
+              <option value="all">Tous les districts</option>
+              {districtOptions.map(district => (
+                <option key={district} value={district}>{district}</option>
+              ))}
+            </select>
+          </label>
+          <label className="space-y-1">
+            <span className="text-[10px] font-black uppercase text-gray-400">Route</span>
+            <select
+              value={routeFilter}
+              onChange={event => setRouteFilter(event.target.value)}
+              className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+            >
+              <option value="all">Toutes les routes</option>
+              {routeOptions.map(route => (
+                <option key={route} value={route}>{route}</option>
+              ))}
+            </select>
+          </label>
+          <label className="space-y-1">
+            <span className="text-[10px] font-black uppercase text-gray-400">Type d&apos;alerte</span>
+            <select
+              value={alertTypeFilter}
+              onChange={event => setAlertTypeFilter(event.target.value)}
+              className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+            >
+              <option value="all">Tous les types</option>
+              {alertTypeOptions.map(alertType => (
+                <option key={alertType} value={alertType}>{alertType}</option>
+              ))}
+            </select>
+          </label>
+          <label className="space-y-1">
+            <span className="text-[10px] font-black uppercase text-gray-400">Periode</span>
+            <select
+              value={periodFilter}
+              onChange={event => setPeriodFilter(event.target.value as PeriodFilter)}
+              className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+            >
+              {PERIOD_OPTIONS.map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          </label>
+          <label className="space-y-1">
+            <span className="text-[10px] font-black uppercase text-gray-400">Criticite</span>
+            <select
+              value={criticalFilter}
+              onChange={event => setCriticalFilter(event.target.value as CriticalFilter)}
+              className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+            >
+              <option value="all">Toutes les donnees</option>
+              <option value="critical">Critiques seulement</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
       <div className="mb-6">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-lg font-black text-gray-900">Graphiques Spark</h3>
@@ -502,19 +705,19 @@ export default function SparkDataPage() {
         </div>
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <SparkChartCard title="Temperature moyenne par quartier">
-            <SparkBarChart data={temperatureChartData} xKey="name" yKey="value" color="#f97316" unit="°C" />
+            <SparkBarChart data={temperatureChartData} xKey="name" yKey="value" color={SPARK_CHART_COLORS.temperature} unit="°C" />
           </SparkChartCard>
           <SparkChartCard title="AQI max par quartier">
-            <SparkBarChart data={aqiChartData} xKey="name" yKey="value" color="#22c55e" />
+            <SparkBarChart data={aqiChartData} xKey="name" yKey="value" color={SPARK_CHART_COLORS.aqi} />
           </SparkChartCard>
           <SparkChartCard title="Congestion max par route">
-            <SparkBarChart data={congestionChartData} xKey="name" yKey="value" color="#ef4444" />
+            <SparkBarChart data={congestionChartData} xKey="name" yKey="value" color={SPARK_CHART_COLORS.congestion} />
           </SparkChartCard>
           <SparkChartCard title="Debit moyen par quartier">
-            <SparkBarChart data={flowChartData} xKey="name" yKey="value" color="#0ea5e9" />
+            <SparkBarChart data={flowChartData} xKey="name" yKey="value" color={SPARK_CHART_COLORS.flow} />
           </SparkChartCard>
           <SparkChartCard title="Score qualite de l'eau">
-            <SparkBarChart data={waterScoreChartData} xKey="name" yKey="value" color="#10b981" />
+            <SparkBarChart data={waterScoreChartData} xKey="name" yKey="value" color={SPARK_CHART_COLORS.waterScore} />
           </SparkChartCard>
           <SparkChartCard title="Latence Spark dans le temps">
             <SparkLatencyChart data={latencyChartData} />
@@ -545,11 +748,11 @@ export default function SparkDataPage() {
         </div>
 
         <div className="p-5">
-          {activeTab === "environment" && <EnvironmentTable data={envData} />}
-          {activeTab === "water" && <WaterTable data={waterData} />}
-          {activeTab === "traffic" && <TrafficTable data={trafficData} />}
-          {activeTab === "alerts" && <AlertsTable data={sparkAlerts} />}
-          {activeTab === "errors" && <ErrorsTable data={sparkErrors} />}
+          {activeTab === "environment" && <EnvironmentTable data={filteredEnvData} />}
+          {activeTab === "water" && <WaterTable data={filteredWaterData} />}
+          {activeTab === "traffic" && <TrafficTable data={filteredTrafficData} />}
+          {activeTab === "alerts" && <AlertsTable data={filteredSparkAlerts} />}
+          {activeTab === "errors" && <ErrorsTable data={filteredSparkErrors} />}
         </div>
       </div>
     </div>

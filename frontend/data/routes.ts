@@ -1,4 +1,5 @@
 import trafficRoutesJson from "./json/routes.json";
+import { TRAFFIC_LEVEL_COLORS, TRAFFIC_LEVEL_LABELS } from "@/lib/constants";
 
 export interface TrafficRoute {
   id: string;
@@ -14,13 +15,7 @@ export interface TrafficRoute {
 export const trafficRoutes = trafficRoutesJson as TrafficRoute[];
 
 export function getTrafficColor(traffic: TrafficRoute["traffic"]): string {
-  const map = {
-    low: "#22c55e",
-    medium: "#f59e0b",
-    high: "#ef4444",
-    critical: "#dc2626",
-  };
-  return map[traffic];
+  return TRAFFIC_LEVEL_COLORS[traffic];
 }
 
 export function getTrafficWeight(traffic: TrafficRoute["traffic"]): number {
@@ -29,11 +24,5 @@ export function getTrafficWeight(traffic: TrafficRoute["traffic"]): number {
 }
 
 export function getTrafficLabel(traffic: TrafficRoute["traffic"]): string {
-  const map = {
-    low: "Fluide",
-    medium: "Modéré",
-    high: "Dense",
-    critical: "Critique",
-  };
-  return map[traffic];
+  return TRAFFIC_LEVEL_LABELS[traffic];
 }

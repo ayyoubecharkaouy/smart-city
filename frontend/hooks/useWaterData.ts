@@ -2,9 +2,8 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { getSocket } from "@/lib/socket";
+import { API_ROUTES, BACKEND_URL, SOCKET_EVENTS } from "@/lib/constants";
 import type { WaterReading, DistrictWater } from "@/lib/types";
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
 
 export function useWaterData(enabled: boolean = true) {
   const [latestReadings, setLatestReadings] = useState<WaterReading[]>([]);
@@ -19,9 +18,9 @@ export function useWaterData(enabled: boolean = true) {
     setError(null);
     try {
       const [latestRes, statsRes, historyRes] = await Promise.all([
-        fetch(`${BACKEND_URL}/api/water/latest`, { signal }),
-        fetch(`${BACKEND_URL}/api/water/stats-by-district`, { signal }),
-        fetch(`${BACKEND_URL}/api/water/history`, { signal }),
+        fetch(`${BACKEND_URL}${API_ROUTES.waterLatest}`, { signal }),
+        fetch(`${BACKEND_URL}${API_ROUTES.waterStatsByDistrict}`, { signal }),
+        fetch(`${BACKEND_URL}${API_ROUTES.waterHistory}`, { signal }),
       ]);
 
       if (!latestRes.ok || !statsRes.ok || !historyRes.ok) {
@@ -91,11 +90,11 @@ export function useWaterData(enabled: boolean = true) {
     }, 0);
     socket.on("connect", handleConnect);
     socket.on("disconnect", handleDisconnect);
-    socket.on("water:new", handleWaterNew);
+    socket.on(SOCKET_EVENTS.waterNew, handleWaterNew);
 
     return () => {
       controller.abort();
-      socket.off("water:new", handleWaterNew);
+      socket.off(SOCKET_EVENTS.waterNew, handleWaterNew);
       socket.off("connect", handleConnect);
       socket.off("disconnect", handleDisconnect);
       window.clearTimeout(fetchTimeout);

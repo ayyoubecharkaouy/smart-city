@@ -2,9 +2,8 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { getSocket } from "@/lib/socket";
+import { API_ROUTES, BACKEND_URL, SOCKET_EVENTS } from "@/lib/constants";
 import type { TrafficReading, RouteTrafficStats, TrafficStatus } from "@/lib/types";
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
 
 function dominantStatus(statuses: TrafficStatus[]): TrafficStatus {
   const order: TrafficStatus[] = ["forte_congestion", "congestion", "dense", "fluide"];
@@ -61,8 +60,8 @@ export function useTrafficData(enabled: boolean = true) {
     setError(null);
     try {
       const [latestRes, historyRes] = await Promise.all([
-        fetch(`${BACKEND_URL}/api/traffic/latest`, { signal }),
-        fetch(`${BACKEND_URL}/api/traffic/history`, { signal }),
+        fetch(`${BACKEND_URL}${API_ROUTES.trafficLatest}`, { signal }),
+        fetch(`${BACKEND_URL}${API_ROUTES.trafficHistory}`, { signal }),
       ]);
 
       if (!latestRes.ok || !historyRes.ok) {
@@ -145,11 +144,11 @@ export function useTrafficData(enabled: boolean = true) {
     }, 0);
     socket.on("connect", handleConnect);
     socket.on("disconnect", handleDisconnect);
-    socket.on("traffic:new", handleTrafficNew);
+    socket.on(SOCKET_EVENTS.trafficNew, handleTrafficNew);
 
     return () => {
       controller.abort();
-      socket.off("traffic:new", handleTrafficNew);
+      socket.off(SOCKET_EVENTS.trafficNew, handleTrafficNew);
       socket.off("connect", handleConnect);
       socket.off("disconnect", handleDisconnect);
       window.clearTimeout(fetchTimeout);

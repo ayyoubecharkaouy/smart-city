@@ -2,14 +2,12 @@
 
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { getSocket } from "@/lib/socket";
+import { API_ROUTES, BACKEND_URL, SOCKET_EVENTS, SPARK_THRESHOLDS } from "@/lib/constants";
 import type {
   TemperatureReading,
   DistrictTemperature,
   TemperatureAlert,
 } from "@/lib/types";
-
-const BACKEND_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
 
 export interface UseTemperatureDataReturn {
   /** Latest readings per sensor */
@@ -45,9 +43,9 @@ export function useTemperatureData(enabled: boolean = true): UseTemperatureDataR
     setError(null);
     try {
       const [latestRes, avgRes, historyRes] = await Promise.all([
-        fetch(`${BACKEND_URL}/api/temperatures/latest`, { signal }),
-        fetch(`${BACKEND_URL}/api/temperatures/avg-by-district`, { signal }),
-        fetch(`${BACKEND_URL}/api/temperatures/history`, { signal }),
+        fetch(`${BACKEND_URL}${API_ROUTES.temperaturesLatest}`, { signal }),
+        fetch(`${BACKEND_URL}${API_ROUTES.temperaturesAvgByDistrict}`, { signal }),
+        fetch(`${BACKEND_URL}${API_ROUTES.temperaturesHistory}`, { signal }),
       ]);
 
       if (!latestRes.ok || !avgRes.ok || !historyRes.ok) {
@@ -81,7 +79,7 @@ export function useTemperatureData(enabled: boolean = true): UseTemperatureDataR
       setLatestReadings(latestData);
 
       const initialAlerts: TemperatureAlert[] = latestData
-        .filter((r) => r.temperature >= 35)
+        .filter((r) => r.temperature >= SPARK_THRESHOLDS.criticalTemperature)
         .map((r) => ({
           id: `initial-${alertIdCounter.current++}`,
           sensor_id: r.sensor_id,
@@ -135,7 +133,7 @@ export function useTemperatureData(enabled: boolean = true): UseTemperatureDataR
       const newAlerts: TemperatureAlert[] = [];
       validReadings.forEach(reading => {
         const temp = Number(reading.temperature);
-        if (temp >= 35) {
+        if (temp >= SPARK_THRESHOLDS.criticalTemperature) {
           newAlerts.push({
             id: `rt-${alertIdCounter.current++}`,
             sensor_id: reading.sensor_id,
@@ -171,13 +169,13 @@ export function useTemperatureData(enabled: boolean = true): UseTemperatureDataR
     }, 0);
     socket.on("connect", handleConnect);
     socket.on("disconnect", handleDisconnect);
-    socket.on("temperature:new", handleTemperatureNew);
-    socket.on("temperature:alert", handleTemperatureAlert);
+    socket.on(SOCKET_EVENTS.temperatureNew, handleTemperatureNew);
+    socket.on(SOCKET_EVENTS.temperatureAlert, handleTemperatureAlert);
 
     return () => {
       controller.abort();
-      socket.off("temperature:new", handleTemperatureNew);
-      socket.off("temperature:alert", handleTemperatureAlert);
+      socket.off(SOCKET_EVENTS.temperatureNew, handleTemperatureNew);
+      socket.off(SOCKET_EVENTS.temperatureAlert, handleTemperatureAlert);
       socket.off("connect", handleConnect);
       socket.off("disconnect", handleDisconnect);
       window.clearTimeout(fetchTimeout);

@@ -3,6 +3,11 @@
 import { useMemo, useState } from "react";
 import { useSparkData } from "@/hooks/useSparkData";
 import { useTemperatureData } from "@/hooks/useTemperatureData";
+import {
+  PERIOD_OPTIONS,
+  SPARK_ALERT_LABELS,
+  SPARK_DOMAIN_LABELS,
+} from "@/lib/constants";
 import type { SparkAlertData } from "@/lib/types";
 import {
   Activity,
@@ -14,12 +19,15 @@ import {
   Factory,
   Filter,
   MapPin,
+  RotateCcw,
   ShieldAlert,
   Wifi,
   WifiOff,
 } from "lucide-react";
 
 type AlertDomain = "all" | "environment" | "traffic" | "water";
+type PeriodFilter = "all" | "1h" | "6h" | "24h";
+type CriticalFilter = "all" | "critical";
 
 const domainOptions: { value: AlertDomain; label: string }[] = [
   { value: "all", label: "Toutes" },
@@ -29,13 +37,7 @@ const domainOptions: { value: AlertDomain; label: string }[] = [
 ];
 
 function getSparkAlertLabel(alert: SparkAlertData): string {
-  const labels: Record<string, string> = {
-    high_air_quality: "Pollution elevee",
-    high_congestion: "Congestion elevee",
-    abnormal_ph: "pH anormal",
-    high_turbidity: "Turbidite elevee",
-  };
-  return labels[alert.alert_type] || alert.alert_type;
+  return SPARK_ALERT_LABELS[alert.alert_type] || alert.alert_type;
 }
 
 function getDomainIcon(type: string) {
@@ -45,9 +47,7 @@ function getDomainIcon(type: string) {
 }
 
 function getDomainLabel(type: string): string {
-  if (type === "water") return "Eau";
-  if (type === "traffic") return "Congestion";
-  return "Pollution";
+  return SPARK_DOMAIN_LABELS[type] || type;
 }
 
 function formatDate(value?: string): string {
@@ -63,15 +63,78 @@ function formatDate(value?: string): string {
   });
 }
 
+function isInPeriod(value: string | undefined, period: PeriodFilter): boolean {
+  if (period === "all") return true;
+  if (!value) return false;
+
+  const time = new Date(value).getTime();
+  if (Number.isNaN(time)) return false;
+
+  const hours: Record<Exclude<PeriodFilter, "all">, number> = {
+    "1h": 1,
+    "6h": 6,
+    "24h": 24,
+  };
+
+  return Date.now() - time <= hours[period] * 60 * 60 * 1000;
+}
+
+function isCriticalSparkAlert(alert: SparkAlertData): boolean {
+  return alert.severity === "critical" || alert.severity === "high";
+}
+
 export default function AlertsPage() {
   const [domainFilter, setDomainFilter] = useState<AlertDomain>("all");
+  const [districtFilter, setDistrictFilter] = useState("all");
+  const [routeFilter, setRouteFilter] = useState("all");
+  const [alertTypeFilter, setAlertTypeFilter] = useState("all");
+  const [periodFilter, setPeriodFilter] = useState<PeriodFilter>("all");
+  const [criticalFilter, setCriticalFilter] = useState<CriticalFilter>("all");
   const { alerts, acknowledgeAlert } = useTemperatureData();
   const { sparkAlerts, connected, reconnecting, reconnectAttempt, lastEvent, eventCount, error } = useSparkData();
 
+  const districtOptions = useMemo(() => {
+    const districts = [
+      ...sparkAlerts.map(alert => alert.district),
+      ...alerts.map(alert => alert.district),
+    ].filter((district): district is string => Boolean(district));
+    return Array.from(new Set(districts.sort()));
+  }, [alerts, sparkAlerts]);
+
+  const routeOptions = useMemo(() => {
+    const routes = sparkAlerts
+      .map(alert => alert.route_id)
+      .filter((route): route is string => Boolean(route));
+    return Array.from(new Set(routes.sort()));
+  }, [sparkAlerts]);
+
+  const alertTypeOptions = useMemo(() => {
+    const alertTypes = sparkAlerts
+      .map(alert => alert.alert_type)
+      .filter(Boolean);
+    return Array.from(new Set(alertTypes.sort()));
+  }, [sparkAlerts]);
+
   const filteredSparkAlerts = useMemo(() => {
-    if (domainFilter === "all") return sparkAlerts;
-    return sparkAlerts.filter(alert => alert.type === domainFilter);
-  }, [domainFilter, sparkAlerts]);
+    return sparkAlerts.filter(alert => {
+      if (domainFilter !== "all" && alert.type !== domainFilter) return false;
+      if (districtFilter !== "all" && alert.district !== districtFilter) return false;
+      if (routeFilter !== "all" && alert.route_id !== routeFilter) return false;
+      if (alertTypeFilter !== "all" && alert.alert_type !== alertTypeFilter) return false;
+      if (!isInPeriod(alert.timestamp || alert.processed_at, periodFilter)) return false;
+      if (criticalFilter === "critical" && !isCriticalSparkAlert(alert)) return false;
+      return true;
+    });
+  }, [alertTypeFilter, criticalFilter, districtFilter, domainFilter, periodFilter, routeFilter, sparkAlerts]);
+
+  const filteredTemperatureAlerts = useMemo(() => {
+    return alerts.filter(alert => {
+      if (districtFilter !== "all" && alert.district !== districtFilter) return false;
+      if (!isInPeriod(alert.timestamp, periodFilter)) return false;
+      if (criticalFilter === "critical" && alert.acknowledged) return false;
+      return true;
+    });
+  }, [alerts, criticalFilter, districtFilter, periodFilter]);
 
   const domainCounts = useMemo(() => {
     return sparkAlerts.reduce<Record<AlertDomain, number>>(
@@ -85,6 +148,15 @@ export default function AlertsPage() {
       { all: 0, environment: 0, traffic: 0, water: 0 },
     );
   }, [sparkAlerts]);
+
+  const resetFilters = () => {
+    setDomainFilter("all");
+    setDistrictFilter("all");
+    setRouteFilter("all");
+    setAlertTypeFilter("all");
+    setPeriodFilter("all");
+    setCriticalFilter("all");
+  };
 
   return (
     <div className="p-8 max-w-7xl mx-auto w-full">
@@ -121,6 +193,86 @@ export default function AlertsPage() {
                     {option.label} ({domainCounts[option.value]})
                   </button>
                 ))}
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-gray-100 bg-white p-4">
+              <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <h4 className="flex items-center gap-2 text-sm font-black uppercase text-gray-500">
+                  <Filter className="h-4 w-4" />
+                  Filtres
+                </h4>
+                <button
+                  onClick={resetFilters}
+                  className="flex w-fit items-center gap-2 rounded-xl border border-gray-200 px-3 py-2 text-xs font-black text-gray-600 transition-colors hover:bg-gray-50"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                  Reinitialiser
+                </button>
+              </div>
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
+                <label className="space-y-1">
+                  <span className="text-[10px] font-black uppercase text-gray-400">District</span>
+                  <select
+                    value={districtFilter}
+                    onChange={event => setDistrictFilter(event.target.value)}
+                    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+                  >
+                    <option value="all">Tous les districts</option>
+                    {districtOptions.map(district => (
+                      <option key={district} value={district}>{district}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className="space-y-1">
+                  <span className="text-[10px] font-black uppercase text-gray-400">Route</span>
+                  <select
+                    value={routeFilter}
+                    onChange={event => setRouteFilter(event.target.value)}
+                    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+                  >
+                    <option value="all">Toutes les routes</option>
+                    {routeOptions.map(route => (
+                      <option key={route} value={route}>{route}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className="space-y-1">
+                  <span className="text-[10px] font-black uppercase text-gray-400">Type d&apos;alerte</span>
+                  <select
+                    value={alertTypeFilter}
+                    onChange={event => setAlertTypeFilter(event.target.value)}
+                    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+                  >
+                    <option value="all">Tous les types</option>
+                    {alertTypeOptions.map(alertType => (
+                      <option key={alertType} value={alertType}>{alertType}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className="space-y-1">
+                  <span className="text-[10px] font-black uppercase text-gray-400">Periode</span>
+                  <select
+                    value={periodFilter}
+                    onChange={event => setPeriodFilter(event.target.value as PeriodFilter)}
+                    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+                  >
+                    {PERIOD_OPTIONS.map(option => (
+                      <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className="space-y-1">
+                  <span className="text-[10px] font-black uppercase text-gray-400">Criticite</span>
+                  <select
+                    value={criticalFilter}
+                    onChange={event => setCriticalFilter(event.target.value as CriticalFilter)}
+                    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+                  >
+                    <option value="all">Toutes les alertes</option>
+                    <option value="critical">Critiques seulement</option>
+                  </select>
+                </label>
               </div>
             </div>
 
@@ -206,14 +358,14 @@ export default function AlertsPage() {
               Alertes Temperature
             </h3>
 
-            {alerts.length === 0 ? (
+            {filteredTemperatureAlerts.length === 0 ? (
               <div className="bg-white rounded-3xl border border-gray-100 p-8 text-center">
                 <CheckCircle2 className="w-8 h-8 text-green-500 mx-auto mb-3" />
                 <p className="font-bold text-gray-900">Aucune alerte temperature</p>
               </div>
             ) : (
               <div className="space-y-2">
-                {alerts.map((alert) => (
+                {filteredTemperatureAlerts.map((alert) => (
                   <div
                     key={alert.id}
                     className={`bg-white p-5 rounded-3xl border transition-all ${alert.acknowledged ? "border-gray-100 opacity-60" : "border-rose-100"}`}

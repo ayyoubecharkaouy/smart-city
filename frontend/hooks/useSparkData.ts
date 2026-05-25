@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { getSocket } from "@/lib/socket";
 import { useSocketStatus } from "@/hooks/useSocketStatus";
+import { API_ROUTES, BACKEND_URL, SOCKET_EVENTS } from "@/lib/constants";
 import type {
   SparkAlertData,
   SparkEnvironmentData,
@@ -10,8 +11,6 @@ import type {
   SparkTrafficData,
   SparkWaterData,
 } from "@/lib/types";
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
 
 function parseSparkPayload<T>(payload: unknown): T | null {
   if (typeof payload === "string") {
@@ -52,8 +51,8 @@ export function useSparkData() {
 
     try {
       const [aggregationsRes, alertsRes] = await Promise.all([
-        fetch(`${BACKEND_URL}/api/spark/aggregations?limit=150`, { signal }),
-        fetch(`${BACKEND_URL}/api/spark/alerts?limit=100`, { signal }),
+        fetch(`${BACKEND_URL}${API_ROUTES.sparkAggregations}?limit=150`, { signal }),
+        fetch(`${BACKEND_URL}${API_ROUTES.sparkAlerts}?limit=100`, { signal }),
       ]);
 
       if (!aggregationsRes.ok || !alertsRes.ok) {
@@ -141,19 +140,19 @@ export function useSparkData() {
       setSparkAlerts(prev => [data, ...prev].slice(0, 100));
     };
 
-    socket.on("spark:environment", handleEnvironment);
-    socket.on("spark:water", handleWater);
-    socket.on("spark:traffic", handleTraffic);
-    socket.on("spark:error", handleError);
-    socket.on("spark:alert", handleAlert);
+    socket.on(SOCKET_EVENTS.sparkEnvironment, handleEnvironment);
+    socket.on(SOCKET_EVENTS.sparkWater, handleWater);
+    socket.on(SOCKET_EVENTS.sparkTraffic, handleTraffic);
+    socket.on(SOCKET_EVENTS.sparkError, handleError);
+    socket.on(SOCKET_EVENTS.sparkAlert, handleAlert);
 
     return () => {
       controller.abort();
-      socket.off("spark:environment", handleEnvironment);
-      socket.off("spark:water", handleWater);
-      socket.off("spark:traffic", handleTraffic);
-      socket.off("spark:error", handleError);
-      socket.off("spark:alert", handleAlert);
+      socket.off(SOCKET_EVENTS.sparkEnvironment, handleEnvironment);
+      socket.off(SOCKET_EVENTS.sparkWater, handleWater);
+      socket.off(SOCKET_EVENTS.sparkTraffic, handleTraffic);
+      socket.off(SOCKET_EVENTS.sparkError, handleError);
+      socket.off(SOCKET_EVENTS.sparkAlert, handleAlert);
       window.clearTimeout(fetchTimeout);
     };
   }, [fetchInitialData]);
