@@ -63,8 +63,8 @@ export default function TemperatureStats({
     <div className="flex flex-col gap-2 p-2">
       <div>
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-lg font-bold text-gray-800 flex items-center px-4 gap-2">
-            <TrendingUp className="w-5 h-5 text-green-500" />
+          <h3 className="text-lg font-bold flex items-center px-4 gap-2">
+            <TrendingUp className="w-5 h-5" />
             Évolution 24h
           </h3>
           <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full uppercase">
@@ -81,7 +81,7 @@ export default function TemperatureStats({
 
       <div>
         <div className="flex items-center justify-between mb-2 px-4">
-          <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+          <h3 className="text-xl font-bold flex items-center gap-2">
             Moyennes par Quartier
           </h3>
           <div className="flex items-center gap-1.5">
@@ -128,21 +128,17 @@ export default function TemperatureStats({
                   return (
                     <div
                       key={d.district}
-                      style={{
-                        backgroundColor: getTemperatureLevelColor(level) + "15",
-                        borderColor: getTemperatureLevelColor(level) + "30",
-                      }}
-                      className="flex items-center justify-between px-4 py-3 rounded-full border transition-all"
+                      className="flex items-center justify-between py-2 border-b border-gray-900 transition-all"
                     >
                       <div className="flex flex-col items-start">
-                        <span className="text-base font-semibold text-gray-900 truncate">
+                        <span className="text-base font-semibold truncate">
                         {d.district}
                       </span>
-                      <span className="text-xs text-gray-700"><AnimatedNumber value={d.sensor_count} /> capteurs</span>
+                      <span className="text-xs text-gray-600"><AnimatedNumber value={d.sensor_count} /> capteurs</span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className="text-xl font-black text-gray-900">
-                          <AnimatedNumber value={d.avg_temperature} decimals={1} /> <span className="text-sm text-gray-800">°C</span>
+                        <span className="text-xl font-black" style={{ color: getTemperatureLevelColor(level) }}>
+                          <AnimatedNumber value={d.avg_temperature} decimals={1} /> <span className="text-sm">°C</span>
                         </span>
                       </div>
                     </div>

@@ -522,9 +522,9 @@ export default function Map() {
       {/* Right Sidebar */}
       <div
         style={{ width: rightWidth }}
-        className="relative hidden h-full shrink-0 overflow-y-auto bg-[#06110b] transition-[width] duration-75 ease-out xl:block"
+        className="relative hidden h-full shrink-0 overflow-y-auto transition-[width] duration-75 ease-out xl:block"
       >
-        <div className="flex flex-col gap-2 min-w-[250px]">
+        <div className="flex flex-col gap-2 min-w-62.5">
           {mode === "temperature" ? (
             <>
               <TemperatureStats

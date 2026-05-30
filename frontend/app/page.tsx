@@ -191,7 +191,7 @@ export default function Overview() {
   return (
     <div className="p-8 max-w-7xl mx-auto w-full">
       <header className="mb-10">
-        <h2 className="text-3xl font-black text-gray-900 mb-2">
+        <h2 className="text-3xl font-black mb-2">
           Vue d&apos;ensemble
         </h2>
       </header>

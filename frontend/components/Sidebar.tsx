@@ -28,14 +28,17 @@ export default function Sidebar() {
 
   return (
     <aside className="fixed inset-x-0 bottom-0 z-2000 h-16 shrink-0 lg:static lg:h-screen lg:w-64 lg:border-t-0">
-      <div className="flex h-full flex-col lg:p-2">
-        <div className="hidden px-3 py-4 lg:block">
-          <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#5f7668]">
-            Smart City
-          </p>
-          <h1 className="mt-1 text-lg font-black text-[#e7f8ed]">
-            El Jadida Ops
-          </h1>
+      <div className="flex flex-col items-start h-full lg:p-2">
+        <div className="flex items-center gap-2 my-4">
+          <img src={'/images/logos/app-logo.png'} width={60} height={60} alt="Logo" />
+          <div className="hidden px-3 py-4 lg:block">
+            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#5f7668]">
+              Smart City
+            </p>
+            <h1 className="mt-1 text-lg font-black text-[#e7f8ed]">
+              El Jadida Ops
+            </h1>
+          </div>
         </div>
         <nav className="flex h-full items-center gap-1 overflow-x-auto px-2 lg:block lg:h-auto lg:space-y-1 lg:overflow-visible lg:px-0">
           {navItems.map((item) => (
