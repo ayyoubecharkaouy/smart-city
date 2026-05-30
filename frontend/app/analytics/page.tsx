@@ -293,9 +293,9 @@ export default function AnalyticsPage() {
   }, []);
 
   return (
-    <div className="flex h-[calc(100vh-2rem)] overflow-hidden">
+    <div className="flex min-h-full flex-col overflow-visible xl:h-[calc(100vh-2rem)] xl:flex-row xl:overflow-hidden">
       {/* Configuration Sidebar */}
-      <aside className="w-80 border-r border-gray-100 flex flex-col p-4 overflow-y-auto">
+      <aside className="w-full border-b border-gray-100 p-4 xl:w-80 xl:shrink-0 xl:overflow-y-auto xl:border-b-0 xl:border-r">
         <div className="flex items-center gap-3 mb-10">
           <Settings2 className="w-5 h-5 text-gray-500" />
           <h2 className="text-xl font-black text-gray-900 uppercase tracking-tighter">
@@ -345,7 +345,7 @@ export default function AnalyticsPage() {
               }`}
             >
               <Zap
-                className={`w-6 h-6 ${isRealtime ? "text-yellow-500" : ""}`}
+                className={`w-6 h-6 ${isRealtime ? "text-green-500" : ""}`}
               />
               Temps Réel
             </button>
@@ -355,7 +355,7 @@ export default function AnalyticsPage() {
                 !isRealtime ? "bg-white text-gray-900" : "text-gray-400"
               }`}
             >
-              <Clock className="w-6 h-6 text-blue-500" />
+              <Clock className="w-6 h-6 text-green-500" />
               Historique
             </button>
           </div>
@@ -373,12 +373,12 @@ export default function AnalyticsPage() {
                 onClick={() => setChartType(t.id)}
                 className={`flex flex-col items-center justify-center p-4 rounded-4xl border-2 transition-all gap-2 ${
                   chartType === t.id
-                    ? "bg-blue-50 border-blue-200 text-blue-600 shadow-xs"
+                    ? "bg-green-50 border-green-200 text-green-600"
                     : "bg-white border-gray-100 text-gray-600 hover:border-gray-200"
                 }`}
               >
                 <div
-                  className={`${chartType === t.id ? "text-blue-600" : "text-gray-600"}`}
+                  className={`${chartType === t.id ? "text-green-600" : "text-gray-600"}`}
                 >
                   {t.icon}
                 </div>
@@ -392,17 +392,16 @@ export default function AnalyticsPage() {
       </aside>
 
       {/* Main Content Viewport */}
-      <main className="flex-1 p-2 flex flex-col overflow-hidden">
-        <header className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-2">
+      <main className="flex-1 p-4 xl:flex xl:flex-col xl:overflow-hidden">
+        <header className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+          <div className="flex min-w-0 items-start gap-2">
             <div
-              className={`w-3 h-10 rounded-full ${metrics.find((m) => m.id === metric)?.color}`}
+              className={`mt-1 h-10 w-3 shrink-0 rounded-full ${metrics.find((m) => m.id === metric)?.color}`}
             />
-            <div>
-              <h1 className="text-3xl font-black text-gray-900 tracking-tighter">
+            <div className="min-w-0">
+              <h1 className="text-2xl font-black tracking-tight text-gray-900 sm:text-3xl">
                 {metrics.find((m) => m.id === metric)?.label}
-                <span className="text-gray-400 ml-2 font-medium">
-                  —{" "}
+                <span className="ml-0 block text-base font-medium text-gray-400 sm:ml-2 sm:inline sm:text-2xl">
                   {isRealtime
                     ? "Flux de données Live"
                     : `Analyse Historique (${selectedPeriodLabel})`}
@@ -414,13 +413,13 @@ export default function AnalyticsPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button className="p-3 bg-white border border-gray-200 rounded-xl text-gray-400 hover:text-gray-900 transition-colors">
+            <button className="p-3 border border-gray-200 rounded-xl text-gray-400 hover:text-gray-900 transition-colors">
               <Maximize2 className="w-5 h-5" />
             </button>
           </div>
         </header>
 
-        <section className="mb-4 rounded-3xl border border-gray-100 bg-white p-3 shadow-sm">
+        <section className="mb-4 rounded-3xl border border-gray-100 p-3">
           <div className="mb-3 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-center gap-2">
               <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gray-900 text-white">
@@ -503,8 +502,8 @@ export default function AnalyticsPage() {
         </section>
 
         {/* Main Chart Card */}
-        <div className="flex-1 p-2 flex flex-col relative overflow-hidden">
-          <div className="relative flex-1">
+        <div className="relative flex-1 p-0 xl:flex xl:flex-col xl:overflow-hidden xl:p-2">
+          <div className="relative min-h-[420px] flex-1">
             {activeError ? (
               <div className="flex h-full items-center justify-center">
                 <StateNotice
@@ -543,8 +542,8 @@ export default function AnalyticsPage() {
             )}
           </div>
 
-          <footer className="mt-8 pt-8 border-t border-gray-50 flex items-center justify-between">
-            <div className="flex items-center gap-8">
+          <footer className="mt-6 border-t border-gray-50 pt-6">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div className="flex flex-col">
                 <span className="text-xs font-black text-gray-700 uppercase tracking-widest mb-1">
                   Métrique Active

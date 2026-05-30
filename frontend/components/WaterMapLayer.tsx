@@ -29,7 +29,7 @@ const buildPopup = (district: string, stats: DistrictWater, mode: string) => {
         <span className="font-bold text-gray-800">{district}</span>
       </div>
       <div className="space-y-2">
-        <div className={`flex items-center justify-between ${mode === 'water_consumption' ? 'bg-blue-50 p-1.5 rounded' : ''}`}>
+        <div className={`flex items-center justify-between ${mode === 'water_consumption' ? 'bg-green-50 p-1.5 rounded' : ''}`}>
           <div className="flex items-center gap-1.5 text-gray-600">
             <Activity className="w-3.5 h-3.5" />
             <span className="text-[11px] font-medium">Débit</span>
@@ -37,7 +37,7 @@ const buildPopup = (district: string, stats: DistrictWater, mode: string) => {
           <span className="text-[11px] font-bold text-gray-800">{stats.avg_flow.toFixed(2)} L/min</span>
         </div>
         
-        <div className={`flex items-center justify-between ${mode === 'water_quality' ? 'bg-cyan-50 p-1.5 rounded' : ''}`}>
+        <div className={`flex items-center justify-between ${mode === 'water_quality' ? 'bg-green-50 p-1.5 rounded' : ''}`}>
           <div className="flex items-center gap-1.5 text-gray-600">
             <Droplet className="w-3.5 h-3.5" />
             <span className="text-[11px] font-medium">Qualité (pH)</span>
@@ -64,7 +64,7 @@ function WaterMapLayer({ districtStats, visible, mode }: WaterMapLayerProps) {
     if (!feature) return {};
     const stats = findDistrictData(feature, districtStats);
 
-    if (!stats) return { fillColor: "#f3f4f6", fillOpacity: 0.1, weight: 1, color: "#d1d5db" };
+    if (!stats) return { fillColor: "#0e2016", fillOpacity: 0.1, weight: 1, color: "#173525" };
 
     const fillColor = mode === "water_consumption" 
       ? getWaterFlowColor(stats.avg_flow)
@@ -74,7 +74,7 @@ function WaterMapLayer({ districtStats, visible, mode }: WaterMapLayerProps) {
       fillColor,
       fillOpacity: 0.6,
       weight: 2,
-      color: "#ffffff",
+      color: "#e7f8ed",
       className: "district-polygon",
     };
   }, [districtStats, mode]);

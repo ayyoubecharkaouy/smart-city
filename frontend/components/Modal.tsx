@@ -29,12 +29,12 @@ function Modal({
     <div className="fixed inset-0 z-9999 flex items-center justify-center sm:p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/40 transition-opacity"
+        className="absolute inset-0 bg-black/70 transition-opacity"
         onClick={onClose}
       />
 
       {/* Modal Content */}
-      <div className="relative w-full max-w-4xl max-h-[80%] overflow-hidden flex flex-col animate-in slide-in-from-left duration-300">
+      <div className="relative flex max-h-[80%] w-full max-w-4xl flex-col overflow-hidden border border-[#173525] bg-[#0a1710] rounded-4xl shadow-2xl animate-in slide-in-from-left duration-300">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors z-10"

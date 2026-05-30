@@ -1,5 +1,6 @@
 "use client";
 
+import { memo, useMemo } from "react";
 import NumberFlow from "@number-flow/react";
 
 interface AnimatedNumberProps {
@@ -9,9 +10,30 @@ interface AnimatedNumberProps {
   suffix?: string;
   className?: string;
   compact?: boolean;
+  keepLastValidValue?: boolean;
 }
 
-export default function AnimatedNumber({
+function parseNumber(value: AnimatedNumberProps["value"]): number | null {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : null;
+  }
+
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const cleaned = value
+    .trim()
+    .replace(/\s/g, "")
+    .replace(",", ".")
+    .replace(/[^\d.-]/g, "");
+
+  const parsed = Number(cleaned);
+
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function AnimatedNumber({
   value,
   decimals = 0,
   prefix,
@@ -19,9 +41,17 @@ export default function AnimatedNumber({
   className,
   compact = false,
 }: AnimatedNumberProps) {
-  const normalizedValue = typeof value === "string" ? value.replace(/[^\d.-]/g, "") : value;
-  const numericValue = Number(normalizedValue);
-  const safeValue = Number.isFinite(numericValue) ? numericValue : 0;
+  const parsedValue = useMemo(() => parseNumber(value), [value]);
+  const safeValue = parsedValue ?? 0;
+
+  const format = useMemo(
+    () => ({
+      notation: compact ? "compact" as const : "standard" as const,
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    }),
+    [compact, decimals]
+  );
 
   return (
     <NumberFlow
@@ -30,11 +60,9 @@ export default function AnimatedNumber({
       locales="fr-FR"
       prefix={prefix}
       suffix={suffix}
-      format={{
-        notation: compact ? "compact" : "standard",
-        minimumFractionDigits: decimals,
-        maximumFractionDigits: decimals,
-      }}
+      format={format}
     />
   );
 }
+
+export default memo(AnimatedNumber);

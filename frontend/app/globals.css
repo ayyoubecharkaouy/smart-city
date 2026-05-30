@@ -1,13 +1,17 @@
 @import "tailwindcss";
 
+:root {
+  color-scheme: dark;
+}
+
 * {
   box-sizing: border-box;
-  scrollbar-color: #e85d04 transparent;
+  scrollbar-color: #7dce32 transparent;
   scrollbar-width: auto;
 }
 
 *::-webkit-scrollbar {
-  width: 10px;
+  width: 5px;
   height: 10px;
 }
 
@@ -16,14 +20,14 @@
 }
 
 *::-webkit-scrollbar-thumb {
-  background: #e85d04;
+  background: #7dce32;
   border: 3px solid transparent;
   border-radius: 999px;
   background-clip: content-box;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: #e85d04;
+  background: #7dce32;
   background-clip: content-box;
 }
 
@@ -41,7 +45,7 @@ body {
 /* ── Leaflet popup/tooltip overrides (can't use Tailwind in Leaflet DOM) ── */
 
 .smart-popup .leaflet-popup-content-wrapper {
-  background: #ffffff !important;
+   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 16px !important;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12) !important;
@@ -84,16 +88,27 @@ body {
   border-top-color: #ffffff !important;
 }
 
-/* ── Leaflet controls override for light theme ── */
+/* ── Leaflet controls override for dark theme ── */
 
 .leaflet-control-attribution {
-  background: rgba(255, 255, 255, 0.85) !important;
-  color: #94a3b8 !important;
+  background: rgba(3, 10, 7, 0.86) !important;
+  color: var(--city-muted) !important;
   font-size: 10px !important;
 }
 
 .leaflet-control-attribution a {
-  color: #3b82f6 !important;
+  color: var(--city-primary) !important;
+}
+
+.leaflet-control-zoom a {
+  background: var(--city-panel) !important;
+  border-color: var(--city-border) !important;
+  color: var(--city-text) !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: var(--city-panel-2) !important;
+  color: var(--city-primary) !important;
 }
 
 /* ── Smooth transitions for Map Zones ── */

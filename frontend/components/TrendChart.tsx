@@ -56,25 +56,25 @@ export default function TrendChart({
           <CartesianGrid
             strokeDasharray="3 3"
             vertical={false}
-            stroke="#f3f4f6"
+            stroke="#173525"
           />
           <XAxis
             dataKey="time"
             axisLine={false}
             tickLine={false}
-            tick={{ fontSize: 10, fill: "#9ca3af" }}
+            tick={{ fontSize: 10, fill: "#8fa89a" }}
           />
           <YAxis
             axisLine={false}
             tickLine={false}
-            tick={{ fontSize: 10, fill: "#9ca3af" }}
+            tick={{ fontSize: 10, fill: "#8fa89a" }}
             domain={["auto", "auto"]}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: "rgba(255, 255, 255, 0.95)",
               borderRadius: "12px",
-              border: "1px solid #e5e7eb",
+              backgroundColor: "#06110b",
+              border: "1px solid #173525",
             }}
             formatter={(val: unknown) => {
               const numVal = Number(val);

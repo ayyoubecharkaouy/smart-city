@@ -89,7 +89,7 @@ function EnvironmentSensorsLayer({
         const reading = readingsBySensor.get(sensor.id);
         const isAnimating = animatingSensors.has(sensor.id);
 
-        let color = "#9ca3af"; // Gray for no data
+        let color = "#5f7668";
         let valueStr = "—";
         let aqiStatus = "";
         let timeStr = "Aucune donnée";
@@ -145,7 +145,7 @@ function EnvironmentSensorsLayer({
                   {valueStr}
                 </div>
                 {aqiStatus && (
-                  <div className="text-[9px] text-blue-400 font-bold uppercase mt-0.5">
+                  <div className="text-[9px] text-green-400 font-bold uppercase mt-0.5">
                     {aqiStatus}
                   </div>
                 )}

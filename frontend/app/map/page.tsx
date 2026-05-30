@@ -1,13 +1,14 @@
 "use client";
 
+import { Loader } from "lucide-react";
 import dynamic from "next/dynamic";
 
 const Map = dynamic(() => import("@/components/Map"), {
   ssr: false,
   loading: () => (
-    <div className="flex items-center justify-center h-full w-full bg-gray-50">
+    <div className="flex items-center justify-center h-full w-full">
       <div className="text-center animate-pulse">
-        <div className="w-12 h-12 border-3 border-gray-200 border-t-blue-500 rounded-full animate-spin mx-auto mb-6" />
+        <Loader className="w-5 h-5 mx-auto mb-2" />
         <h2 className="text-xl font-bold text-gray-800">
           Carte Smart City
         </h2>

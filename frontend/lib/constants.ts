@@ -40,15 +40,15 @@ export const SOCKET_EVENTS = {
 
 export const UI_COLORS = {
   success: "#22c55e",
-  lime: "#84cc16",
-  warning: "#f59e0b",
-  orange: "#f97316",
-  danger: "#ef4444",
-  purple: "#a855f7",
-  darkDanger: "#7f1d1d",
-  blue: "#3b82f6",
-  sky: "#0ea5e9",
-  emerald: "#10b981",
+  lime: "#4ade80",
+  warning: "#86efac",
+  orange: "#16a34a",
+  danger: "#15803d",
+  purple: "#22c55e",
+  darkDanger: "#14532d",
+  blue: "#22c55e",
+  sky: "#22c55e",
+  emerald: "#22c55e",
 } as const;
 
 export const SPARK_THRESHOLDS = {
@@ -78,7 +78,7 @@ export const TRAFFIC_LEVEL_COLORS = {
   low: UI_COLORS.success,
   medium: UI_COLORS.warning,
   high: UI_COLORS.danger,
-  critical: "#dc2626",
+  critical: UI_COLORS.darkDanger,
 } as const;
 
 export const TRAFFIC_LEVEL_LABELS = {
@@ -92,9 +92,9 @@ export const SPARK_CHART_COLORS = {
   temperature: UI_COLORS.orange,
   aqi: UI_COLORS.success,
   congestion: UI_COLORS.danger,
-  flow: UI_COLORS.sky,
+  flow: UI_COLORS.success,
   waterScore: UI_COLORS.emerald,
-  latency: "#2563eb",
+  latency: UI_COLORS.success,
 } as const;
 
 export const PERIOD_HOURS = {
@@ -119,7 +119,7 @@ export const ANALYTICS_METRICS = {
     label: "Température",
     chartLabel: "Température",
     color: SPARK_CHART_COLORS.temperature,
-    accentClass: "bg-orange-500",
+    accentClass: "bg-green-500",
     unit: "°C",
   },
   aqi: {
@@ -133,14 +133,14 @@ export const ANALYTICS_METRICS = {
     label: "Eau Potable",
     chartLabel: "Débit d'Eau",
     color: SPARK_CHART_COLORS.flow,
-    accentClass: "bg-blue-500",
+    accentClass: "bg-green-500",
     unit: "L/min",
   },
   traffic: {
     label: "Trafic Routier",
     chartLabel: "Congestion",
     color: SPARK_CHART_COLORS.congestion,
-    accentClass: "bg-violet-500",
+    accentClass: "bg-green-500",
     unit: "%",
   },
 } as const;

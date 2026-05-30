@@ -21,13 +21,13 @@ export default function TemperatureAlerts({
   return (
     <div className=" border border-gray-200 rounded-sm  overflow-hidden">
       {/* Header */}
-      <div className="px-2 py-3 border-b border-gray-100 flex items-center justify-between bg-red-50/50">
-        <h3 className="text-sm font-bold text-red-700 flex items-center gap-2">
+      <div className="px-2 py-3 border-b border-gray-100 flex items-center justify-between bg-green-50/50">
+        <h3 className="text-sm font-bold text-green-700 flex items-center gap-2">
           <AlertTriangle className="w-4 h-4" />
           Alertes Température
         </h3>
         {activeAlerts.length > 0 && (
-          <span className="text-xs font-bold bg-red-500 text-white px-2 py-0.5 rounded-full animate-pulse">
+          <span className="text-xs font-bold bg-green-500 text-white px-2 py-0.5 rounded-full animate-pulse">
             <AnimatedNumber value={activeAlerts.length} />
           </span>
         )}
@@ -46,8 +46,8 @@ export default function TemperatureAlerts({
               <div
                 className={`w-8 h-8 rounded-sm flex items-center justify-center shrink-0 ${
                   (alert.temperature ?? 0) >= 40
-                    ? "bg-red-100 text-red-600"
-                    : "bg-orange-100 text-orange-600"
+                    ? "bg-green-100 text-green-600"
+                    : "bg-green-100 text-green-600"
                 }`}
               >
                 <Thermometer className="w-4 h-4" />

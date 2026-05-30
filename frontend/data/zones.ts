@@ -36,10 +36,10 @@ export const METRICS: MetricConfig[] = [
     label: "Énergie",
     unit: "kWh",
     icon: "⚡",
-    colors: ["#fef3c7", "#fde68a", "#fbbf24", "#f59e0b", "#d97706", "#b45309"],
+    colors: ["#bbf7d0", "#86efac", "#4ade80", "#22c55e", "#15803d", "#14532d"],
     thresholds: [
-      { label: "Faible", color: "#fef3c7" },
-      { label: "Élevée", color: "#b45309" },
+      { label: "Faible", color: "#bbf7d0" },
+      { label: "Élevée", color: "#14532d" },
     ],
   },
   {
@@ -47,10 +47,10 @@ export const METRICS: MetricConfig[] = [
     label: "Eau",
     unit: "m³",
     icon: "💧",
-    colors: ["#dbeafe", "#93c5fd", "#60a5fa", "#3b82f6", "#2563eb", "#1d4ed8"],
+    colors: ["#bbf7d0", "#86efac", "#4ade80", "#22c55e", "#16a34a", "#15803d"],
     thresholds: [
-      { label: "Faible", color: "#dbeafe" },
-      { label: "Élevée", color: "#1d4ed8" },
+      { label: "Faible", color: "#bbf7d0" },
+      { label: "Élevée", color: "#15803d" },
     ],
   },
   {
@@ -58,10 +58,10 @@ export const METRICS: MetricConfig[] = [
     label: "Véhicules",
     unit: "",
     icon: "🚗",
-    colors: ["#d1fae5", "#6ee7b7", "#34d399", "#10b981", "#059669", "#047857"],
+    colors: ["#bbf7d0", "#86efac", "#22c55e", "#22c55e", "#16a34a", "#14532d"],
     thresholds: [
-      { label: "Faible", color: "#d1fae5" },
-      { label: "Dense", color: "#047857" },
+      { label: "Faible", color: "#bbf7d0" },
+      { label: "Dense", color: "#14532d" },
     ],
   },
   {
@@ -69,10 +69,10 @@ export const METRICS: MetricConfig[] = [
     label: "Qualité Air",
     unit: "AQI",
     icon: "🌬️",
-    colors: ["#d1fae5", "#a7f3d0", "#fde68a", "#fdba74", "#f87171", "#dc2626"],
+    colors: ["#bbf7d0", "#a7f3d0", "#86efac", "#4ade80", "#15803d", "#14532d"],
     thresholds: [
-      { label: "Bon", color: "#d1fae5" },
-      { label: "Dangereux", color: "#dc2626" },
+      { label: "Bon", color: "#bbf7d0" },
+      { label: "Dangereux", color: "#14532d" },
     ],
   },
   {
@@ -80,10 +80,10 @@ export const METRICS: MetricConfig[] = [
     label: "Bruit",
     unit: "dB",
     icon: "🔊",
-    colors: ["#ede9fe", "#c4b5fd", "#a78bfa", "#8b5cf6", "#7c3aed", "#6d28d9"],
+    colors: ["#bbf7d0", "#86efac", "#4ade80", "#22c55e", "#15803d", "#14532d"],
     thresholds: [
-      { label: "Calme", color: "#ede9fe" },
-      { label: "Fort", color: "#6d28d9" },
+      { label: "Calme", color: "#bbf7d0" },
+      { label: "Fort", color: "#14532d" },
     ],
   },
   {
@@ -91,10 +91,10 @@ export const METRICS: MetricConfig[] = [
     label: "Température",
     unit: "°C",
     icon: "🌡️",
-    colors: ["#dbeafe", "#bfdbfe", "#fde68a", "#fdba74", "#f87171", "#ef4444"],
+    colors: ["#bbf7d0", "#86efac", "#86efac", "#4ade80", "#15803d", "#15803d"],
     thresholds: [
-      { label: "Froid", color: "#dbeafe" },
-      { label: "Chaud", color: "#ef4444" },
+      { label: "Froid", color: "#bbf7d0" },
+      { label: "Chaud", color: "#15803d" },
     ],
   },
 ];

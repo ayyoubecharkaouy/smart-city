@@ -42,19 +42,19 @@ interface AnalyticsChartProps {
 }
 
 const COLORS = [
-  "#3b82f6",
-  "#f97316",
-  "#10b981",
-  "#8b5cf6",
-  "#ef4444",
-  "#f59e0b",
+  "#bbf7d0",
+  "#86efac",
+  "#4ade80",
+  "#22c55e",
+  "#16a34a",
+  "#14532d",
 ];
 
 export default function AnalyticsChart({
   type,
   data,
   loading,
-  color = "#3b82f6",
+  color = "#22c55e",
   label = "Valeur",
   unit = "",
   xAxisKey = "name",
@@ -110,28 +110,28 @@ export default function AnalyticsChart({
             <LineChart data={chartData}>
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="#f1f5f9"
+                stroke="#173525"
                 vertical={false}
               />
               <XAxis
                 dataKey={xAxisKey}
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "#1a1a1a", fontSize: 12 }}
+                tick={{ fill: "#8fa89a", fontSize: 12 }}
                 dy={10}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "#1a1a1a", fontSize: 12 }}
+                tick={{ fill: "#8fa89a", fontSize: 12 }}
                 unit={unit}
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#000000",
+                  backgroundColor: "#06110b",
                   borderRadius: "16px",
                   border: "none",
-                  color: "#fff",
+                  color: "#e7f8ed",
                   padding: "8px 12px",
                 }}
                 itemStyle={{ color: color, fontWeight: 700 }}
@@ -141,7 +141,7 @@ export default function AnalyticsChart({
                 dataKey={yAxisKey}
                 stroke={color}
                 strokeWidth={4}
-                dot={{ r: 4, fill: color, strokeWidth: 2, stroke: "#fff" }}
+                dot={{ r: 4, fill: color, strokeWidth: 2, stroke: "#06110b" }}
                 activeDot={{ r: 6, strokeWidth: 0 }}
                 animationDuration={1500}
               />
@@ -160,7 +160,7 @@ export default function AnalyticsChart({
             >
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="#f1f5f9"
+                stroke="#173525"
                 vertical={false}
               />
 
@@ -168,24 +168,24 @@ export default function AnalyticsChart({
                 dataKey={xAxisKey}
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "#94a3b8", fontSize: 12 }}
+                tick={{ fill: "#8fa89a", fontSize: 12 }}
                 dy={10}
               />
 
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "#94a3b8", fontSize: 12 }}
+                tick={{ fill: "#8fa89a", fontSize: 12 }}
                 unit={unit}
               />
 
               <Tooltip
-                cursor={{ fill: "#f8fafc" }}
+                cursor={{ fill: "#0e2016" }}
                 contentStyle={{
-                  backgroundColor: "#fff",
+                  backgroundColor: "#06110b",
                   borderRadius: "16px",
                   border: "none",
-                  boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
+                  boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.35)",
                 }}
               />
 
@@ -237,7 +237,7 @@ export default function AnalyticsChart({
                 nameKey={xAxisKey}
                 animationDuration={1200}
                 animationEasing="ease-out"
-                stroke="#ffffff"
+                stroke="#06110b"
                 strokeWidth={3}
               >
                 {chartData.map((_, index) => (
@@ -250,18 +250,18 @@ export default function AnalyticsChart({
 
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#ffffff",
-                  border: "1px solid #e2e8f0",
+                  backgroundColor: "#06110b",
+                  border: "1px solid #173525",
                   borderRadius: "14px",
                   boxShadow: "0 12px 30px rgba(15, 23, 42, 0.12)",
                   padding: "10px 12px",
                 }}
                 labelStyle={{
-                  color: "#334155",
+                  color: "#e7f8ed",
                   fontWeight: 700,
                 }}
                 itemStyle={{
-                  color: "#0f172a",
+                  color: "#e7f8ed",
                   fontWeight: 600,
                 }}
                 formatter={(value, name) => [
@@ -280,7 +280,7 @@ export default function AnalyticsChart({
                   paddingTop: 12,
                   fontSize: 12,
                   fontWeight: 600,
-                  color: "#64748b",
+                  color: "#8fa89a",
                 }}
               />
             </PieChart>
@@ -365,7 +365,7 @@ export default function AnalyticsChart({
 
       case "table":
         return (
-          <div className="h-full w-full overflow-hidden rounded-4xl border border-slate-100 bg-white">
+          <div className="h-full w-full overflow-hidden rounded-4xl border border-slate-100">
             <div className="h-full w-full overflow-auto">
               <table className="w-full border-collapse text-left">
                 <thead className="sticky top-0 z-10 bg-slate-50/95 backdrop-blur">

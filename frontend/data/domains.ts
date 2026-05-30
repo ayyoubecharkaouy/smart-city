@@ -31,25 +31,25 @@ export const SMART_CITY_DOMAINS: DomainCategory[] = [
   },
   {
     items: [
-      { id: "water_consumption", label: "Consommation d'eau", icon: Droplet, colorClass: "text-blue-600", bgClass: "bg-blue-300" },
-      { id: "water_quality", label: "Qualité de l'eau", icon: Droplet, colorClass: "text-cyan-600", bgClass: "bg-cyan-300" },
+      { id: "water_consumption", label: "Consommation d'eau", icon: Droplet, colorClass: "text-green-600", bgClass: "bg-green-300" },
+      { id: "water_quality", label: "Qualité de l'eau", icon: Droplet, colorClass: "text-green-600", bgClass: "bg-green-300" },
     ]
   },
   {
     items: [
-      { id: "air_quality", label: "Qualité de l'air", icon: Wind, colorClass: "text-teal-600", bgClass: "bg-teal-300" },
-      { id: "temperature", label: "Température", icon: Thermometer, colorClass: "text-orange-600", bgClass: "bg-orange-300" },
+      { id: "air_quality", label: "Qualité de l'air", icon: Wind, colorClass: "text-green-600", bgClass: "bg-green-300" },
+      { id: "temperature", label: "Température", icon: Thermometer, colorClass: "text-green-600", bgClass: "bg-green-300" },
     ]
   },
   {
     items: [
-      { id: "energy_consumption", label: "Consommation électrique", icon: Zap, colorClass: "text-yellow-600", bgClass: "bg-yellow-300" },
-      { id: "street_lighting", label: "Eclairage public intelligent", icon: Lightbulb, colorClass: "text-amber-500", bgClass: "bg-amber-300" },
+      { id: "energy_consumption", label: "Consommation électrique", icon: Zap, colorClass: "text-green-600", bgClass: "bg-green-300" },
+      { id: "street_lighting", label: "Eclairage public intelligent", icon: Lightbulb, colorClass: "text-green-600", bgClass: "bg-green-300" },
     ]
   },
   {
     items: [
-      { id: "waste_level", label: "Niveau de remplissage", icon: Trash2, colorClass: "text-stone-600", bgClass: "bg-stone-300" },
+      { id: "waste_level", label: "Niveau de remplissage", icon: Trash2, colorClass: "text-green-600", bgClass: "bg-green-300" },
     ]
   }
 ];

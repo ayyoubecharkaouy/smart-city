@@ -16,10 +16,10 @@ interface AirQualityStatsProps {
 
 const getAqiLabel = (aqi: number) => {
   if (aqi <= 50) return { label: "Bon", color: "#22c55e" };
-  if (aqi <= 100) return { label: "Moyen", color: "#eab308" };
-  if (aqi <= 150) return { label: "Sensible", color: "#f97316" };
-  if (aqi <= 200) return { label: "Mauvais", color: "#ef4444" };
-  return { label: "Critique", color: "#7f1d1d" };
+  if (aqi <= 100) return { label: "Moyen", color: "#4ade80" };
+  if (aqi <= 150) return { label: "Sensible", color: "#16a34a" };
+  if (aqi <= 200) return { label: "Mauvais", color: "#15803d" };
+  return { label: "Critique", color: "#14532d" };
 };
 
 export default function AirQualityStats({
@@ -60,20 +60,20 @@ export default function AirQualityStats({
 
   return (
     <div className="flex flex-col gap-2 p-4">
-      <div className="border border-gray-200 rounded-4xl p-4 bg-white/50 backdrop-blur-sm">
+      <div className="border border-gray-200 rounded-4xl p-4/50 backdrop-blur-sm">
         <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2 px-2 mb-2">
           <TrendingUp className="w-5 h-5 text-emerald-500" />
           Analyse Qualité Air
         </h3>
         <TrendChart
           data={combinedHistory}
-          color="#10b981"
+          color="#22c55e"
           label="AQI"
           unit=""
         />
       </div>
 
-      <div className=" border border-gray-200 rounded-4xl p-4 bg-white/50 backdrop-blur-sm">
+      <div className=" border border-gray-200 rounded-4xl p-4/50 backdrop-blur-sm">
         <div className="flex items-center justify-between mb-2 px-4">
           <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
             Indices par Quartier
@@ -82,7 +82,7 @@ export default function AirQualityStats({
             {connected ? (
               <Wifi className="w-4 h-4 text-green-600" />
             ) : (
-              <WifiOff className="w-4 h-4 text-red-600" />
+              <WifiOff className="w-4 h-4 text-green-600" />
             )}
           </div>
         </div>
@@ -103,7 +103,7 @@ export default function AirQualityStats({
                 return (
                   <div
                     key={d.district}
-                    className="flex items-center justify-between px-4 py-3 bg-white/80 rounded-full border-2 border-gray-100 transition-all"
+                    className="flex items-center justify-between px-4 py-3/80 rounded-full border-2 border-gray-100 transition-all"
                   >
                     <span className="text-sm font-semibold text-gray-700 truncate">
                       {d.district}

@@ -66,7 +66,7 @@ function WaterSensorsLayer({ latestReadings, visible, mode }: WaterSensorsLayerP
         const reading = readingsBySensor.get(sensor.id);
         const isAnimating = animatingSensors.has(sensor.id);
 
-        let color = "#9ca3af";
+        let color = "#5f7668";
         let valueStr = "—";
         let statusStr = "";
 
@@ -100,7 +100,7 @@ function WaterSensorsLayer({ latestReadings, visible, mode }: WaterSensorsLayerP
               <div className="text-center font-sans">
                 <div className="text-[10px] text-gray-400 font-mono">{sensor.id}</div>
                 <div className="text-xs text-gray-700 font-bold">{sensor.districtName}</div>
-                <div className="font-black text-blue-600 text-sm mt-1">{valueStr}</div>
+                <div className="font-black text-green-600 text-sm mt-1">{valueStr}</div>
                 <div className="text-[9px] text-gray-400 uppercase mt-0.5">{statusStr}</div>
               </div>
             </Tooltip>

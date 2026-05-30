@@ -60,11 +60,11 @@ export default function TemperatureStats({
   ).length;
 
   return (
-    <div className="flex flex-col gap-2 p-4">
-      <div className="border border-gray-200 rounded-4xl p-4 bg-white/50 backdrop-blur-sm">
+    <div className="flex flex-col gap-2 p-2">
+      <div>
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-lg font-bold text-gray-800 flex items-center px-4 gap-2">
-            <TrendingUp className="w-5 h-5 text-orange-500" />
+            <TrendingUp className="w-5 h-5 text-green-500" />
             Évolution 24h
           </h3>
           <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full uppercase">
@@ -73,13 +73,13 @@ export default function TemperatureStats({
         </div>
         <TrendChart
           data={combinedHistory}
-          color="#f97316"
+          color="#16a34a"
           label="Température"
           unit="°C"
         />
       </div>
 
-      <div className=" border border-gray-200 rounded-4xl p-4 bg-white/50 backdrop-blur-sm">
+      <div>
         <div className="flex items-center justify-between mb-2 px-4">
           <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
             Moyennes par Quartier
@@ -88,7 +88,7 @@ export default function TemperatureStats({
             {connected ? (
               <Wifi className="w-4 h-4 text-green-600" />
             ) : (
-              <WifiOff className="w-4 h-4 text-red-600" />
+              <WifiOff className="w-4 h-4 text-green-600" />
             )}
           </div>
         </div>
@@ -100,7 +100,7 @@ export default function TemperatureStats({
         )}
 
         {error && (
-          <div className="text-xs text-red-500 bg-red-50 rounded-4xl p-2 mb-2 flex items-center gap-2">
+          <div className="text-xs text-green-500 bg-green-50 rounded-4xl p-2 mb-2 flex items-center gap-2">
             <AlertTriangle className="w-4 h-4" />
             {error}
           </div>
@@ -113,7 +113,7 @@ export default function TemperatureStats({
                 <AnimatedNumber value={totalSensors} /> capteurs actifs
               </span>
               {criticalZones > 0 && (
-                <span className="text-red-600 font-bold flex items-center gap-1">
+                <span className="text-green-600 font-bold flex items-center gap-1">
                   <AlertTriangle className="w-4 h-4" />
                   <AnimatedNumber value={criticalZones} /> zone{criticalZones > 1 ? "s" : ""} critique
                 </span>

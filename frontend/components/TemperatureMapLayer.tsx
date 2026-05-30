@@ -35,7 +35,7 @@ const buildPopup = (district: string, stats: DistrictTemperature, mode: string) 
         <span className="font-bold text-gray-800">{district}</span>
       </div>
       <div className="space-y-2">
-        <div className={`flex items-center justify-between ${mode === 'temperature' ? 'bg-orange-50 p-1.5 rounded' : ''}`}>
+        <div className={`flex items-center justify-between ${mode === 'temperature' ? 'bg-green-50 p-1.5 rounded' : ''}`}>
           <div className="flex items-center gap-1.5 text-gray-600">
             <Thermometer className="w-3.5 h-3.5" />
             <span className="text-[11px] font-medium">Température</span>
@@ -85,10 +85,10 @@ function EnvironmentMapLayer({
 
     if (!stats) {
       return {
-        fillColor: "#f3f4f6",
+        fillColor: "#0e2016",
         fillOpacity: 0.1,
         weight: 1,
-        color: "#d1d5db",
+        color: "#173525",
       };
     }
 
@@ -100,7 +100,7 @@ function EnvironmentMapLayer({
       fillColor,
       fillOpacity: 0.6,
       weight: 2,
-      color: "#ffffff",
+      color: "#e7f8ed",
       className: "district-polygon",
     };
   }, [districtStats, mode]);

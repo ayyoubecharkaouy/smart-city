@@ -72,7 +72,7 @@ export default function TrafficStats({
   return (
     <div className="flex flex-col gap-2 p-4">
       {/* Speed Trend Chart */}
-      <div className="border border-gray-200 rounded-sm p-4 bg-white/50 backdrop-blur-sm">
+      <div className="border border-gray-200 rounded-sm p-4/50 backdrop-blur-sm">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-emerald-500" />
@@ -91,7 +91,7 @@ export default function TrafficStats({
       </div>
 
       {/* Per-route stats */}
-      <div className="border border-gray-200 rounded-sm p-4 bg-white/50 backdrop-blur-sm">
+      <div className="border border-gray-200 rounded-sm p-4/50 backdrop-blur-sm">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
             Trafic par Route
@@ -100,7 +100,7 @@ export default function TrafficStats({
             {connected ? (
               <Wifi className="w-4 h-4 text-green-600" />
             ) : (
-              <WifiOff className="w-4 h-4 text-red-600" />
+              <WifiOff className="w-4 h-4 text-green-600" />
             )}
           </div>
         </div>
@@ -124,29 +124,29 @@ export default function TrafficStats({
                 </span>
                 <span className="text-[10px] text-emerald-600 ml-1">km/h</span>
               </div>
-              <div className="bg-blue-50 p-3 rounded-2xl text-center border border-blue-100">
-                <span className="block text-[10px] uppercase font-bold text-blue-600 mb-1">
+              <div className="bg-green-50 p-3 rounded-2xl text-center border border-green-100">
+                <span className="block text-[10px] uppercase font-bold text-green-600 mb-1">
                   Véhicules
                 </span>
-                <span className="text-xl font-black text-blue-800">
+                <span className="text-xl font-black text-green-800">
                   <AnimatedNumber value={totalVehicles} />
                 </span>
               </div>
               <div
-                className={`p-3 rounded-2xl text-center border ${congestionRoutes > 0 ? "bg-red-50 border-red-100" : "bg-green-50 border-green-100"}`}
+                className={`p-3 rounded-2xl text-center border ${congestionRoutes > 0 ? "bg-green-50 border-green-100" : "bg-green-50 border-green-100"}`}
               >
                 <span
-                  className={`block text-[10px] uppercase font-bold mb-1 ${congestionRoutes > 0 ? "text-red-600" : "text-green-600"}`}
+                  className={`block text-[10px] uppercase font-bold mb-1 ${congestionRoutes > 0 ? "text-green-600" : "text-green-600"}`}
                 >
                   Congestion
                 </span>
                 <span
-                  className={`text-xl font-black ${congestionRoutes > 0 ? "text-red-800" : "text-green-800"}`}
+                  className={`text-xl font-black ${congestionRoutes > 0 ? "text-green-800" : "text-green-800"}`}
                 >
                   <AnimatedNumber value={congestionRoutes} />
                 </span>
                 <span
-                  className={`text-[10px] ml-1 ${congestionRoutes > 0 ? "text-red-600" : "text-green-600"}`}
+                  className={`text-[10px] ml-1 ${congestionRoutes > 0 ? "text-green-600" : "text-green-600"}`}
                 >
                   routes
                 </span>
@@ -163,7 +163,7 @@ export default function TrafficStats({
                   return (
                     <div
                       key={r.route_id}
-                      className="flex flex-col gap-2 p-3 bg-white/80 rounded-2xl border border-gray-100 transition-all"
+                      className="flex flex-col gap-2 p-3/80 rounded-2xl border border-gray-100 transition-all"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">

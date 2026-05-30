@@ -119,12 +119,12 @@ const RoutesOverlay = memo(function RoutesOverlay({
               ? `${10 * scale} ${6 * scale}`
               : undefined;
         } else if (isTrafficMode) {
-          color = "#005eff";
+          color = "#22c55e";
           weight = Math.max(2, 3 * scale);
           opacity = 0.5;
           dashArray = undefined;
         } else {
-          color = "#ff0000";
+          color = "#14532d";
           weight = 1.2;
           opacity = 0.15;
           dashArray = undefined;
@@ -169,7 +169,7 @@ const RoutesOverlay = memo(function RoutesOverlay({
                     <div
                       style={{
                         fontSize: 11,
-                        color: "#6b7280",
+                        color: "#86efac",
                         lineHeight: 1.6,
                       }}
                     >
@@ -182,7 +182,7 @@ const RoutesOverlay = memo(function RoutesOverlay({
                     </div>
                   </div>
                 ) : (
-                  <div style={{ marginTop: 4, fontSize: 11, color: "#9ca3af" }}>
+                  <div style={{ marginTop: 4, fontSize: 11, color: "#86efac" }}>
                     Pas de données en temps réel
                   </div>
                 )}
@@ -321,7 +321,7 @@ export default function Map() {
 
   return (
     <div
-      className={`flex flex-row-reverse h-full w-full bg-gray-50 overflow-hidden select-none ${isResizingRight ? "cursor-col-resize" : ""}`}
+      className={`flex h-full w-full flex-row-reverse overflow-hidden text-green-50 select-none ${isResizingRight ? "cursor-col-resize" : ""}`}
     >
       {/* Menu Modal */}
       {isModalOpen && (
@@ -340,10 +340,12 @@ export default function Map() {
       <div className="flex-1 relative h-full min-w-0">
         <button
           onClick={openModal}
-          className="absolute bottom-6 left-6 z-1001 cursor-pointer bg-white p-4 rounded-4xl border-2 border-gray-500 flex items-center gap-3"
+          className="absolute bottom-4 left-4 z-1001 flex max-w-[calc(100vw-2rem)] cursor-pointer items-center gap-2 rounded-2xl border border-green-500/30 bg-[#06110b]/95 px-3 py-3 shadow-lg backdrop-blur-md sm:bottom-6 sm:left-6 sm:gap-3 sm:px-4"
         >
-          <Menu className="w-6 h-6 text-black" />
-          <span className="font-black text-gray-900 pr-2">Changer Type de donnees</span>
+          <Menu className="h-5 w-5 text-green-400" />
+          <span className="truncate pr-1 text-sm font-black text-green-50">
+            Type de données
+          </span>
         </button>
 
         <MapContainer
@@ -355,7 +357,7 @@ export default function Map() {
           <MapResizer rightWidth={rightWidth} />
           <TileLayer
             attribution="&copy; OpenStreetMap"
-            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
           />
 
           {/* Environmental Layers */}
@@ -420,7 +422,7 @@ export default function Map() {
             <StateNotice
               variant="error"
               message={`${currentError}. Les dernières données affichées peuvent être obsolètes.`}
-              className="mx-auto max-w-2xl shadow-sm pointer-events-auto"
+              className="mx-auto max-w-2xl pointer-events-auto"
             />
           </div>
         )}
@@ -430,7 +432,7 @@ export default function Map() {
             <StateNotice
               variant="disconnected"
               message="Le backend n'est pas connecté. Lancez l'API et les producteurs Kafka pour alimenter la carte."
-              className="mx-auto max-w-2xl shadow-sm pointer-events-auto"
+              className="mx-auto max-w-2xl pointer-events-auto"
             />
           </div>
         )}
@@ -440,24 +442,24 @@ export default function Map() {
             <StateNotice
               variant="empty"
               message="Connexion active, mais aucune mesure n'est disponible pour cette couche."
-              className="mx-auto max-w-2xl shadow-sm pointer-events-auto"
+              className="mx-auto max-w-2xl pointer-events-auto"
             />
           </div>
         )}
 
         {/* Legends */}
-        <div className="absolute bottom-6 right-6 z-1000 flex flex-col gap-2">
+        <div className="absolute bottom-4 right-4 z-1000 flex max-w-[calc(100vw-2rem)] flex-col gap-2 sm:bottom-6 sm:right-6">
           {mode === "temperature" && (
             <Legend
               title="🌡️ Température"
               items={[
-                { color: "#93c5fd", label: "< 15°C" },
-                { color: "#60a5fa", label: "15 – 20°C" },
-                { color: "#fbbf24", label: "20 – 25°C" },
-                { color: "#f59e0b", label: "25 – 29°C" },
-                { color: "#f97316", label: "29 – 32°C" },
-                { color: "#ef4444", label: "32 – 35°C" },
-                { color: "#dc2626", label: "> 35°C" },
+                { color: "#bbf7d0", label: "< 15°C" },
+                { color: "#86efac", label: "15 – 20°C" },
+                { color: "#4ade80", label: "20 – 25°C" },
+                { color: "#22c55e", label: "25 – 29°C" },
+                { color: "#16a34a", label: "29 – 32°C" },
+                { color: "#15803d", label: "32 – 35°C" },
+                { color: "#14532d", label: "> 35°C" },
               ]}
             />
           )}
@@ -466,11 +468,11 @@ export default function Map() {
               title="🌬️ Qualité de l'Air (AQI)"
               items={[
                 { color: "#22c55e", label: "0 – 50 (Bon)" },
-                { color: "#84cc16", label: "51 – 100 (Moyen)" },
-                { color: "#eab308", label: "101 – 150 (Sensible)" },
-                { color: "#f97316", label: "151 – 200 (Mauvais)" },
-                { color: "#ef4444", label: "201 – 300 (Très Mauvais)" },
-                { color: "#7f1d1d", label: "> 300 (Dangereux)" },
+                { color: "#86efac", label: "51 – 100 (Moyen)" },
+                { color: "#4ade80", label: "101 – 150 (Sensible)" },
+                { color: "#16a34a", label: "151 – 200 (Mauvais)" },
+                { color: "#15803d", label: "201 – 300 (Très Mauvais)" },
+                { color: "#14532d", label: "> 300 (Dangereux)" },
               ]}
             />
           )}
@@ -484,15 +486,15 @@ export default function Map() {
               items={
                 mode === "water_consumption"
                   ? [
-                      { color: "#d1fae5", label: "0 – 5 L/min" },
-                      { color: "#34d399", label: "5 – 15 L/min" },
-                      { color: "#3b82f6", label: "15 – 25 L/min" },
-                      { color: "#1d4ed8", label: "> 25 L/min" },
+                      { color: "#bbf7d0", label: "0 – 5 L/min" },
+                      { color: "#4ade80", label: "5 – 15 L/min" },
+                      { color: "#22c55e", label: "15 – 25 L/min" },
+                      { color: "#15803d", label: "> 25 L/min" },
                     ]
                   : [
-                      { color: "#f87171", label: "< 6.5 (Acide)" },
-                      { color: "#34d399", label: "6.5 – 8.5 (Sain)" },
-                      { color: "#818cf8", label: "> 8.5 (Basique)" },
+                      { color: "#15803d", label: "< 6.5 (Acide)" },
+                      { color: "#22c55e", label: "6.5 – 8.5 (Sain)" },
+                      { color: "#4ade80", label: "> 8.5 (Basique)" },
                     ]
               }
             />
@@ -502,9 +504,9 @@ export default function Map() {
               title="🚦 Congestion Routière"
               items={[
                 { color: "#22c55e", label: "Fluide" },
-                { color: "#f59e0b", label: "Dense" },
-                { color: "#f97316", label: "Congestion" },
-                { color: "#ef4444", label: "Forte Congestion" },
+                { color: "#86efac", label: "Dense" },
+                { color: "#16a34a", label: "Congestion" },
+                { color: "#14532d", label: "Forte Congestion" },
               ]}
             />
           )}
@@ -514,13 +516,13 @@ export default function Map() {
       {/* Right Resizer */}
       <div
         onMouseDown={startResizingRight}
-        className={`relative z-1100 w-1.5 h-full cursor-col-resize hover:bg-blue-500/30 transition-colors shrink-0 ${isResizingRight ? "bg-blue-500" : "bg-gray-200"}`}
+        className={`relative z-1100 hidden h-full w-1.5 shrink-0 cursor-col-resize transition-colors hover:bg-green-500/30 xl:block ${isResizingRight ? "bg-green-500" : "bg-green-950/50"}`}
       />
 
       {/* Right Sidebar */}
       <div
         style={{ width: rightWidth }}
-        className="h-full bg-[#fafaf8] relative transition-[width] duration-75 ease-out overflow-y-auto shrink-0"
+        className="relative hidden h-full shrink-0 overflow-y-auto bg-[#06110b] transition-[width] duration-75 ease-out xl:block"
       >
         <div className="flex flex-col gap-2 min-w-[250px]">
           {mode === "temperature" ? (
@@ -577,8 +579,8 @@ function Legend({
   items: { color: string; label: string }[];
 }) {
   return (
-    <div className="bg-white/95 backdrop-blur-md border border-gray-200 rounded-sm p-2 w-max ">
-      <h3 className="text-[11px] font-bold text-gray-800 mb-2 uppercase tracking-tight">
+    <div className="w-max max-w-[calc(100vw-2rem)] rounded-sm border border-green-500/30 bg-[#06110b]/95 p-2 backdrop-blur-md">
+      <h3 className="text-[11px] font-bold text-green-100 mb-2 uppercase tracking-tight">
         {title}
       </h3>
       <div className="space-y-1">
@@ -588,7 +590,7 @@ function Legend({
               className="w-3 h-3 rounded-full"
               style={{ backgroundColor: item.color }}
             />
-            <span className="text-[10px] text-gray-600 font-medium">
+            <span className="text-[10px] text-green-200/80 font-medium">
               {item.label}
             </span>
           </div>

@@ -17,7 +17,7 @@ function Controls({
   onModeChange,
 }: ControlsProps) {
   return (
-    <div className="w-full flex flex-col bg-white rounded-4xl  py-12 h-max">
+    <div className="w-full flex flex-col rounded-4xl  py-12 h-max">
       {/* Data Displayed & Visualization Options */}
       <div className="space-y-2 px-2">
         {SMART_CITY_DOMAINS.map((category, idx) => (
@@ -32,14 +32,14 @@ function Controls({
                     onClick={() => onModeChange(item.id)}
                     className={`cursor-pointer w-full flex items-center gap-2.5 px-1 pe-4 py-1 rounded-full font-semibold transition-all text-left ${
                       isActive
-                        ? ` ring-2 ring-gray-200 ${item.colorClass} bg-white`
-                        : "text-gray-900 hover:bg-gray-300 hover:text-gray-800"
+                        ? `bg-[#102a1b] ring-2 ring-[#22c55e]/50 ${item.colorClass}`
+                        : "text-gray-500 hover:bg-[#0e2016] hover:text-gray-900"
                     }`}
                   >
                     <div
                       className={`w-12 h-12 flex justify-center items-center rounded-full p-2 ${item.bgClass}`}
                     >
-                      <Icon className={`w-6 h-6 text-black`} />
+                      <Icon className="w-6 h-6 text-[#031007]" />
                     </div>
 
                     <span className="flex-1 text-base font-medium">

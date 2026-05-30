@@ -9,6 +9,7 @@ import {
   Map as MapIcon,
   Star,
   Loader,
+  Settings,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -20,14 +21,23 @@ const navItems = [
   { label: "Données Spark", icon: Star, href: APP_ROUTES.spark },
   { label: "Analytiques", icon: LineChart, href: APP_ROUTES.analytics },
   { label: "Alertes", icon: Bell, href: APP_ROUTES.alerts },
+  { label: "Réglages", icon: Settings, href: APP_ROUTES.settings },
 ];
 
 export default function Sidebar() {
 
   return (
-    <aside className="w-64 flex flex-col h-screen shrink-0">
-      <div className="p-2">
-        <nav className="space-y-1">
+    <aside className="fixed inset-x-0 bottom-0 z-2000 h-16 shrink-0 lg:static lg:h-screen lg:w-64 lg:border-t-0">
+      <div className="flex h-full flex-col lg:p-2">
+        <div className="hidden px-3 py-4 lg:block">
+          <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#5f7668]">
+            Smart City
+          </p>
+          <h1 className="mt-1 text-lg font-black text-[#e7f8ed]">
+            El Jadida Ops
+          </h1>
+        </div>
+        <nav className="flex h-full items-center gap-1 overflow-x-auto px-2 lg:block lg:h-auto lg:space-y-1 lg:overflow-visible lg:px-0">
           {navItems.map((item) => (
             <SidebarItem
               key={item.href}
@@ -64,25 +74,30 @@ function SidebarItem({
   return (
     <Link
       href={href}
-      className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 group ${
+      aria-label={label}
+      title={label}
+      className={`flex min-w-16 flex-1 flex-col items-center justify-center gap-1 rounded-2xl px-2 py-2 transition-all duration-200 group lg:min-w-0 lg:flex-row lg:justify-start lg:gap-3 lg:px-4 lg:py-3 ${
         isActive
-          ? "bg-[#e85d04] text-white"
-          : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+          ? "bg-[#22C55E] text-[#031007] shadow-lg shadow-green-950/40"
+          : "text-[#8fa89a] hover:bg-[#0e2016] hover:text-[#e7f8ed]"
       }`}
       onClick={() => {
         if (!isActive) setIsclicked(true);
       }}
     >
       {isclicked ? (
-        <Loader className="w-5 h-5 animate-spin text-gray-400" />
+        <Loader className="w-5 h-5 animate-spin text-[#22C55E]" />
       ) : (
         <Icon
           className={`w-5 h-5 transition-colors ${
-            isActive ? "text-white" : "text-gray-400 group-hover:text-gray-600"
+            isActive ? "text-[#031007]" : "text-[#6f8979] group-hover:text-[#22C55E]"
           }`}
         />
       )}
-      <span className="text-sm font-bold">{label}</span>
+      <span className="max-w-14 truncate text-[10px] font-bold leading-none lg:hidden">
+        {label}
+      </span>
+      <span className="hidden text-sm font-bold lg:inline">{label}</span>
     </Link>
   );
 }

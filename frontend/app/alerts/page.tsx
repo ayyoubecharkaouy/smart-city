@@ -165,7 +165,7 @@ export default function AlertsPage() {
             Alertes Spark temps reel, seuils critiques et incidents capteurs
           </p>
         </div>
-        <div className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-bold ${connected ? "border-emerald-100 bg-emerald-50 text-emerald-700" : "border-amber-100 bg-amber-50 text-amber-700"}`}>
+        <div className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-bold ${connected ? "border-emerald-100 bg-emerald-50 text-emerald-700" : "border-green-100 bg-green-50 text-green-700"}`}>
           {connected ? <Wifi className="w-4 h-4" /> : <WifiOff className="w-4 h-4" />}
           {connected ? (
             <>
@@ -190,7 +190,7 @@ export default function AlertsPage() {
                   <button
                     key={option.value}
                     onClick={() => setDomainFilter(option.value)}
-                    className={`rounded-xl border px-3 py-2 text-xs font-black transition-colors ${domainFilter === option.value ? "border-gray-900 bg-gray-900 text-white" : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"}`}
+                    className={`rounded-xl border px-3 py-2 text-xs font-black transition-colors ${domainFilter === option.value ? "border-gray-900 bg-gray-900 text-white" : "border-gray-200 text-gray-600 hover:bg-gray-50"}`}
                   >
                     {option.label} (<AnimatedNumber value={domainCounts[option.value]} />)
                   </button>
@@ -198,7 +198,7 @@ export default function AlertsPage() {
               </div>
             </div>
 
-            <div className="rounded-3xl border border-gray-100 bg-white p-4">
+            <div className="rounded-3xl border border-gray-100 p-4">
               <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <h4 className="flex items-center gap-2 text-sm font-black uppercase text-gray-500">
                   <Filter className="h-4 w-4" />
@@ -218,7 +218,7 @@ export default function AlertsPage() {
                   <select
                     value={districtFilter}
                     onChange={event => setDistrictFilter(event.target.value)}
-                    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+                    className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
                   >
                     <option value="all">Tous les districts</option>
                     {districtOptions.map(district => (
@@ -231,7 +231,7 @@ export default function AlertsPage() {
                   <select
                     value={routeFilter}
                     onChange={event => setRouteFilter(event.target.value)}
-                    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+                    className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
                   >
                     <option value="all">Toutes les routes</option>
                     {routeOptions.map(route => (
@@ -244,7 +244,7 @@ export default function AlertsPage() {
                   <select
                     value={alertTypeFilter}
                     onChange={event => setAlertTypeFilter(event.target.value)}
-                    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+                    className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
                   >
                     <option value="all">Tous les types</option>
                     {alertTypeOptions.map(alertType => (
@@ -257,7 +257,7 @@ export default function AlertsPage() {
                   <select
                     value={periodFilter}
                     onChange={event => setPeriodFilter(event.target.value as PeriodFilter)}
-                    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+                    className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
                   >
                     {PERIOD_OPTIONS.map(option => (
                       <option key={option.value} value={option.value}>{option.label}</option>
@@ -269,7 +269,7 @@ export default function AlertsPage() {
                   <select
                     value={criticalFilter}
                     onChange={event => setCriticalFilter(event.target.value as CriticalFilter)}
-                    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+                    className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
                   >
                     <option value="all">Toutes les alertes</option>
                     <option value="critical">Critiques seulement</option>
@@ -279,7 +279,7 @@ export default function AlertsPage() {
             </div>
 
             {error && (
-              <div className="rounded-2xl border border-rose-100 bg-rose-50 p-4 text-sm font-bold text-rose-700">
+              <div className="rounded-2xl border border-green-100 bg-green-50 p-4 text-sm font-bold text-green-700">
                 {error}
               </div>
             )}
@@ -304,12 +304,12 @@ export default function AlertsPage() {
                   return (
                     <div
                       key={`${alert.processed_at}-${alert.type}-${index}`}
-                      className="bg-white p-5 rounded-3xl border border-amber-100"
+                      className="bg-white p-5 rounded-3xl border border-green-100"
                     >
                       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                         <div className="flex items-start gap-3">
-                          <div className="p-3 rounded-2xl bg-amber-50">
-                            <Icon className="w-6 h-6 text-amber-600" />
+                          <div className="p-3 rounded-2xl bg-green-50">
+                            <Icon className="w-6 h-6 text-green-600" />
                           </div>
                           <div className="min-w-0">
                             <div className="flex flex-wrap items-center gap-2">
@@ -319,7 +319,7 @@ export default function AlertsPage() {
                               <span className="rounded-full bg-gray-100 px-2 py-1 text-[10px] font-black uppercase text-gray-600">
                                 {getDomainLabel(alert.type)}
                               </span>
-                              <span className="rounded-full bg-amber-100 px-2 py-1 text-[10px] font-black uppercase text-amber-700">
+                              <span className="rounded-full bg-green-100 px-2 py-1 text-[10px] font-black uppercase text-green-700">
                                 {alert.severity}
                               </span>
                             </div>
@@ -339,11 +339,11 @@ export default function AlertsPage() {
                             </div>
                           </div>
                         </div>
-                        <div className="rounded-2xl bg-amber-50 px-4 py-3 text-right">
-                          <p className="text-[10px] font-black uppercase text-amber-600">
+                        <div className="rounded-2xl bg-green-50 px-4 py-3 text-right">
+                          <p className="text-[10px] font-black uppercase text-green-600">
                             Valeur / seuil
                           </p>
-                          <p className="text-lg font-black text-amber-900">
+                          <p className="text-lg font-black text-green-900">
                             <AnimatedNumber value={alert.value} decimals={1} /> {alert.operator} <AnimatedNumber value={alert.threshold} decimals={1} />
                           </p>
                         </div>
@@ -370,12 +370,12 @@ export default function AlertsPage() {
                 {filteredTemperatureAlerts.map((alert) => (
                   <div
                     key={alert.id}
-                    className={`bg-white p-5 rounded-3xl border transition-all ${alert.acknowledged ? "border-gray-100 opacity-60" : "border-rose-100"}`}
+                    className={`bg-white p-5 rounded-3xl border transition-all ${alert.acknowledged ? "border-gray-100 opacity-60" : "border-green-100"}`}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-start gap-3">
-                        <div className={`p-3 rounded-2xl ${alert.acknowledged ? "bg-gray-100" : "bg-rose-50"}`}>
-                          <ShieldAlert className={`w-6 h-6 ${alert.acknowledged ? "text-gray-400" : "text-rose-600"}`} />
+                        <div className={`p-3 rounded-2xl ${alert.acknowledged ? "bg-gray-100" : "bg-green-50"}`}>
+                          <ShieldAlert className={`w-6 h-6 ${alert.acknowledged ? "text-gray-400" : "text-green-600"}`} />
                         </div>
                         <div>
                           <h4 className="text-lg font-bold text-gray-900">
@@ -396,7 +396,7 @@ export default function AlertsPage() {
                       {!alert.acknowledged && (
                         <button
                           onClick={() => acknowledgeAlert(alert.id)}
-                          className="bg-rose-600 text-white font-bold px-4 py-2 rounded-xl text-sm hover:bg-rose-700 transition-colors"
+                          className="bg-green-600 text-white font-bold px-4 py-2 rounded-xl text-sm hover:bg-green-700 transition-colors"
                         >
                           Acquitter
                         </button>
@@ -412,7 +412,7 @@ export default function AlertsPage() {
         <div className="space-y-4">
           <div className="bg-gray-900 rounded-3xl p-8 text-white">
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <Bell className="w-5 h-5 text-yellow-400" />
+              <Bell className="w-5 h-5 text-green-400" />
               Resume Spark
             </h3>
             <div className="space-y-3">
@@ -437,7 +437,7 @@ export default function AlertsPage() {
 
           <div className="bg-white rounded-3xl border border-gray-100 p-6">
             <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-amber-500" />
+              <AlertTriangle className="w-5 h-5 text-green-500" />
               Severite
             </h3>
             <p className="text-sm text-gray-500 font-medium leading-relaxed">

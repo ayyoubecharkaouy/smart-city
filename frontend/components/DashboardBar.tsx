@@ -87,28 +87,28 @@ const DashboardBar = memo(
                 icon: <Thermometer />,
                 label: "Moyenne",
                 unit: "°C",
-                color: "from-orange-400 to-red-500",
+                color: "from-green-400 to-green-700",
                 key: "avg",
               },
               {
                 icon: <TrendingDown />,
                 label: "Minimum",
                 unit: "°C",
-                color: "from-blue-400 to-blue-600",
+                color: "from-green-400 to-green-700",
                 key: "min",
               },
               {
                 icon: <TrendingUp />,
                 label: "Maximum",
                 unit: "°C",
-                color: "from-red-400 to-red-600",
+                color: "from-green-400 to-green-700",
                 key: "max",
               },
               {
                 icon: <Activity />,
                 label: "Capteurs",
                 unit: "actifs",
-                color: "from-violet-400 to-purple-500",
+                color: "from-green-400 to-green-700",
                 key: "total",
               },
               {
@@ -132,14 +132,14 @@ const DashboardBar = memo(
                 icon: <AlertTriangle />,
                 label: "AQI Max",
                 unit: "",
-                color: "from-orange-400 to-red-600",
+                color: "from-green-400 to-green-700",
                 key: "max",
               },
               {
                 icon: <Activity />,
                 label: "Capteurs",
                 unit: "actifs",
-                color: "from-blue-400 to-cyan-500",
+                color: "from-green-400 to-green-700",
                 key: "total",
               },
               {
@@ -156,28 +156,28 @@ const DashboardBar = memo(
                 icon: <Droplets />,
                 label: "Débit Total",
                 unit: "L/min",
-                color: "from-blue-400 to-indigo-600",
+                color: "from-green-400 to-green-700",
                 key: "totalFlow",
               },
               {
                 icon: <Gauge />,
                 label: "Moyenne",
                 unit: "L/min",
-                color: "from-cyan-400 to-blue-500",
+                color: "from-green-400 to-green-700",
                 key: "avg",
               },
               {
                 icon: <Activity />,
                 label: "Volume Cumulé",
                 unit: "L",
-                color: "from-blue-500 to-blue-700",
+                color: "from-green-500 to-green-800",
                 key: "totalVolume",
               },
               {
                 icon: <Navigation />,
                 label: "Points d'accès",
                 unit: "actifs",
-                color: "from-teal-400 to-emerald-500",
+                color: "from-green-400 to-green-700",
                 key: "sensors",
               },
             ];
@@ -187,14 +187,14 @@ const DashboardBar = memo(
                 icon: <FlaskConical />,
                 label: "pH Moyen",
                 unit: "pH",
-                color: "from-teal-400 to-green-600",
+                color: "from-green-400 to-green-700",
                 key: "avgPh",
               },
               {
                 icon: <Droplets />,
                 label: "Turbidité",
                 unit: "NTU",
-                color: "from-amber-400 to-orange-500",
+                color: "from-green-400 to-green-700",
                 key: "avgTurb",
               },
               {
@@ -218,14 +218,14 @@ const DashboardBar = memo(
                 icon: <Car />,
                 label: "Véhicules",
                 unit: "détectés",
-                color: "from-blue-400 to-blue-600",
+                color: "from-green-400 to-green-700",
                 key: "totalVehicles",
               },
               {
                 icon: <Activity />,
                 label: "Capteurs",
                 unit: "actifs",
-                color: "from-violet-400 to-purple-500",
+                color: "from-green-400 to-green-700",
                 key: "totalSensors",
               },
               {
@@ -285,7 +285,7 @@ const DashboardBar = memo(
                 return {
                   ...k,
                   value: critical.toString(),
-                  color: critical > 0 ? "from-red-500 to-red-700" : k.color,
+                  color: critical > 0 ? "from-green-700 to-green-900" : k.color,
                 };
               return k;
             }),
@@ -325,7 +325,7 @@ const DashboardBar = memo(
                 return {
                   ...k,
                   value: critical.toString(),
-                  color: critical > 0 ? "from-red-500 to-red-700" : k.color,
+                  color: critical > 0 ? "from-green-700 to-green-900" : k.color,
                 };
               return k;
             }),
@@ -397,7 +397,7 @@ const DashboardBar = memo(
                 return {
                   ...k,
                   value: alerts.toString(),
-                  color: alerts > 0 ? "from-red-500 to-red-700" : k.color,
+                  color: alerts > 0 ? "from-green-700 to-green-900" : k.color,
                 };
               return k;
             }),
@@ -442,7 +442,7 @@ const DashboardBar = memo(
                 return {
                   ...k,
                   value: congested.toString(),
-                  color: congested > 0 ? "from-red-600 to-red-800" : k.color,
+                  color: congested > 0 ? "from-green-700 to-green-950" : k.color,
                 };
               return k;
             }),
@@ -470,7 +470,7 @@ const DashboardBar = memo(
           {stats.kpis.map((kpi, idx) => (
             <div
               key={idx}
-              className="flex-1 bg-white/70 backdrop-blur-xl border border-white/40 rounded-4xl p-4 pointer-events-auto transition-all hover:bg-white/90"
+              className="flex-1/70 backdrop-blur-xl border border-[#173525] rounded-4xl p-4 pointer-events-auto transition-all hover:bg-[#0e2016]"
             >
               <div className="flex items-center gap-2">
                 <div
@@ -504,7 +504,7 @@ const DashboardBar = memo(
 
         {/* Distribution Statistics Bar */}
         {stats.distribution && (
-          <div className="w-full max-w-max bg-white/70 backdrop-blur-xl border border-white/40 rounded-full px-6 py-3 pointer-events-auto flex items-center gap-2">
+          <div className="w-full max-w-max/70 backdrop-blur-xl border border-[#173525] rounded-full px-6 py-3 pointer-events-auto flex items-center gap-2">
             <div className="flex items-center gap-2 text-gray-700">
               <span className="text-sm font-bold uppercase tracking-widest whitespace-nowrap">
                 {stats.title}
@@ -514,13 +514,13 @@ const DashboardBar = memo(
             <div className="flex items-center gap-2">
               {connected && (
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
-                  <span className="text-sm font-black text-red-600 tracking-tighter uppercase">
+                  <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
+                  <span className="text-sm font-black text-green-600 tracking-tighter uppercase">
                     {mode === "traffic_congestion" ? "TEMPS RÉEL" : "LIVE FEED"}
                   </span>
                 </div>
               )}
-              <span className="text-sm font-medium text-gray-500 tabular-nums border-b-2 border-red-600">
+              <span className="text-sm font-medium text-gray-500 tabular-nums border-b-2 border-green-600">
                 {currentTime ?? "--:--:--"}
               </span>
             </div>

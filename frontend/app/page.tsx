@@ -40,7 +40,7 @@ function MetricCard({
         </div>
         {trend && (
           <div
-            className={`flex items-center gap-1 text-sm font-bold ${trend > 0 ? "text-emerald-600" : "text-rose-600"}`}
+            className="flex items-center gap-1 text-sm font-bold text-green-600"
           >
             {trend > 0 ? (
               <ArrowUpRight className="w-4 h-4" />
@@ -204,7 +204,7 @@ export default function Overview() {
           unit="°C"
           icon={Thermometer}
           trend={tempTrend}
-          colorClass="bg-orange-500"
+          colorClass="bg-green-500"
         />
         <MetricCard
           title="Qualité de l'Air"
@@ -212,7 +212,7 @@ export default function Overview() {
           unit="AQI"
           icon={Activity}
           trend={aqiTrend}
-          colorClass="bg-blue-500"
+          colorClass="bg-green-500"
         />
         <MetricCard
           title="Consommation Eau"
@@ -220,7 +220,7 @@ export default function Overview() {
           unit="L/min"
           icon={Droplets}
           trend={flowTrend}
-          colorClass="bg-emerald-500"
+          colorClass="bg-green-500"
         />
         <MetricCard
           title="Trafic Actuel"
@@ -228,7 +228,7 @@ export default function Overview() {
           unit="véhicules"
           icon={Car}
           trend={trafficTrend}
-          colorClass="bg-indigo-500"
+          colorClass="bg-green-500"
         />
       </div>
     </div>

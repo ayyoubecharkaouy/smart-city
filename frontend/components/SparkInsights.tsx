@@ -68,22 +68,22 @@ const SparkInsights = memo(() => {
 
       {/* Spark Alerts */}
       {sparkAlerts.length > 0 && (
-        <div className="rounded-4xl p-3 border border-amber-100 bg-amber-50">
-          <h4 className="font-bold text-amber-700 flex items-center gap-1 mb-2">
+        <div className="rounded-4xl p-3 border border-green-100 bg-green-50">
+          <h4 className="font-bold text-green-700 flex items-center gap-1 mb-2">
             <AlertTriangle className="w-3 h-3" /> Alertes Spark
           </h4>
           <div className="space-y-2">
             {sparkAlerts.slice(0, 5).map((item, i) => (
-              <div key={`${item.processed_at}-${i}`} className="flex items-center justify-between gap-2 border-b border-amber-100 pb-2 last:border-0 last:pb-0">
+              <div key={`${item.processed_at}-${i}`} className="flex items-center justify-between gap-2 border-b border-green-100 pb-2 last:border-0 last:pb-0">
                 <div className="min-w-0">
-                  <p className="truncate text-xs font-bold text-amber-900">
+                  <p className="truncate text-xs font-bold text-green-900">
                     {item.type} / {item.alert_type}
                   </p>
-                  <p className="truncate text-[10px] text-amber-700">
+                  <p className="truncate text-[10px] text-green-700">
                     {item.district || item.route_id || item.sensor_id}
                   </p>
                 </div>
-                <span className="shrink-0 text-[10px] font-black text-amber-800">
+                <span className="shrink-0 text-[10px] font-black text-green-800">
                   <AnimatedNumber value={item.value} decimals={1} /> {item.operator} <AnimatedNumber value={item.threshold} decimals={1} />
                 </span>
               </div>
@@ -94,18 +94,18 @@ const SparkInsights = memo(() => {
 
       {/* Spark JSON Errors */}
       {sparkErrors.length > 0 && (
-        <div className="rounded-4xl p-3 border border-red-100 bg-red-50">
-          <h4 className="font-bold text-red-700 flex items-center gap-1 mb-2">
+        <div className="rounded-4xl p-3 border border-green-100 bg-green-50">
+          <h4 className="font-bold text-green-700 flex items-center gap-1 mb-2">
             <AlertTriangle className="w-3 h-3" /> Erreurs JSON Spark
           </h4>
           <div className="space-y-2">
             {sparkErrors.slice(0, 5).map((item, i) => (
-              <div key={`${item.processed_at}-${i}`} className="border-b border-red-100 pb-2 last:border-0 last:pb-0">
-                <div className="flex items-center justify-between gap-2 text-[10px] font-bold uppercase text-red-700">
+              <div key={`${item.processed_at}-${i}`} className="border-b border-green-100 pb-2 last:border-0 last:pb-0">
+                <div className="flex items-center justify-between gap-2 text-[10px] font-bold uppercase text-green-700">
                   <span>{item.stream}</span>
                   <span>{item.error_reason}</span>
                 </div>
-                <p className="mt-1 max-w-full truncate font-mono text-[10px] text-red-900" title={item.raw_value}>
+                <p className="mt-1 max-w-full truncate font-mono text-[10px] text-green-900" title={item.raw_value}>
                   {item.raw_value}
                 </p>
               </div>
@@ -123,14 +123,14 @@ const SparkInsights = memo(() => {
           {trafficData.map((t, i) => (
             <div key={i} className="flex flex-wrap justify-between items-center gap-2 py-1 border-b border-gray-100 last:border-0">
               <span className="truncate w-24 text-gray-700">{t.route_id}</span>
-              <span className="font-semibold text-blue-600"><AnimatedNumber value={t.avg_speed || 0} decimals={1} suffix=" km/h" /></span>
-              <span className="text-[9px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded">
+              <span className="font-semibold text-green-600"><AnimatedNumber value={t.avg_speed || 0} decimals={1} suffix=" km/h" /></span>
+              <span className="text-[9px] bg-green-100 text-green-600 px-1.5 py-0.5 rounded">
                 Congestion max: <AnimatedNumber value={t.max_congestion || 0} decimals={1} />
               </span>
               <span className="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
                 Véhicules moy.: <AnimatedNumber value={t.avg_vehicle_count || 0} />
               </span>
-              <span className="text-[9px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">
+              <span className="text-[9px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
                 Min: <AnimatedNumber value={t.min_speed || 0} decimals={1} suffix=" km/h" />
               </span>
               <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
@@ -153,11 +153,11 @@ const SparkInsights = memo(() => {
           {envData.map((e, i) => (
             <div key={i} className="flex flex-wrap justify-between items-center gap-2 py-1 border-b border-gray-100 last:border-0">
               <span className="truncate w-24 text-gray-700">{e.district}</span>
-              <span className="font-semibold text-orange-500"><AnimatedNumber value={e.avg_temperature || 0} decimals={1} suffix="°C" /></span>
+              <span className="font-semibold text-green-500"><AnimatedNumber value={e.avg_temperature || 0} decimals={1} suffix="°C" /></span>
               <span className="text-[9px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
                 AQI: <AnimatedNumber value={e.avg_air_quality || 0} />
               </span>
-              <span className="text-[9px] bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">
+              <span className="text-[9px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
                 <AnimatedNumber value={e.min_temperature || 0} decimals={1} />-<AnimatedNumber value={e.max_temperature || 0} decimals={1} suffix="°C" />
               </span>
               <span className="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
@@ -183,14 +183,14 @@ const SparkInsights = memo(() => {
           {waterData.map((w, i) => (
             <div key={i} className="flex flex-wrap justify-between items-center gap-2 py-1 border-b border-gray-100 last:border-0">
               <span className="truncate w-24 text-gray-700">{w.district}</span>
-              <span className="font-semibold text-blue-500"><AnimatedNumber value={w.avg_flow_rate || 0} decimals={1} suffix=" L/m" /></span>
-              <span className="text-[9px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">
+              <span className="font-semibold text-green-500"><AnimatedNumber value={w.avg_flow_rate || 0} decimals={1} suffix=" L/m" /></span>
+              <span className="text-[9px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
                 pH: <AnimatedNumber value={w.avg_ph || 0} decimals={1} />
               </span>
-              <span className="text-[9px] bg-cyan-100 text-cyan-700 px-1.5 py-0.5 rounded">
+              <span className="text-[9px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
                 Total: <AnimatedNumber value={w.total_flow_rate || 0} decimals={1} />
               </span>
-              <span className={`text-[9px] px-1.5 py-0.5 rounded ${w.sudden_flow_drop ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700"}`}>
+              <span className={`text-[9px] px-1.5 py-0.5 rounded ${w.sudden_flow_drop ? "bg-green-100 text-green-700" : "bg-emerald-100 text-emerald-700"}`}>
                 Score: <AnimatedNumber value={w.water_quality_score || 0} />
               </span>
               <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">

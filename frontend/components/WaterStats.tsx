@@ -52,20 +52,20 @@ export default function WaterStats({
 
   return (
     <div className="flex flex-col gap-2 p-4">
-      <div className="border border-gray-200 rounded-4xl p-4 bg-white/50 backdrop-blur-sm">
+      <div className="border border-gray-200 rounded-4xl p-4/50 backdrop-blur-sm">
         <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2 mb-2 px-2">
-          <TrendingUp className="w-5 h-5 text-blue-500" />
+          <TrendingUp className="w-5 h-5 text-green-500" />
           Analyse Débit Eau
         </h3>
         <TrendChart
           data={combinedHistory}
-          color="#3b82f6"
+          color="#22c55e"
           label="Débit"
           unit=" L/m"
         />
       </div>
 
-      <div className=" border border-gray-200 rounded-4xl p-4 bg-white/50 backdrop-blur-sm">
+      <div className=" border border-gray-200 rounded-4xl p-4/50 backdrop-blur-sm">
         <div className="flex items-center justify-between mb-4 px-4">
           <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
             Gestion par Quartier
@@ -74,7 +74,7 @@ export default function WaterStats({
             {connected ? (
               <Wifi className="w-4 h-4 text-green-600" />
             ) : (
-              <WifiOff className="w-4 h-4 text-red-600" />
+              <WifiOff className="w-4 h-4 text-green-600" />
             )}
           </div>
         </div>
@@ -82,19 +82,19 @@ export default function WaterStats({
         {!loading && districts.length > 0 && (
           <>
             <div className="grid grid-cols-2 gap-2 mb-6">
-              <div className="bg-blue-50 p-3 rounded-4xl text-center border border-blue-100">
-                <span className="block text-[10px] uppercase font-bold text-blue-600 mb-1">
+              <div className="bg-green-50 p-3 rounded-4xl text-center border border-green-100">
+                <span className="block text-[10px] uppercase font-bold text-green-600 mb-1">
                   Volume Total
                 </span>
-                <span className="text-xl font-black text-blue-800">
+                <span className="text-xl font-black text-green-800">
                   <AnimatedNumber value={totalVolume} decimals={1} suffix=" L" />
                 </span>
               </div>
-              <div className="bg-cyan-50 p-3 rounded-4xl text-center border border-cyan-100">
-                <span className="block text-[10px] uppercase font-bold text-cyan-600 mb-1">
+              <div className="bg-green-50 p-3 rounded-4xl text-center border border-green-100">
+                <span className="block text-[10px] uppercase font-bold text-green-600 mb-1">
                   Débit Moyen
                 </span>
-                <span className="text-xl font-black text-cyan-800">
+                <span className="text-xl font-black text-green-800">
                   <AnimatedNumber value={avgFlow} decimals={1} />
                 </span>
               </div>
@@ -132,7 +132,7 @@ export default function WaterStats({
                           </span>
                         </div>
                         <span>|</span>
-                        <span className="text-base font-black text-blue-600">
+                        <span className="text-base font-black text-green-600">
                           <AnimatedNumber value={d.avg_flow} decimals={2} />{" "}
                           <span className="text-[10px]">L/min</span>
                         </span>
