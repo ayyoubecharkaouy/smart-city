@@ -1,44 +1,44 @@
 # Smart City
 
-Ce projet contient plusieurs parties :
+Plateforme Big Data & IoT pour une ville intelligente. Le dépôt contient plusieurs composants qui interagissent via Kafka :
 
 - Kafka
-- Node-RED
-- Backend Node.js
-- Frontend Next.js
-- Spark
+- Node-RED (flux et simulateurs de capteurs)
+- Backend (Node.js + Socket.IO)
+- Frontend (Next.js)
+- Spark (jobs de streaming et d'agrégation)
 
-## Ordre de démarrage du projet
+## Prérequis
 
-Avant de commencer, il faut installer et démarrer **Kafka**.
+- Docker (recommandé pour Kafka)
+- Node.js (pour le backend et le frontend)
+- Python 3.11+ et `pip` (pour les jobs Spark)
 
-Il est recommandé d’utiliser **Docker** pour installer et lancer Kafka plus facilement.
-
-## 1. Démarrer Kafka
-
-Démarrez Kafka avant Node-RED, car Node-RED utilise Kafka pour communiquer avec les autres services.
-
-Si vous utilisez Docker, lancez Kafka avec votre fichier `docker-compose.yml` :
+Installez les dépendances Python nécessaires pour les jobs Spark :
 
 ```bash
-docker compose up -d
+pip install -r requirements.txt
 ```
 
-ou, selon votre version de Docker :
+## Ordre recommandé de démarrage
 
-```bash
-docker-compose up -d
-```
-## Création des topics Kafka
+1. Démarrer Kafka
+	- Si vous utilisez Docker :
 
-Créez tous les topics Kafka nécessaires avec le script du projet :
+	```bash
+	docker compose up -d
+	# ou, selon votre version:
+	docker-compose up -d
+	```
+
+2. Créer les topics Kafka
 
 ```bash
 cd backend/kafka
 ./create-topics.sh
 ```
 
-Le script crée les topics d'entrée et les topics produits par Spark :
+Les topics créés incluent notamment :
 
 ```text
 smartcity.environment.readings
@@ -51,44 +51,57 @@ smartcity.spark.errors
 smartcity.spark.alerts
 ```
 
-## 2. Démarrer Node-RED
-
-Après le démarrage de Kafka, lancez Node-RED :
+3. Démarrer Node-RED
 
 ```bash
 node-red
 ```
 
-Puis ouvrez l’interface dans le navigateur :
+Ouvrez ensuite l'interface :
 
 ```text
 http://127.0.0.1:1880/
 ```
 
-(suirve README.md | node-red/README.md)
+Voir les détails et les flows : [node-red/README.md](node-red/README.md)
 
-## 3. Démarrer le backend
-(suirve README.md | backend/README.md)
+4. Démarrer le backend
 
-## 4. Démarrer Spark
-(suirve README.md | spark/README.md)
-
-## 4. Démarrer le frontend
-(suirve README.md | frontend/README.md)
-
-## Résumé
-
-L’ordre recommandé est le suivant :
-
-```text
-1. Démarrer Kafka
-2. Démarrer Node-RED
-3. Démarrer le backend
-4. Démarrer le frontend
-5. Démarrer Spark
+```bash
+node server.js
 ```
-## License
+
+Voir les instructions spécifiques : [backend/README.md](backend/README.md)
+
+5. Démarrer le frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Voir les détails : [frontend/README.md](frontend/README.md)
+
+6. (Optionnel) Démarrer les jobs Spark
+
+```bash
+cd spark
+./run_spark.sh
+```
+
+Voir la documentation Spark : [spark/README.md](spark/README.md)
+
+## Résumé de l'ordre
+
+1. Kafka
+2. Node-RED
+3. Backend
+4. Frontend
+5. Spark
+
+## Licence
 
 Copyright 2026 Echarkaouy Ayyoub, Ghazi Zakaria, Ahouir Mohamed.
 
-This software is distributed under the Apache License 2.0. See the LICENSE file for more information.
+Ce projet est distribué sous la licence Apache 2.0.
