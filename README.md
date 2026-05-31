@@ -87,3 +87,8 @@ L’ordre recommandé est le suivant :
 4. Démarrer le frontend
 5. Démarrer Spark
 ```
+## License
+
+Copyright 2026 Echarkaouy Ayyoub, Ghazi Zakaria, Ahouir Mohamed.
+
+This software is distributed under the Apache License 2.0. See the LICENSE file for more information.
