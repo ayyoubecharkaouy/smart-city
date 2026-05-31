@@ -33,7 +33,7 @@ function MetricCard({
   colorClass: string;
 }) {
   return (
-    <div className="bg-white p-6 rounded-3xl border border-gray-100 hover:shadow-md transition-all duration-300">
+    <div className="bg-green-950/10 p-6 rounded-3xl border border-green-950">
       <div className="flex items-center justify-between mb-4">
         <div className={`${colorClass} p-3 rounded-2xl`}>
           <Icon className="w-6 h-6 text-white" />
@@ -52,14 +52,14 @@ function MetricCard({
         )}
       </div>
       <div>
-        <p className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">
+        <p className="text-sm font-bold text-gray-50 uppercase tracking-wider mb-1">
           {title}
         </p>
         <div className="flex items-baseline gap-1">
-          <h3 className="text-3xl font-black text-gray-900">
+          <h3 className="text-3xl font-black">
             <AnimatedNumber value={value} decimals={decimals} />
           </h3>
-          <span className="text-sm font-bold text-gray-400">{unit}</span>
+          <span className="text-sm font-bold text-gray-100">{unit}</span>
         </div>
       </div>
     </div>

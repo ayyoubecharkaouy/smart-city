@@ -14,7 +14,6 @@ import type {
 import {
   PERIOD_OPTIONS,
   PERIOD_HOURS,
-  SPARK_CHART_COLORS,
   SPARK_THRESHOLDS,
 } from "@/lib/constants";
 import {
@@ -128,11 +127,11 @@ function StatCard({
   tone: string;
 }) {
   return (
-    <div className="rounded-2xl border border-gray-100 p-4">
+    <div className="rounded-2xl border border-gray-950 p-4 shadow-lg shadow-black/20">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-[10px] font-black uppercase text-gray-400">{label}</p>
-          <p className="mt-1 text-2xl font-black text-gray-900">
+          <p className="text-[10px] font-black uppercase text-gray-500">{label}</p>
+          <p className="mt-1 text-2xl font-black">
             {value === null ? "--" : <AnimatedNumber value={value} decimals={decimals} suffix={suffix} />}
           </p>
         </div>
@@ -146,9 +145,9 @@ function StatCard({
 
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="rounded-2xl border border-gray-100 bg-gray-50 p-8 text-center">
-      <Database className="mx-auto mb-3 h-8 w-8 text-gray-400" />
-      <p className="font-bold text-gray-700">{message}</p>
+    <div className="rounded-2xl border border-gray-950 p-8 text-center">
+      <Database className="mx-auto mb-3 h-8 w-8 text-gray-500" />
+      <p className="font-bold text-gray-300">{message}</p>
     </div>
   );
 }
@@ -161,8 +160,8 @@ function SparkChartCard({
   children: ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-gray-100 p-4">
-      <h3 className="mb-4 text-sm font-black text-gray-900">{title}</h3>
+    <div className="rounded-2xl border border-gray-950 p-4 shadow-lg shadow-black/20">
+      <h3 className="mb-4 text-sm font-black">{title}</h3>
       <div className="h-64 w-full">{children}</div>
     </div>
   );
@@ -197,7 +196,8 @@ function SparkBarChart({
             backgroundColor: "#06110b",
             border: "1px solid #173525",
             borderRadius: "12px",
-            boxShadow: "0 10px 25px rgba(15, 23, 42, 0.08)",
+            color: "#e2e8f0",
+            boxShadow: "0 18px 40px rgba(0, 0, 0, 0.45)",
           }}
         />
         <Bar dataKey={yKey} fill={color} radius={[6, 6, 0, 0]} />
@@ -222,10 +222,11 @@ function SparkLatencyChart({ data }: { data: { time: string; latency: number }[]
             backgroundColor: "#06110b",
             border: "1px solid #173525",
             borderRadius: "12px",
-            boxShadow: "0 10px 25px rgba(15, 23, 42, 0.08)",
+            color: "#e2e8f0",
+            boxShadow: "0 18px 40px rgba(0, 0, 0, 0.45)",
           }}
         />
-        <Line type="monotone" dataKey="latency" stroke={SPARK_CHART_COLORS.latency} strokeWidth={3} dot={{ r: 3 }} />
+        <Line type="monotone" dataKey="latency" stroke="#22c55e" strokeWidth={3} dot={{ r: 3 }} />
       </LineChart>
     </ResponsiveContainer>
   );
@@ -237,8 +238,8 @@ function EnvironmentTable({ data }: { data: SparkEnvironmentData[] }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[760px] text-left text-sm">
-        <thead className="text-[10px] uppercase text-gray-400">
-          <tr className="border-b border-gray-100">
+        <thead className="text-[10px] uppercase text-gray-500">
+          <tr className="border-b border-gray-800">
             <th className="py-3 font-black">District</th>
             <th className="py-3 font-black">Temp. moy.</th>
             <th className="py-3 font-black">Min / Max</th>
@@ -252,16 +253,16 @@ function EnvironmentTable({ data }: { data: SparkEnvironmentData[] }) {
           {data.map(item => {
             const latency = getLatencySeconds(item.processed_at, item.window?.end);
             return (
-              <tr key={`${item.district}-${item.processed_at}`} className="border-b border-gray-50">
-                <td className="py-3 font-bold text-gray-900">{item.district}</td>
-                <td className="py-3 text-green-600 font-black"><AnimatedNumber value={item.avg_temperature} decimals={1} suffix="°C" /></td>
-                <td className="py-3 text-gray-600">
+              <tr key={`${item.district}-${item.processed_at}`} className="border-b border-gray-900/80">
+                <td className="py-3 font-bold">{item.district}</td>
+                <td className="py-3 text-green-500 font-black"><AnimatedNumber value={item.avg_temperature} decimals={1} suffix="°C" /></td>
+                <td className="py-3 text-gray-400">
                   <AnimatedNumber value={item.min_temperature} decimals={1} /> / <AnimatedNumber value={item.max_temperature} decimals={1} suffix="°C" />
                 </td>
-                <td className="py-3 text-gray-600"><AnimatedNumber value={item.max_air_quality} /></td>
-                <td className="py-3 text-gray-600">{item.temperature_trend}</td>
+                <td className="py-3 text-gray-400"><AnimatedNumber value={item.max_air_quality} /></td>
+                <td className="py-3 text-gray-400">{item.temperature_trend}</td>
                 <td className="py-3 text-gray-500">{formatTime(item.processed_at)}</td>
-                <td className="py-3 font-bold text-green-600">{latency === null ? "--" : <AnimatedNumber value={latency} decimals={1} suffix="s" />}</td>
+                <td className="py-3 font-bold text-green-500">{latency === null ? "--" : <AnimatedNumber value={latency} decimals={1} suffix="s" />}</td>
               </tr>
             );
           })}
@@ -277,8 +278,8 @@ function WaterTable({ data }: { data: SparkWaterData[] }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[760px] text-left text-sm">
-        <thead className="text-[10px] uppercase text-gray-400">
-          <tr className="border-b border-gray-100">
+        <thead className="text-[10px] uppercase text-gray-500">
+          <tr className="border-b border-gray-800">
             <th className="py-3 font-black">District</th>
             <th className="py-3 font-black">Debit moy.</th>
             <th className="py-3 font-black">Debit total</th>
@@ -292,14 +293,14 @@ function WaterTable({ data }: { data: SparkWaterData[] }) {
           {data.map(item => {
             const latency = getLatencySeconds(item.processed_at, item.window?.end);
             return (
-              <tr key={`${item.district}-${item.processed_at}`} className="border-b border-gray-50">
-                <td className="py-3 font-bold text-gray-900">{item.district}</td>
-                <td className="py-3 text-green-600 font-black"><AnimatedNumber value={item.avg_flow_rate} decimals={1} suffix=" L/m" /></td>
-                <td className="py-3 text-gray-600"><AnimatedNumber value={item.total_flow_rate} decimals={1} /></td>
-                <td className="py-3 text-gray-600"><AnimatedNumber value={item.avg_ph} decimals={1} /></td>
-                <td className="py-3 font-bold text-emerald-600"><AnimatedNumber value={item.water_quality_score} /></td>
-                <td className="py-3 text-gray-600">{item.sudden_flow_drop ? "Oui" : "Non"}</td>
-                <td className="py-3 font-bold text-green-600">{latency === null ? "--" : <AnimatedNumber value={latency} decimals={1} suffix="s" />}</td>
+              <tr key={`${item.district}-${item.processed_at}`} className="border-b border-gray-900/80">
+                <td className="py-3 font-bold">{item.district}</td>
+                <td className="py-3 text-green-500 font-black"><AnimatedNumber value={item.avg_flow_rate} decimals={1} suffix=" L/m" /></td>
+                <td className="py-3 text-gray-400"><AnimatedNumber value={item.total_flow_rate} decimals={1} /></td>
+                <td className="py-3 text-gray-400"><AnimatedNumber value={item.avg_ph} decimals={1} /></td>
+                <td className="py-3 font-bold text-green-500"><AnimatedNumber value={item.water_quality_score} /></td>
+                <td className="py-3 text-gray-400">{item.sudden_flow_drop ? "Oui" : "Non"}</td>
+                <td className="py-3 font-bold text-green-500">{latency === null ? "--" : <AnimatedNumber value={latency} decimals={1} suffix="s" />}</td>
               </tr>
             );
           })}
@@ -315,8 +316,8 @@ function TrafficTable({ data }: { data: SparkTrafficData[] }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[760px] text-left text-sm">
-        <thead className="text-[10px] uppercase text-gray-400">
-          <tr className="border-b border-gray-100">
+        <thead className="text-[10px] uppercase text-gray-500">
+          <tr className="border-b border-gray-800">
             <th className="py-3 font-black">Route</th>
             <th className="py-3 font-black">Vitesse moy.</th>
             <th className="py-3 font-black">Vitesse min.</th>
@@ -330,14 +331,14 @@ function TrafficTable({ data }: { data: SparkTrafficData[] }) {
           {data.map(item => {
             const latency = getLatencySeconds(item.processed_at, item.window?.end);
             return (
-              <tr key={`${item.route_id}-${item.processed_at}`} className="border-b border-gray-50">
-                <td className="py-3 font-bold text-gray-900">{item.route_id}</td>
-                <td className="py-3 text-green-600 font-black"><AnimatedNumber value={item.avg_speed} decimals={1} suffix=" km/h" /></td>
-                <td className="py-3 text-gray-600"><AnimatedNumber value={item.min_speed} decimals={1} suffix=" km/h" /></td>
-                <td className="py-3 text-gray-600"><AnimatedNumber value={item.avg_vehicle_count} /></td>
-                <td className="py-3 text-green-600 font-bold"><AnimatedNumber value={item.max_congestion} decimals={2} /></td>
-                <td className="py-3 text-gray-600">{item.congestion_level}</td>
-                <td className="py-3 font-bold text-green-600">{latency === null ? "--" : <AnimatedNumber value={latency} decimals={1} suffix="s" />}</td>
+              <tr key={`${item.route_id}-${item.processed_at}`} className="border-b border-gray-900/80">
+                <td className="py-3 font-bold">{item.route_id}</td>
+                <td className="py-3 text-green-500 font-black"><AnimatedNumber value={item.avg_speed} decimals={1} suffix=" km/h" /></td>
+                <td className="py-3 text-gray-400"><AnimatedNumber value={item.min_speed} decimals={1} suffix=" km/h" /></td>
+                <td className="py-3 text-gray-400"><AnimatedNumber value={item.avg_vehicle_count} /></td>
+                <td className="py-3 text-green-500 font-bold"><AnimatedNumber value={item.max_congestion} decimals={2} /></td>
+                <td className="py-3 text-gray-400">{item.congestion_level}</td>
+                <td className="py-3 font-bold text-green-500">{latency === null ? "--" : <AnimatedNumber value={latency} decimals={1} suffix="s" />}</td>
               </tr>
             );
           })}
@@ -353,15 +354,15 @@ function AlertsTable({ data }: { data: SparkAlertData[] }) {
   return (
     <div className="space-y-2">
       {data.map((item, index) => (
-        <div key={`${item.processed_at}-${index}`} className="rounded-2xl border border-green-100 bg-green-50 p-4">
+        <div key={`${item.processed_at}-${index}`} className="rounded-2xl border border-green-500/20 bg-green-500/10 p-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="font-black text-green-900">{item.type} / {item.alert_type}</p>
-              <p className="mt-1 text-sm font-medium text-green-700">
+              <p className="font-black text-green-300">{item.type} / {item.alert_type}</p>
+              <p className="mt-1 text-sm font-medium text-green-400">
                 {item.district || item.route_id || item.sensor_id || "Source inconnue"} · {formatTime(item.timestamp || item.processed_at)}
               </p>
             </div>
-            <p className="font-black text-green-900">
+            <p className="font-black text-green-300">
               <AnimatedNumber value={item.value} decimals={1} /> {item.operator} <AnimatedNumber value={item.threshold} decimals={1} />
             </p>
           </div>
@@ -377,13 +378,13 @@ function ErrorsTable({ data }: { data: SparkErrorData[] }) {
   return (
     <div className="space-y-2">
       {data.map((item, index) => (
-        <div key={`${item.processed_at}-${index}`} className="rounded-2xl border border-green-100 bg-green-50 p-4">
+        <div key={`${item.processed_at}-${index}`} className="rounded-2xl border border-green-500/20 bg-green-500/10 p-4">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
-              <p className="font-black text-green-900">{item.stream} / {item.error_reason}</p>
-              <p className="mt-1 truncate font-mono text-xs text-green-700" title={item.raw_value}>{item.raw_value}</p>
+              <p className="font-black text-green-300">{item.stream} / {item.error_reason}</p>
+              <p className="mt-1 truncate font-mono text-xs text-green-400" title={item.raw_value}>{item.raw_value}</p>
             </div>
-            <p className="shrink-0 text-sm font-bold text-green-700">{formatTime(item.processed_at)}</p>
+            <p className="shrink-0 text-sm font-bold text-green-400">{formatTime(item.processed_at)}</p>
           </div>
         </div>
       ))}
@@ -558,12 +559,12 @@ export default function SparkDataPage() {
   };
 
   return (
-    <div className="p-2 mx-auto w-full">
+    <div className="mx-auto min-h-screen w-full p-4">
       <header className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-3">
           <Image src="/images/logos/spark.png" alt="Spark" width={120} height={120} className="h-20 w-auto" />
           <div>
-            <h2 className="text-3xl font-black text-gray-900 leading-tight">
+            <h2 className="text-3xl font-black leading-tight">
               Moteur de Calcul Spark
             </h2>
             <p className="text-gray-500 font-medium">
@@ -571,54 +572,54 @@ export default function SparkDataPage() {
             </p>
           </div>
         </div>
-        <div className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-bold ${connected ? "border-emerald-100 bg-emerald-50 text-emerald-700" : "border-green-100 bg-green-50 text-green-700"}`}>
+        <div className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-bold ${connected ? "border-green-500/30 bg-green-500/10 text-green-400" : "border-green-500/20 bg-gray-950 text-green-400"}`}>
           {connected ? <Wifi className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />}
           {connected ? "Backend temps reel connecte" : reconnecting ? `Reconnexion ${reconnectAttempt}` : "Backend temps reel hors ligne"}
         </div>
       </header>
 
       {error && (
-        <div className="mb-6 rounded-2xl border border-green-100 bg-green-50 p-4 text-sm font-bold text-green-700">
+        <div className="mb-6 rounded-2xl border border-green-500/20 bg-green-500/10 p-4 text-sm font-bold text-green-400">
           {error}
         </div>
       )}
 
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard icon={Database} label="Fenetres chargees" value={allWindows.length} tone="bg-green-50 text-green-600" />
-        <StatCard icon={Gauge} label="Latence moyenne" value={averageLatency} decimals={1} suffix="s" tone="bg-emerald-50 text-emerald-600" />
-        <StatCard icon={Bell} label="Alertes Spark" value={sparkAlerts.length} tone="bg-green-50 text-green-600" />
-        <StatCard icon={AlertTriangle} label="Erreurs JSON" value={sparkErrors.length} tone="bg-green-50 text-green-600" />
+        <StatCard icon={Database} label="Fenetres chargees" value={allWindows.length} tone="bg-green-500/10 text-green-500" />
+        <StatCard icon={Gauge} label="Latence moyenne" value={averageLatency} decimals={1} suffix="s" tone="bg-green-500/10 text-green-500" />
+        <StatCard icon={Bell} label="Alertes Spark" value={sparkAlerts.length} tone="bg-green-500/10 text-green-500" />
+        <StatCard icon={AlertTriangle} label="Erreurs JSON" value={sparkErrors.length} tone="bg-green-500/10 text-green-500" />
       </div>
 
       <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="rounded-2xl border border-gray-100 p-5">
-          <h3 className="mb-3 flex items-center gap-2 text-sm font-black uppercase text-gray-400">
+        <div className="rounded-2xl border border-gray-950 p-5 shadow-lg shadow-black/20">
+          <h3 className="mb-3 flex items-center gap-2 text-sm font-black uppercase text-gray-500">
             <Cpu className="h-4 w-4" /> Spark
           </h3>
-          <p className="text-lg font-black text-gray-900">{allWindows.length > 0 ? "Actif" : "En attente"}</p>
+          <p className="text-lg font-black">{allWindows.length > 0 ? "Actif" : "En attente"}</p>
           <p className="mt-1 text-sm font-medium text-gray-500">Dernier traitement : {formatTime(latestProcessedAt)}</p>
         </div>
-        <div className="rounded-2xl border border-gray-100 p-5">
-          <h3 className="mb-3 flex items-center gap-2 text-sm font-black uppercase text-gray-400">
+        <div className="rounded-2xl border border-gray-950 p-5 shadow-lg shadow-black/20">
+          <h3 className="mb-3 flex items-center gap-2 text-sm font-black uppercase text-gray-500">
             <Server className="h-4 w-4" /> Backend
           </h3>
-          <p className="text-lg font-black text-gray-900">{connected ? "Connecte" : "Hors ligne"}</p>
+          <p className="text-lg font-black">{connected ? "Connecte" : "Hors ligne"}</p>
           <p className="mt-1 text-sm font-medium text-gray-500">
             {socketError ? `Erreur: ${socketError}` : "Socket.IO et historique API"}
           </p>
         </div>
-        <div className="rounded-2xl border border-gray-100 p-5">
-          <h3 className="mb-3 flex items-center gap-2 text-sm font-black uppercase text-gray-400">
+        <div className="rounded-2xl border border-gray-950 p-5 shadow-lg shadow-black/20">
+          <h3 className="mb-3 flex items-center gap-2 text-sm font-black uppercase text-gray-500">
             <Wifi className="h-4 w-4" /> Kafka
           </h3>
-          <p className="text-lg font-black text-gray-900">{allWindows.length + sparkAlerts.length + sparkErrors.length > 0 ? "Messages recus" : "Aucun message"}</p>
+          <p className="text-lg font-black">{allWindows.length + sparkAlerts.length + sparkErrors.length > 0 ? "Messages recus" : "Aucun message"}</p>
           <p className="mt-1 text-sm font-medium text-gray-500">
             {eventCount} evenements, dernier: {lastEvent || "--"}
           </p>
         </div>
       </div>
 
-      <section className="mb-6 rounded-3xl border border-gray-100 p-4">
+      <section className="mb-6 rounded-3xl border border-gray-950 p-4 shadow-lg shadow-black/20">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h3 className="flex items-center gap-2 text-sm font-black uppercase text-gray-500">
             <Filter className="h-4 w-4" />
@@ -626,7 +627,7 @@ export default function SparkDataPage() {
           </h3>
           <button
             onClick={resetFilters}
-            className="flex w-fit items-center gap-2 rounded-xl border border-gray-200 px-3 py-2 text-xs font-black text-gray-600 transition-colors hover:bg-gray-50"
+            className="flex w-fit items-center gap-2 rounded-xl border border-gray-700 bg-gray-950 px-3 py-4 text-xs font-black text-gray-400 transition-colors hover:bg-green-500/10"
           >
             <RotateCcw className="h-4 w-4" />
             Reinitialiser
@@ -634,11 +635,11 @@ export default function SparkDataPage() {
         </div>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
           <label className="space-y-1">
-            <span className="text-[10px] font-black uppercase text-gray-400">District</span>
+            <span className="text-[10px] font-black uppercase text-gray-500">District</span>
             <select
               value={districtFilter}
               onChange={event => setDistrictFilter(event.target.value)}
-              className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+              className="w-full rounded-xl border border-gray-700 bg-gray-950 px-3 py-4 text-sm font-bold text-gray-300 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
             >
               <option value="all">Tous les districts</option>
               {districtOptions.map(district => (
@@ -647,11 +648,11 @@ export default function SparkDataPage() {
             </select>
           </label>
           <label className="space-y-1">
-            <span className="text-[10px] font-black uppercase text-gray-400">Route</span>
+            <span className="text-[10px] font-black uppercase text-gray-500">Route</span>
             <select
               value={routeFilter}
               onChange={event => setRouteFilter(event.target.value)}
-              className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+              className="w-full rounded-xl border border-gray-700 bg-gray-950 px-3 py-4 text-sm font-bold text-gray-300 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
             >
               <option value="all">Toutes les routes</option>
               {routeOptions.map(route => (
@@ -660,11 +661,11 @@ export default function SparkDataPage() {
             </select>
           </label>
           <label className="space-y-1">
-            <span className="text-[10px] font-black uppercase text-gray-400">Type d&apos;alerte</span>
+            <span className="text-[10px] font-black uppercase text-gray-500">Type d&apos;alerte</span>
             <select
               value={alertTypeFilter}
               onChange={event => setAlertTypeFilter(event.target.value)}
-              className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+              className="w-full rounded-xl border border-gray-700 bg-gray-950 px-3 py-4 text-sm font-bold text-gray-300 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
             >
               <option value="all">Tous les types</option>
               {alertTypeOptions.map(alertType => (
@@ -673,11 +674,11 @@ export default function SparkDataPage() {
             </select>
           </label>
           <label className="space-y-1">
-            <span className="text-[10px] font-black uppercase text-gray-400">Periode</span>
+            <span className="text-[10px] font-black uppercase text-gray-500">Periode</span>
             <select
               value={periodFilter}
               onChange={event => setPeriodFilter(event.target.value as PeriodFilter)}
-              className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+              className="w-full rounded-xl border border-gray-700 bg-gray-950 px-3 py-4 text-sm font-bold text-gray-300 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
             >
               {PERIOD_OPTIONS.map(option => (
                 <option key={option.value} value={option.value}>{option.label}</option>
@@ -685,11 +686,11 @@ export default function SparkDataPage() {
             </select>
           </label>
           <label className="space-y-1">
-            <span className="text-[10px] font-black uppercase text-gray-400">Criticite</span>
+            <span className="text-[10px] font-black uppercase text-gray-500">Criticite</span>
             <select
               value={criticalFilter}
               onChange={event => setCriticalFilter(event.target.value as CriticalFilter)}
-              className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+              className="w-full rounded-xl border border-gray-700 bg-gray-950 px-3 py-4 text-sm font-bold text-gray-300 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
             >
               <option value="all">Toutes les donnees</option>
               <option value="critical">Critiques seulement</option>
@@ -700,26 +701,26 @@ export default function SparkDataPage() {
 
       <div className="mb-6">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-lg font-black text-gray-900">Graphiques Spark</h3>
-          <span className="rounded-full bg-green-50 px-3 py-1 text-[10px] font-black uppercase text-green-700">
+          <h3 className="text-lg font-black">Graphiques Spark</h3>
+          <span className="rounded-full bg-green-500/10 px-3 py-1 text-[10px] font-black uppercase text-green-400 ring-1 ring-green-500/20">
             Recharts
           </span>
         </div>
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <SparkChartCard title="Temperature moyenne par quartier">
-            <SparkBarChart data={temperatureChartData} xKey="name" yKey="value" color={SPARK_CHART_COLORS.temperature} unit="°C" />
+            <SparkBarChart data={temperatureChartData} xKey="name" yKey="value" color="#22c55e" unit="°C" />
           </SparkChartCard>
           <SparkChartCard title="AQI max par quartier">
-            <SparkBarChart data={aqiChartData} xKey="name" yKey="value" color={SPARK_CHART_COLORS.aqi} />
+            <SparkBarChart data={aqiChartData} xKey="name" yKey="value" color="#22c55e" />
           </SparkChartCard>
           <SparkChartCard title="Congestion max par route">
-            <SparkBarChart data={congestionChartData} xKey="name" yKey="value" color={SPARK_CHART_COLORS.congestion} />
+            <SparkBarChart data={congestionChartData} xKey="name" yKey="value" color="#22c55e" />
           </SparkChartCard>
           <SparkChartCard title="Debit moyen par quartier">
-            <SparkBarChart data={flowChartData} xKey="name" yKey="value" color={SPARK_CHART_COLORS.flow} />
+            <SparkBarChart data={flowChartData} xKey="name" yKey="value" color="#22c55e" />
           </SparkChartCard>
           <SparkChartCard title="Score qualite de l'eau">
-            <SparkBarChart data={waterScoreChartData} xKey="name" yKey="value" color={SPARK_CHART_COLORS.waterScore} />
+            <SparkBarChart data={waterScoreChartData} xKey="name" yKey="value" color="#22c55e" />
           </SparkChartCard>
           <SparkChartCard title="Latence Spark dans le temps">
             <SparkLatencyChart data={latencyChartData} />
@@ -727,8 +728,8 @@ export default function SparkDataPage() {
         </div>
       </div>
 
-      <div className="rounded-3xl border border-gray-100">
-        <div className="border-b border-gray-100 p-4">
+      <div className="rounded-3xl border border-gray-950 shadow-lg shadow-black/20">
+        <div className="border-b border-gray-800 p-4">
           <div className="flex flex-wrap gap-2">
             {tabs.map(tab => {
               const Icon = tab.icon;
@@ -736,11 +737,11 @@ export default function SparkDataPage() {
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-black transition-colors ${activeTab === tab.key ? "border-gray-900 bg-gray-900 text-white" : "border-gray-200 text-gray-600 hover:bg-gray-50"}`}
+                  className={`flex items-center gap-2 rounded-xl border px-3 py-4 text-sm font-black transition-colors ${activeTab === tab.key ? "border-green-500 bg-green-500 text-gray-950" : "border-gray-700 text-gray-400 hover:border-green-500 hover:bg-green-500/10 hover:text-green-400"}`}
                 >
                   <Icon className="h-4 w-4" />
                   {tab.label}
-                  <span className={`rounded-full px-2 py-0.5 text-[10px] ${activeTab === tab.key ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500"}`}>
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] ${activeTab === tab.key ? "bg-gray-950/20 text-gray-950" : "bg-gray-800 text-gray-500"}`}>
                     {tabCounts[tab.key]}
                   </span>
                 </button>

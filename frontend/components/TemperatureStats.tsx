@@ -60,10 +60,10 @@ export default function TemperatureStats({
   ).length;
 
   return (
-    <div className="flex flex-col gap-2 p-2">
+    <div className="flex flex-col gap-2">
       <div>
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-lg font-bold flex items-center px-4 gap-2">
+          <h3 className="text-lg font-bold flex items-center gap-2">
             <TrendingUp className="w-5 h-5" />
             Évolution 24h
           </h3>
@@ -80,7 +80,7 @@ export default function TemperatureStats({
       </div>
 
       <div>
-        <div className="flex items-center justify-between mb-2 px-4">
+        <div className="flex items-center justify-between mb-2">
           <h3 className="text-xl font-bold flex items-center gap-2">
             Moyennes par Quartier
           </h3>

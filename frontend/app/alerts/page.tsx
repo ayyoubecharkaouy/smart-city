@@ -155,17 +155,17 @@ export default function AlertsPage() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto w-full">
+    <div className="min-h-screen w-full bg-black p-8 text-slate-100">
       <header className="flex flex-col gap-4 mb-10 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h2 className="text-3xl font-black text-gray-900 mb-2">
+          <h2 className="text-3xl font-black text-slate-100 mb-2">
             Centre d&apos;Alertes
           </h2>
-          <p className="text-gray-500 font-medium">
+          <p className="text-slate-400 font-medium">
             Alertes Spark temps reel, seuils critiques et incidents capteurs
           </p>
         </div>
-        <div className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-bold ${connected ? "border-emerald-100 bg-emerald-50 text-emerald-700" : "border-green-100 bg-green-50 text-green-700"}`}>
+        <div className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-bold ${connected ? "border-green-500/20 bg-green-500/10 text-green-500" : "border-slate-800 bg-slate-950 text-slate-400"}`}>
           {connected ? <Wifi className="w-4 h-4" /> : <WifiOff className="w-4 h-4" />}
           {connected ? (
             <>
@@ -181,16 +181,16 @@ export default function AlertsPage() {
         <div className="lg:col-span-2 space-y-6">
           <section className="space-y-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <h3 className="text-lg font-bold text-gray-900">
+              <h3 className="text-lg font-bold text-slate-100">
                 Alertes Spark
               </h3>
               <div className="flex flex-wrap items-center gap-2">
-                <Filter className="w-4 h-4 text-gray-400" />
+                <Filter className="w-4 h-4 text-slate-500" />
                 {domainOptions.map(option => (
                   <button
                     key={option.value}
                     onClick={() => setDomainFilter(option.value)}
-                    className={`rounded-xl border px-3 py-2 text-xs font-black transition-colors ${domainFilter === option.value ? "border-gray-900 bg-gray-900 text-white" : "border-gray-200 text-gray-600 hover:bg-gray-50"}`}
+                    className={`rounded-xl border px-3 py-2 text-xs font-black transition-colors ${domainFilter === option.value ? "border-green-500 bg-green-500 text-black" : "border-slate-800 bg-slate-950 text-slate-300 hover:border-green-500/40 hover:bg-green-500/10 hover:text-green-500"}`}
                   >
                     {option.label} (<AnimatedNumber value={domainCounts[option.value]} />)
                   </button>
@@ -198,15 +198,15 @@ export default function AlertsPage() {
               </div>
             </div>
 
-            <div className="rounded-3xl border border-gray-100 p-4">
+            <div className="rounded-3xl border border-slate-800 bg-slate-950 p-4">
               <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <h4 className="flex items-center gap-2 text-sm font-black uppercase text-gray-500">
+                <h4 className="flex items-center gap-2 text-sm font-black uppercase text-slate-400">
                   <Filter className="h-4 w-4" />
                   Filtres
                 </h4>
                 <button
                   onClick={resetFilters}
-                  className="flex w-fit items-center gap-2 rounded-xl border border-gray-200 px-3 py-2 text-xs font-black text-gray-600 transition-colors hover:bg-gray-50"
+                  className="flex w-fit items-center gap-2 rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-xs font-black text-slate-300 transition-colors hover:border-green-500/40 hover:bg-green-500/10 hover:text-green-500"
                 >
                   <RotateCcw className="h-4 w-4" />
                   Reinitialiser
@@ -214,11 +214,11 @@ export default function AlertsPage() {
               </div>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
                 <label className="space-y-1">
-                  <span className="text-[10px] font-black uppercase text-gray-400">District</span>
+                  <span className="text-[10px] font-black uppercase text-slate-500">District</span>
                   <select
                     value={districtFilter}
                     onChange={event => setDistrictFilter(event.target.value)}
-                    className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+                    className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-sm font-bold text-slate-100 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                   >
                     <option value="all">Tous les districts</option>
                     {districtOptions.map(district => (
@@ -227,11 +227,11 @@ export default function AlertsPage() {
                   </select>
                 </label>
                 <label className="space-y-1">
-                  <span className="text-[10px] font-black uppercase text-gray-400">Route</span>
+                  <span className="text-[10px] font-black uppercase text-slate-500">Route</span>
                   <select
                     value={routeFilter}
                     onChange={event => setRouteFilter(event.target.value)}
-                    className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+                    className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-sm font-bold text-slate-100 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                   >
                     <option value="all">Toutes les routes</option>
                     {routeOptions.map(route => (
@@ -240,11 +240,11 @@ export default function AlertsPage() {
                   </select>
                 </label>
                 <label className="space-y-1">
-                  <span className="text-[10px] font-black uppercase text-gray-400">Type d&apos;alerte</span>
+                  <span className="text-[10px] font-black uppercase text-slate-500">Type d&apos;alerte</span>
                   <select
                     value={alertTypeFilter}
                     onChange={event => setAlertTypeFilter(event.target.value)}
-                    className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+                    className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-sm font-bold text-slate-100 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                   >
                     <option value="all">Tous les types</option>
                     {alertTypeOptions.map(alertType => (
@@ -253,11 +253,11 @@ export default function AlertsPage() {
                   </select>
                 </label>
                 <label className="space-y-1">
-                  <span className="text-[10px] font-black uppercase text-gray-400">Periode</span>
+                  <span className="text-[10px] font-black uppercase text-slate-500">Periode</span>
                   <select
                     value={periodFilter}
                     onChange={event => setPeriodFilter(event.target.value as PeriodFilter)}
-                    className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+                    className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-sm font-bold text-slate-100 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                   >
                     {PERIOD_OPTIONS.map(option => (
                       <option key={option.value} value={option.value}>{option.label}</option>
@@ -265,11 +265,11 @@ export default function AlertsPage() {
                   </select>
                 </label>
                 <label className="space-y-1">
-                  <span className="text-[10px] font-black uppercase text-gray-400">Criticite</span>
+                  <span className="text-[10px] font-black uppercase text-slate-500">Criticite</span>
                   <select
                     value={criticalFilter}
                     onChange={event => setCriticalFilter(event.target.value as CriticalFilter)}
-                    className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-bold text-gray-700 outline-none focus:border-gray-900"
+                    className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-sm font-bold text-slate-100 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                   >
                     <option value="all">Toutes les alertes</option>
                     <option value="critical">Critiques seulement</option>
@@ -279,20 +279,20 @@ export default function AlertsPage() {
             </div>
 
             {error && (
-              <div className="rounded-2xl border border-green-100 bg-green-50 p-4 text-sm font-bold text-green-700">
+              <div className="rounded-2xl border border-green-500/20 bg-green-500/10 p-4 text-sm font-bold text-green-500">
                 {error}
               </div>
             )}
 
             {filteredSparkAlerts.length === 0 ? (
-              <div className="bg-white rounded-3xl border border-gray-100 p-12 text-center">
-                <div className="bg-green-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="rounded-3xl border border-slate-800 bg-slate-950 p-12 text-center">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/10">
                   <CheckCircle2 className="w-8 h-8 text-green-500" />
                 </div>
-                <h4 className="text-xl font-bold text-gray-900 mb-2">
+                <h4 className="text-xl font-bold text-slate-100 mb-2">
                   Aucune alerte Spark
                 </h4>
-                <p className="text-gray-500">
+                <p className="text-slate-400">
                   Les alertes pollution, congestion et eau apparaitront ici des que Spark detecte un depassement.
                 </p>
               </div>
@@ -304,26 +304,26 @@ export default function AlertsPage() {
                   return (
                     <div
                       key={`${alert.processed_at}-${alert.type}-${index}`}
-                      className="bg-white p-5 rounded-3xl border border-green-100"
+                      className="rounded-3xl border border-slate-800 bg-slate-950 p-5 transition-colors hover:border-green-500/30"
                     >
                       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                         <div className="flex items-start gap-3">
-                          <div className="p-3 rounded-2xl bg-green-50">
-                            <Icon className="w-6 h-6 text-green-600" />
+                          <div className="rounded-2xl bg-green-500/10 p-3">
+                            <Icon className="w-6 h-6 text-green-500" />
                           </div>
                           <div className="min-w-0">
                             <div className="flex flex-wrap items-center gap-2">
-                              <h4 className="text-lg font-bold text-gray-900">
+                              <h4 className="text-lg font-bold text-slate-100">
                                 {getSparkAlertLabel(alert)}
                               </h4>
-                              <span className="rounded-full bg-gray-100 px-2 py-1 text-[10px] font-black uppercase text-gray-600">
+                              <span className="rounded-full border border-slate-800 bg-slate-900 px-2 py-1 text-[10px] font-black uppercase text-slate-400">
                                 {getDomainLabel(alert.type)}
                               </span>
-                              <span className="rounded-full bg-green-100 px-2 py-1 text-[10px] font-black uppercase text-green-700">
+                              <span className="rounded-full border border-green-500/20 bg-green-500/10 px-2 py-1 text-[10px] font-black uppercase text-green-500">
                                 {alert.severity}
                               </span>
                             </div>
-                            <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-gray-500 font-medium">
+                            <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-slate-400 font-medium">
                               <span className="flex items-center gap-1">
                                 <MapPin className="w-4 h-4" />
                                 {location}
@@ -339,11 +339,11 @@ export default function AlertsPage() {
                             </div>
                           </div>
                         </div>
-                        <div className="rounded-2xl bg-green-50 px-4 py-3 text-right">
-                          <p className="text-[10px] font-black uppercase text-green-600">
+                        <div className="rounded-2xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-right">
+                          <p className="text-[10px] font-black uppercase text-green-500">
                             Valeur / seuil
                           </p>
-                          <p className="text-lg font-black text-green-900">
+                          <p className="text-lg font-black text-green-500">
                             <AnimatedNumber value={alert.value} decimals={1} /> {alert.operator} <AnimatedNumber value={alert.threshold} decimals={1} />
                           </p>
                         </div>
@@ -356,32 +356,32 @@ export default function AlertsPage() {
           </section>
 
           <section className="space-y-4">
-            <h3 className="text-lg font-bold text-gray-900">
+            <h3 className="text-lg font-bold text-slate-100">
               Alertes Temperature
             </h3>
 
             {filteredTemperatureAlerts.length === 0 ? (
-              <div className="bg-white rounded-3xl border border-gray-100 p-8 text-center">
+              <div className="rounded-3xl border border-slate-800 bg-slate-950 p-8 text-center">
                 <CheckCircle2 className="w-8 h-8 text-green-500 mx-auto mb-3" />
-                <p className="font-bold text-gray-900">Aucune alerte temperature</p>
+                <p className="font-bold text-slate-100">Aucune alerte temperature</p>
               </div>
             ) : (
               <div className="space-y-2">
                 {filteredTemperatureAlerts.map((alert) => (
                   <div
                     key={alert.id}
-                    className={`bg-white p-5 rounded-3xl border transition-all ${alert.acknowledged ? "border-gray-100 opacity-60" : "border-green-100"}`}
+                    className={`rounded-3xl bg-slate-950 p-5 border transition-all ${alert.acknowledged ? "border-slate-800 opacity-60" : "border-green-500/20"}`}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-start gap-3">
-                        <div className={`p-3 rounded-2xl ${alert.acknowledged ? "bg-gray-100" : "bg-green-50"}`}>
-                          <ShieldAlert className={`w-6 h-6 ${alert.acknowledged ? "text-gray-400" : "text-green-600"}`} />
+                        <div className={`p-3 rounded-2xl ${alert.acknowledged ? "bg-slate-800" : "bg-green-500/10"}`}>
+                          <ShieldAlert className={`w-6 h-6 ${alert.acknowledged ? "text-slate-500" : "text-green-500"}`} />
                         </div>
                         <div>
-                          <h4 className="text-lg font-bold text-gray-900">
+                          <h4 className="text-lg font-bold text-slate-100">
                             Temperature critique : <AnimatedNumber value={alert.temperature} decimals={1} suffix="°C" />
                           </h4>
-                          <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-gray-400 font-medium">
+                          <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-slate-500 font-medium">
                             <span className="flex items-center gap-1">
                               <MapPin className="w-4 h-4" />
                               {alert.district}
@@ -396,7 +396,7 @@ export default function AlertsPage() {
                       {!alert.acknowledged && (
                         <button
                           onClick={() => acknowledgeAlert(alert.id)}
-                          className="bg-green-600 text-white font-bold px-4 py-2 rounded-xl text-sm hover:bg-green-700 transition-colors"
+                          className="bg-green-500 text-black font-bold px-4 py-2 rounded-xl text-sm hover:bg-green-400 transition-colors"
                         >
                           Acquitter
                         </button>
@@ -410,37 +410,37 @@ export default function AlertsPage() {
         </div>
 
         <div className="space-y-4">
-          <div className="bg-gray-900 rounded-3xl p-8 text-white">
+          <div className="rounded-3xl border border-slate-800 bg-slate-950 p-8 text-slate-100">
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <Bell className="w-5 h-5 text-green-400" />
+              <Bell className="w-5 h-5 text-green-500" />
               Resume Spark
             </h3>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-bold text-gray-400">Total</span>
+                <span className="text-sm font-bold text-slate-500">Total</span>
                 <span className="text-xl font-black"><AnimatedNumber value={domainCounts.all} /></span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-bold text-gray-400">Pollution</span>
+                <span className="text-sm font-bold text-slate-500">Pollution</span>
                 <span className="text-xl font-black"><AnimatedNumber value={domainCounts.environment} /></span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-bold text-gray-400">Congestion</span>
+                <span className="text-sm font-bold text-slate-500">Congestion</span>
                 <span className="text-xl font-black"><AnimatedNumber value={domainCounts.traffic} /></span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-bold text-gray-400">Eau</span>
+                <span className="text-sm font-bold text-slate-500">Eau</span>
                 <span className="text-xl font-black"><AnimatedNumber value={domainCounts.water} /></span>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl border border-gray-100 p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="rounded-3xl border border-slate-800 bg-slate-950 p-6">
+            <h3 className="text-lg font-bold text-slate-100 mb-4 flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-green-500" />
               Severite
             </h3>
-            <p className="text-sm text-gray-500 font-medium leading-relaxed">
+            <p className="text-sm text-slate-400 font-medium leading-relaxed">
               Les alertes Spark sont generees depuis les seuils configures dans le pipeline de streaming et sont mises a jour en temps reel.
             </p>
           </div>

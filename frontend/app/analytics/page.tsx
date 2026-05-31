@@ -140,7 +140,7 @@ export default function AnalyticsPage() {
     let xAxis = "time";
     const yAxis = "value";
     const metricConfig = ANALYTICS_METRICS[metric];
-    const color = metricConfig.color;
+    const color = "#22c55e";
     const label = metricConfig.chartLabel;
     const unit = metricConfig.unit;
 
@@ -258,25 +258,25 @@ export default function AnalyticsPage() {
         id: "temperature",
         icon: <Thermometer />,
         label: ANALYTICS_METRICS.temperature.label,
-        color: ANALYTICS_METRICS.temperature.accentClass,
+        color: "bg-green-500",
       },
       {
         id: "aqi",
         icon: <Wind />,
         label: ANALYTICS_METRICS.aqi.label,
-        color: ANALYTICS_METRICS.aqi.accentClass,
+        color: "bg-green-500",
       },
       {
         id: "water",
         icon: <Droplets />,
         label: ANALYTICS_METRICS.water.label,
-        color: ANALYTICS_METRICS.water.accentClass,
+        color: "bg-green-500",
       },
       {
         id: "traffic",
         icon: <Car />,
         label: ANALYTICS_METRICS.traffic.label,
-        color: ANALYTICS_METRICS.traffic.accentClass,
+        color: "bg-green-500",
       },
     ];
 
@@ -293,19 +293,19 @@ export default function AnalyticsPage() {
   }, []);
 
   return (
-    <div className="flex min-h-full flex-col overflow-visible xl:h-[calc(100vh-2rem)] xl:flex-row xl:overflow-hidden">
+    <div className="flex min-h-screen flex-col overflow-visible bg-black text-slate-100 xl:h-screen xl:flex-row xl:overflow-hidden">
       {/* Configuration Sidebar */}
-      <aside className="w-full border-b border-gray-100 p-4 xl:w-80 xl:shrink-0 xl:overflow-y-auto xl:border-b-0 xl:border-r">
+      <aside className="w-full border-b border-slate-800 bg-black p-4 xl:w-80 xl:shrink-0 xl:overflow-y-auto xl:border-b-0 xl:border-r">
         <div className="flex items-center gap-3 mb-10">
-          <Settings2 className="w-5 h-5 text-gray-500" />
-          <h2 className="text-xl font-black text-gray-900 uppercase tracking-tighter">
+          <Settings2 className="w-5 h-5 text-green-500" />
+          <h2 className="text-xl font-black text-slate-100 uppercase tracking-tighter">
             Explorateur
           </h2>
         </div>
 
         {/* Metric Selection */}
         <section className="mb-8">
-          <label className="text-xs font-black text-gray-700 uppercase tracking-widest mb-4 block">
+          <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 block">
             Type de Métrique
           </label>
           <div className="grid grid-cols-1 gap-2">
@@ -315,13 +315,13 @@ export default function AnalyticsPage() {
                 onClick={() => setMetric(m.id)}
                 className={`flex items-center justify-between py-1 px-1 rounded-4xl border transition-all ${
                   metric === m.id
-                    ? "bg-gray-900 border-gray-900 text-white"
-                    : "bg-white border-gray-100 text-gray-600 hover:border-gray-200"
+                    ? "border-green-500 bg-green-500 text-black shadow-lg shadow-green-500/20"
+                    : "border-slate-800 bg-slate-950 text-slate-400 hover:border-green-500/50 hover:text-slate-100"
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <div
-                    className={`p-2 rounded-full ${metric === m.id ? "bg-white/10" : "bg-gray-50 text-gray-400"}`}
+                    className={`p-2 rounded-full ${metric === m.id ? "bg-black/20 text-black" : "bg-slate-900 text-slate-500"}`}
                   >
                     {m.icon}
                   </div>
@@ -334,28 +334,28 @@ export default function AnalyticsPage() {
 
         {/* Mode Toggle */}
         <section className="mb-8">
-          <label className="text-xs font-black text-gray-700 uppercase tracking-widest mb-4 block">
+          <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 block">
             Fenêtre Temporelle
           </label>
-          <div className="flex p-1 bg-gray-50 rounded-2xl gap-1">
+          <div className="flex p-1 bg-slate-950 rounded-2xl gap-1 border border-slate-800">
             <button
               onClick={() => setIsRealtime(true)}
               className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-2xl text-sm font-bold transition-all ${
-                isRealtime ? "bg-white text-gray-900" : "text-gray-400"
+                isRealtime ? "bg-green-500 text-black" : "text-slate-500 hover:text-slate-200"
               }`}
             >
               <Zap
-                className={`w-6 h-6 ${isRealtime ? "text-green-500" : ""}`}
+                className={`w-6 h-6 ${isRealtime ? "text-black" : "text-green-500"}`}
               />
               Temps Réel
             </button>
             <button
               onClick={() => setIsRealtime(false)}
               className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold transition-all ${
-                !isRealtime ? "bg-white text-gray-900" : "text-gray-400"
+                !isRealtime ? "bg-green-500 text-black" : "text-slate-500 hover:text-slate-200"
               }`}
             >
-              <Clock className="w-6 h-6 text-green-500" />
+              <Clock className={`w-6 h-6 ${!isRealtime ? "text-black" : "text-green-500"}`} />
               Historique
             </button>
           </div>
@@ -363,7 +363,7 @@ export default function AnalyticsPage() {
 
         {/* Chart Type Selection */}
         <section className="mb-8">
-          <label className="text-xs font-black text-gray-700 uppercase tracking-widest mb-4 block">
+          <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 block">
             Visualisation
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -373,12 +373,12 @@ export default function AnalyticsPage() {
                 onClick={() => setChartType(t.id)}
                 className={`flex flex-col items-center justify-center p-4 rounded-4xl border-2 transition-all gap-2 ${
                   chartType === t.id
-                    ? "bg-green-50 border-green-200 text-green-600"
-                    : "bg-white border-gray-100 text-gray-600 hover:border-gray-200"
+                    ? "border-green-500 bg-green-500/10 text-green-500 shadow-lg shadow-green-500/10"
+                    : "border-slate-800 bg-slate-950 text-slate-500 hover:border-green-500/50 hover:text-slate-200"
                 }`}
               >
                 <div
-                  className={`${chartType === t.id ? "text-green-600" : "text-gray-600"}`}
+                  className={`${chartType === t.id ? "text-green-500" : "text-slate-500"}`}
                 >
                   {t.icon}
                 </div>
@@ -392,51 +392,51 @@ export default function AnalyticsPage() {
       </aside>
 
       {/* Main Content Viewport */}
-      <main className="flex-1 p-4 xl:flex xl:flex-col xl:overflow-hidden">
+      <main className="flex-1 bg-black p-4 xl:flex xl:flex-col xl:overflow-hidden">
         <header className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex min-w-0 items-start gap-2">
             <div
               className={`mt-1 h-10 w-3 shrink-0 rounded-full ${metrics.find((m) => m.id === metric)?.color}`}
             />
             <div className="min-w-0">
-              <h1 className="text-2xl font-black tracking-tight text-gray-900 sm:text-3xl">
+              <h1 className="text-2xl font-black tracking-tight text-slate-100 sm:text-3xl">
                 {metrics.find((m) => m.id === metric)?.label}
-                <span className="ml-0 block text-base font-medium text-gray-400 sm:ml-2 sm:inline sm:text-2xl">
+                <span className="ml-0 block text-base font-medium text-slate-500 sm:ml-2 sm:inline sm:text-2xl">
                   {isRealtime
                     ? "Flux de données Live"
                     : `Analyse Historique (${selectedPeriodLabel})`}
                 </span>
               </h1>
-              <p className="text-sm font-medium text-gray-500 mt-1">
+              <p className="text-sm font-medium text-slate-400 mt-1">
                 Exploration granulaire des métriques urbaines via Apache Spark
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button className="p-3 border border-gray-200 rounded-xl text-gray-400 hover:text-gray-900 transition-colors">
+            <button className="p-3 border border-slate-800 rounded-xl bg-slate-950 text-slate-500 transition-colors hover:border-green-500/50 hover:text-green-500">
               <Maximize2 className="w-5 h-5" />
             </button>
           </div>
         </header>
 
-        <section className="mb-4 rounded-3xl border border-gray-100 p-3">
+        <section className="mb-4 rounded-3xl border border-slate-800 bg-slate-950/70 p-3 shadow-2xl shadow-black/40">
           <div className="mb-3 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gray-900 text-white">
+              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-green-500 text-black">
                 <Filter className="h-4 w-4" />
               </div>
               <div>
-                <h3 className="text-sm font-black uppercase text-gray-900">
+                <h3 className="text-sm font-black uppercase text-slate-100">
                   Filtres globaux
                 </h3>
-                <p className="text-xs font-medium text-gray-500">
+                <p className="text-xs font-medium text-slate-400">
                   Période, zone et criticité appliquées au graphique
                 </p>
               </div>
             </div>
             <button
               onClick={resetFilters}
-              className="flex w-fit items-center gap-2 rounded-2xl border border-gray-200 px-3 py-2 text-xs font-black uppercase text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900"
+              className="flex w-fit items-center gap-2 rounded-2xl border border-slate-800 bg-black px-3 py-2 text-xs font-black uppercase text-slate-400 transition-colors hover:border-green-500/50 hover:text-green-500"
             >
               <RotateCcw className="h-4 w-4" />
               Réinitialiser
@@ -445,11 +445,11 @@ export default function AnalyticsPage() {
 
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_auto]">
             <label className="space-y-1">
-              <span className="text-[10px] font-black uppercase text-gray-400">Période</span>
+              <span className="text-[10px] font-black uppercase text-slate-500">Période</span>
               <select
                 value={periodFilter}
                 onChange={(event) => setPeriodFilter(event.target.value as PeriodFilter)}
-                className="h-11 w-full rounded-2xl border border-gray-200 bg-gray-50 px-3 text-sm font-bold text-gray-700 outline-none transition-colors focus:border-gray-900 focus:bg-white"
+                className="h-11 w-full rounded-2xl border border-slate-800 bg-black px-3 text-sm font-bold text-slate-200 outline-none transition-colors focus:border-green-500 focus:bg-slate-950"
               >
                 {PERIOD_OPTIONS.filter(option => option.value !== "all").map(option => (
                   <option key={option.value} value={option.value}>{option.label}</option>
@@ -458,12 +458,12 @@ export default function AnalyticsPage() {
             </label>
 
             <label className="space-y-1">
-              <span className="text-[10px] font-black uppercase text-gray-400">District</span>
+              <span className="text-[10px] font-black uppercase text-slate-500">District</span>
               <select
                 value={districtFilter}
                 onChange={(event) => setDistrictFilter(event.target.value)}
                 disabled={metric === "traffic"}
-                className="h-11 w-full rounded-2xl border border-gray-200 bg-gray-50 px-3 text-sm font-bold text-gray-700 outline-none transition-colors focus:border-gray-900 focus:bg-white disabled:bg-gray-100 disabled:text-gray-400"
+                className="h-11 w-full rounded-2xl border border-slate-800 bg-black px-3 text-sm font-bold text-slate-200 outline-none transition-colors focus:border-green-500 focus:bg-slate-950 disabled:bg-slate-900 disabled:text-slate-600"
               >
                 <option value="all">Tous les districts</option>
                 {districtOptions.map(district => (
@@ -473,12 +473,12 @@ export default function AnalyticsPage() {
             </label>
 
             <label className="space-y-1">
-              <span className="text-[10px] font-black uppercase text-gray-400">Route</span>
+              <span className="text-[10px] font-black uppercase text-slate-500">Route</span>
               <select
                 value={routeFilter}
                 onChange={(event) => setRouteFilter(event.target.value)}
                 disabled={metric !== "traffic"}
-                className="h-11 w-full rounded-2xl border border-gray-200 bg-gray-50 px-3 text-sm font-bold text-gray-700 outline-none transition-colors focus:border-gray-900 focus:bg-white disabled:bg-gray-100 disabled:text-gray-400"
+                className="h-11 w-full rounded-2xl border border-slate-800 bg-black px-3 text-sm font-bold text-slate-200 outline-none transition-colors focus:border-green-500 focus:bg-slate-950 disabled:bg-slate-900 disabled:text-slate-600"
               >
                 <option value="all">Toutes les routes</option>
                 {routeOptions.map(route => (
@@ -487,22 +487,22 @@ export default function AnalyticsPage() {
               </select>
             </label>
 
-            <label className="flex h-full min-h-11 items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-3 xl:mt-4">
-              <span className="text-xs font-black uppercase text-gray-600">
+            <label className="flex h-full min-h-11 items-center justify-between gap-3 rounded-2xl border border-slate-800 bg-black px-3 xl:mt-4">
+              <span className="text-xs font-black uppercase text-slate-400">
                 Critiques
               </span>
               <input
                 type="checkbox"
                 checked={criticalFilter === "critical"}
                 onChange={(event) => setCriticalFilter(event.target.checked ? "critical" : "all")}
-                className="h-5 w-5 rounded border-gray-300 text-gray-900"
+                className="h-5 w-5 rounded border-slate-700 bg-black text-green-500 focus:ring-green-500"
               />
             </label>
           </div>
         </section>
 
         {/* Main Chart Card */}
-        <div className="relative flex-1 p-0 xl:flex xl:flex-col xl:overflow-hidden xl:p-2">
+        <div className="relative flex-1 rounded-3xl border border-slate-800 bg-slate-950/70 p-0 shadow-2xl shadow-black/40 xl:flex xl:flex-col xl:overflow-hidden xl:p-2">
           <div className="relative min-h-[420px] flex-1">
             {activeError ? (
               <div className="flex h-full items-center justify-center">
@@ -542,29 +542,29 @@ export default function AnalyticsPage() {
             )}
           </div>
 
-          <footer className="mt-6 border-t border-gray-50 pt-6">
+          <footer className="mt-6 border-t border-slate-800 pt-6">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div className="flex flex-col">
-                <span className="text-xs font-black text-gray-700 uppercase tracking-widest mb-1">
+                <span className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">
                   Métrique Active
                 </span>
-                <span className="text-sm font-bold text-gray-700">
+                <span className="text-sm font-bold text-slate-200">
                   {chartConfig.label}
                 </span>
               </div>
               <div className="flex flex-col">
-                <span className="text-xs font-black text-gray-700 uppercase tracking-widest mb-1">
+                <span className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">
                   Total Points
                 </span>
-                <span className="text-sm font-bold text-gray-700">
+                <span className="text-sm font-bold text-slate-200">
                   <AnimatedNumber value={chartConfig.data.length} /> enregistrements
                 </span>
               </div>
               <div className="flex flex-col">
-                <span className="text-xs font-black text-gray-700 uppercase tracking-widest mb-1">
+                <span className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">
                   Dernière Sync
                 </span>
-                <span className="text-sm font-bold text-gray-700">
+                <span className="text-sm font-bold text-slate-200">
                   {time ?? "--:--:--"}
                 </span>
               </div>
