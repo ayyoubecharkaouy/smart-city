@@ -110,13 +110,13 @@ function interpolateHex(color1: string, color2: string, factor: number): string 
 
 export function getTemperatureFillColor(temp: number): string {
   const stops = [
-    { t: 10, c: "#bbf7d0" },
-    { t: 15, c: "#86efac" },
-    { t: 20, c: "#4ade80" },
-    { t: 25, c: "#22c55e" },
-    { t: 30, c: "#16a34a" },
-    { t: 35, c: "#15803d" },
-    { t: 40, c: "#14532d" },
+    { t: 10, c: "#3b82f6" },
+    { t: 15, c: "#60a5fa" },
+    { t: 20, c: "#2dd4bf" },
+    { t: 25, c: "#f59e0b" },
+    { t: 30, c: "#f97316" },
+    { t: 35, c: "#ef4444" },
+    { t: 40, c: "#b91c1c" },
   ];
 
   if (temp <= stops[0].t) return stops[0].c;
@@ -138,7 +138,7 @@ export function getAqiFillColor(aqi: number): string {
   const stops = [
     { t: 0, c: UI_COLORS.success },
     { t: 50, c: UI_COLORS.lime },
-    { t: 100, c: "#4ade80" },
+    { t: 100, c: UI_COLORS.warning },
     { t: 150, c: UI_COLORS.orange },
     { t: 200, c: UI_COLORS.danger },
     { t: 300, c: UI_COLORS.purple },
@@ -217,8 +217,8 @@ export interface DistrictWater {
 }
 
 export function getPhColor(ph: number): string {
-  if (ph < 6.5) return "#15803d";
-  if (ph > 8.5) return "#4ade80";
+  if (ph < 6.5) return "#ef4444";
+  if (ph > 8.5) return "#3b82f6";
   return "#22c55e";
 }
 
@@ -230,19 +230,19 @@ export function getPhLevel(ph: number): number {
 
 export function getPhLevelColor(level: number): string {
   switch (level) {
-    case 0: return "#15803d";
+    case 0: return "#ef4444";
     case 1: return "#22c55e";
-    case 2: return "#4ade80";
+    case 2: return "#3b82f6";
     default: return "#22c55e";
   }
 }
 
 export function getWaterFlowColor(flow: number): string {
   const stops = [
-    { t: 0, c: "#bbf7d0" },
-    { t: 10, c: "#4ade80" },
-    { t: 20, c: "#22c55e" },
-    { t: 30, c: "#15803d" },
+    { t: 0, c: "#e0f2fe" },
+    { t: 10, c: "#7dd3fc" },
+    { t: 20, c: "#0284c7" },
+    { t: 30, c: "#0369a1" },
   ];
   
   if (flow <= stops[0].t) return stops[0].c;
@@ -267,7 +267,7 @@ export function getWaterFlowLevel(flow: number): number {
 }
 
 export function getWaterFlowLevelColor(level: number): string {
-  const colors = ["#bbf7d0", "#4ade80", "#22c55e", "#15803d"];
+  const colors = ["#e0f2fe", "#7dd3fc", "#0284c7", "#0369a1"];
   return colors[level] || colors[0];
 }
 

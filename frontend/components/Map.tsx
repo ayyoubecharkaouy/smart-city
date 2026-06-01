@@ -453,13 +453,13 @@ export default function Map() {
             <Legend
               title="🌡️ Température"
               items={[
-                { color: "#bbf7d0", label: "< 15°C" },
-                { color: "#86efac", label: "15 – 20°C" },
-                { color: "#4ade80", label: "20 – 25°C" },
-                { color: "#22c55e", label: "25 – 29°C" },
-                { color: "#16a34a", label: "29 – 32°C" },
-                { color: "#15803d", label: "32 – 35°C" },
-                { color: "#14532d", label: "> 35°C" },
+                { color: "#3b82f6", label: "< 15°C" },
+                { color: "#60a5fa", label: "15 – 20°C" },
+                { color: "#2dd4bf", label: "20 – 25°C" },
+                { color: "#f59e0b", label: "25 – 29°C" },
+                { color: "#f97316", label: "29 – 32°C" },
+                { color: "#ef4444", label: "32 – 35°C" },
+                { color: "#b91c1c", label: "> 35°C" },
               ]}
             />
           )}
@@ -468,11 +468,11 @@ export default function Map() {
               title="🌬️ Qualité de l'Air (AQI)"
               items={[
                 { color: "#22c55e", label: "0 – 50 (Bon)" },
-                { color: "#86efac", label: "51 – 100 (Moyen)" },
-                { color: "#4ade80", label: "101 – 150 (Sensible)" },
-                { color: "#16a34a", label: "151 – 200 (Mauvais)" },
-                { color: "#15803d", label: "201 – 300 (Très Mauvais)" },
-                { color: "#14532d", label: "> 300 (Dangereux)" },
+                { color: "#84cc16", label: "51 – 100 (Moyen)" },
+                { color: "#eab308", label: "101 – 150 (Sensible)" },
+                { color: "#f97316", label: "151 – 200 (Mauvais)" },
+                { color: "#ef4444", label: "201 – 300 (Très Mauvais)" },
+                { color: "#b91c1c", label: "> 300 (Dangereux)" },
               ]}
             />
           )}
@@ -486,15 +486,15 @@ export default function Map() {
               items={
                 mode === "water_consumption"
                   ? [
-                      { color: "#bbf7d0", label: "0 – 5 L/min" },
-                      { color: "#4ade80", label: "5 – 15 L/min" },
-                      { color: "#22c55e", label: "15 – 25 L/min" },
-                      { color: "#15803d", label: "> 25 L/min" },
+                      { color: "#e0f2fe", label: "0 – 5 L/min" },
+                      { color: "#7dd3fc", label: "5 – 15 L/min" },
+                      { color: "#0284c7", label: "15 – 25 L/min" },
+                      { color: "#0369a1", label: "> 25 L/min" },
                     ]
                   : [
-                      { color: "#15803d", label: "< 6.5 (Acide)" },
+                      { color: "#ef4444", label: "< 6.5 (Acide)" },
                       { color: "#22c55e", label: "6.5 – 8.5 (Sain)" },
-                      { color: "#4ade80", label: "> 8.5 (Basique)" },
+                      { color: "#3b82f6", label: "> 8.5 (Basique)" },
                     ]
               }
             />
@@ -504,9 +504,9 @@ export default function Map() {
               title="🚦 Congestion Routière"
               items={[
                 { color: "#22c55e", label: "Fluide" },
-                { color: "#86efac", label: "Dense" },
-                { color: "#16a34a", label: "Congestion" },
-                { color: "#14532d", label: "Forte Congestion" },
+                { color: "#eab308", label: "Dense" },
+                { color: "#f97316", label: "Congestion" },
+                { color: "#ef4444", label: "Forte Congestion" },
               ]}
             />
           )}

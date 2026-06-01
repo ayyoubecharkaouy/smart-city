@@ -40,15 +40,15 @@ export const SOCKET_EVENTS = {
 
 export const UI_COLORS = {
   success: "#22c55e",
-  lime: "#4ade80",
-  warning: "#86efac",
-  orange: "#16a34a",
-  danger: "#15803d",
-  purple: "#22c55e",
-  darkDanger: "#14532d",
-  blue: "#22c55e",
-  sky: "#22c55e",
-  emerald: "#22c55e",
+  lime: "#84cc16",
+  warning: "#eab308",
+  orange: "#f97316",
+  danger: "#ef4444",
+  purple: "#a855f7",
+  darkDanger: "#b91c1c",
+  blue: "#3b82f6",
+  sky: "#0ea5e9",
+  emerald: "#10b981",
 } as const;
 
 export const SPARK_THRESHOLDS = {

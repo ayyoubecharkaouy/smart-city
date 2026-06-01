@@ -487,7 +487,7 @@ const DashboardBar = memo(
                       <Loader className="w-5 h-5 animate-spin text-gray-400" />
                     ) : (
                       <>
-                        <span className="text-2xl font-black text-gray-900 tabular-nums">
+                        <span className="text-2xl font-black text-gray-500 tabular-nums">
                           <AnimatedNumber value={kpi.value} decimals={String(kpi.value).includes(".") ? String(kpi.value).split(".")[1].length : 0} />
                         </span>
                         <span className="text-[10px] font-bold text-gray-500">
@@ -505,7 +505,7 @@ const DashboardBar = memo(
         {/* Distribution Statistics Bar */}
         {stats.distribution && (
           <div className="w-full max-w-max/70 backdrop-blur-xl border border-[#173525] rounded-full px-6 py-3 pointer-events-auto flex items-center gap-2">
-            <div className="flex items-center gap-2 text-gray-700">
+            <div className="flex items-center gap-2 text-gray-500">
               <span className="text-sm font-bold uppercase tracking-widest whitespace-nowrap">
                 {stats.title}
               </span>
