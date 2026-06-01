@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import array, col, current_timestamp, explode, from_json, lit, when
+from pyspark.sql.functions import array, col, current_timestamp, explode, from_json, lit, to_date, when
 from pyspark.sql.types import ArrayType
 
 def create_kafka_stream(spark: SparkSession, topic_name: str, kafka_servers: str):
@@ -13,6 +13,23 @@ def create_kafka_stream(spark: SparkSession, topic_name: str, kafka_servers: str
         .option("subscribe", topic_name) \
         .option("startingOffsets", "latest") \
         .load()
+
+def create_raw_kafka_lake_stream(spark: SparkSession, topic_name: str, kafka_servers: str, source: str):
+    """
+    Prepare un flux brut Kafka pour la zone bronze du data lake.
+    """
+    return create_kafka_stream(spark, topic_name, kafka_servers) \
+        .select(
+            lit(source).alias("source"),
+            col("topic"),
+            col("partition"),
+            col("offset"),
+            col("timestamp").alias("kafka_timestamp"),
+            col("key").cast("string").alias("key"),
+            col("value").cast("string").alias("raw_value"),
+            current_timestamp().alias("ingested_at")
+        ) \
+        .withColumn("event_date", to_date(col("kafka_timestamp")))
 
 def parse_kafka_json_records(df, element_schema, stream_name: str):
     """
@@ -89,6 +106,32 @@ def write_stream_to_console(df, query_name: str):
         .option("truncate", "false") \
         .queryName(query_name) \
         .start()
+
+def write_stream_to_parquet(
+    df,
+    output_path: str,
+    checkpoint_dir: str,
+    output_mode: str = "append",
+    query_name: str = None,
+    partition_by: list = None
+):
+    """
+    Ecrit un flux Spark dans le data lake local au format Parquet.
+    """
+    writer = df \
+        .writeStream \
+        .format("parquet") \
+        .option("path", output_path) \
+        .option("checkpointLocation", checkpoint_dir) \
+        .outputMode(output_mode)
+
+    if query_name:
+        writer = writer.queryName(query_name)
+
+    if partition_by:
+        writer = writer.partitionBy(*partition_by)
+
+    return writer.start()
 
 def write_stream_to_kafka(
     df,

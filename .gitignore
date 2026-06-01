@@ -15,6 +15,7 @@ __pycache__/
 
 # Spark runtime state
 spark/checkpoints/
+data_lake/
 
 # Environment files
 .env

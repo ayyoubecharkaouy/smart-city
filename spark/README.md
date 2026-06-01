@@ -70,6 +70,8 @@ WINDOW_DURATION="2 minutes"
 SLIDING_INTERVAL="1 minute"
 WATERMARK_DELAY="5 minutes"
 SPARK_CHECKPOINT_VERSION=v3
+DATA_LAKE_ENABLED=true
+DATA_LAKE_BASE_DIR="../data_lake"
 ```
 
 Seuils d'alertes :
@@ -175,4 +177,43 @@ Les alertes metier sont envoyees vers :
 
 ```text
 smartcity.spark.alerts
+```
+
+## Data lake local
+
+Les jobs Spark ecrivent aussi les flux dans un data lake local au format Parquet.
+Par defaut, les fichiers sont crees dans :
+
+```text
+Platform/smart-city/data_lake/
+```
+
+Structure :
+
+```text
+data_lake/
+  bronze/
+    environment/
+    water/
+    traffic/
+  silver/
+    environment/
+    water/
+    traffic/
+```
+
+- `bronze` conserve les messages Kafka bruts avec topic, partition, offset et valeur JSON originale.
+- `silver` conserve les donnees JSON parsees et validees par Spark.
+
+Les dossiers sont partitionnes par `event_date` pour faciliter les analyses historiques.
+Vous pouvez desactiver cette ecriture avec :
+
+```bash
+DATA_LAKE_ENABLED=false ./run_spark.sh
+```
+
+Ou choisir un autre emplacement :
+
+```bash
+DATA_LAKE_BASE_DIR=/chemin/vers/data_lake ./run_spark.sh
 ```

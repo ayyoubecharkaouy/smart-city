@@ -12,6 +12,13 @@ def env_float(name: str, default: float) -> float:
     return float(os.getenv(name, default))
 
 
+def env_bool(name: str, default: bool) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
 BASE_DIR = Path(__file__).resolve().parent
 
 # Adresse du broker Kafka
@@ -55,6 +62,28 @@ CHECKPOINT_PATHS = {
     "ENVIRONMENT_ALERTS": str(CHECKPOINT_DIR / "environment-alerts"),
     "WATER_ALERTS": str(CHECKPOINT_DIR / "water-alerts"),
     "TRAFFIC_ALERTS": str(CHECKPOINT_DIR / "traffic-alerts")
+}
+
+# Data lake local pour conserver les donnees brutes et nettoyees.
+DATA_LAKE_ENABLED = env_bool("DATA_LAKE_ENABLED", True)
+DATA_LAKE_BASE_DIR = Path(env("DATA_LAKE_BASE_DIR", str(BASE_DIR.parent / "data_lake")))
+
+DATA_LAKE_PATHS = {
+    "BRONZE_ENVIRONMENT": str(DATA_LAKE_BASE_DIR / "bronze" / "environment"),
+    "BRONZE_WATER": str(DATA_LAKE_BASE_DIR / "bronze" / "water"),
+    "BRONZE_TRAFFIC": str(DATA_LAKE_BASE_DIR / "bronze" / "traffic"),
+    "SILVER_ENVIRONMENT": str(DATA_LAKE_BASE_DIR / "silver" / "environment"),
+    "SILVER_WATER": str(DATA_LAKE_BASE_DIR / "silver" / "water"),
+    "SILVER_TRAFFIC": str(DATA_LAKE_BASE_DIR / "silver" / "traffic")
+}
+
+DATA_LAKE_CHECKPOINT_PATHS = {
+    "BRONZE_ENVIRONMENT": str(CHECKPOINT_DIR / "data-lake" / "bronze-environment"),
+    "BRONZE_WATER": str(CHECKPOINT_DIR / "data-lake" / "bronze-water"),
+    "BRONZE_TRAFFIC": str(CHECKPOINT_DIR / "data-lake" / "bronze-traffic"),
+    "SILVER_ENVIRONMENT": str(CHECKPOINT_DIR / "data-lake" / "silver-environment"),
+    "SILVER_WATER": str(CHECKPOINT_DIR / "data-lake" / "silver-water"),
+    "SILVER_TRAFFIC": str(CHECKPOINT_DIR / "data-lake" / "silver-traffic")
 }
 
 # Seuils des alertes Spark

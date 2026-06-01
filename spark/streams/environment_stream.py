@@ -1,6 +1,6 @@
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, TimestampType
-from pyspark.sql.functions import avg, col, current_timestamp, lit, max as spark_max, max_by, min as spark_min, min_by, when, window
-from utils.kafka_helpers import create_validated_kafka_json_stream, with_event_time_watermark, write_stream_to_kafka
+from pyspark.sql.functions import avg, col, current_timestamp, lit, max as spark_max, max_by, min as spark_min, min_by, to_date, when, window
+from utils.kafka_helpers import create_raw_kafka_lake_stream, create_validated_kafka_json_stream, with_event_time_watermark, write_stream_to_kafka, write_stream_to_parquet
 import config
 
 def process_environment_stream(spark):
@@ -23,6 +23,21 @@ def process_environment_stream(spark):
         StructField("air_quality", air_quality_schema, True),
         StructField("timestamp", TimestampType(), True)
     ])
+
+    if config.DATA_LAKE_ENABLED:
+        bronze_df = create_raw_kafka_lake_stream(
+            spark,
+            config.TOPICS["ENVIRONMENT"],
+            config.KAFKA_BOOTSTRAP_SERVERS,
+            "environment"
+        )
+        write_stream_to_parquet(
+            bronze_df,
+            config.DATA_LAKE_PATHS["BRONZE_ENVIRONMENT"],
+            config.DATA_LAKE_CHECKPOINT_PATHS["BRONZE_ENVIRONMENT"],
+            query_name="environment_bronze_lake",
+            partition_by=["event_date"]
+        )
     
     parsed_df = create_validated_kafka_json_stream(
         spark,
@@ -34,6 +49,18 @@ def process_environment_stream(spark):
         config.CHECKPOINT_PATHS["ENVIRONMENT_ERRORS"],
         "environment_errors_stream"
     )
+
+    if config.DATA_LAKE_ENABLED:
+        silver_df = parsed_df \
+            .withColumn("processed_at", current_timestamp()) \
+            .withColumn("event_date", to_date(col("timestamp")))
+        write_stream_to_parquet(
+            silver_df,
+            config.DATA_LAKE_PATHS["SILVER_ENVIRONMENT"],
+            config.DATA_LAKE_CHECKPOINT_PATHS["SILVER_ENVIRONMENT"],
+            query_name="environment_silver_lake",
+            partition_by=["event_date"]
+        )
 
     enriched_df = parsed_df \
         .withColumn("air_quality_value", col("air_quality.aqi"))

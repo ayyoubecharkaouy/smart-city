@@ -1,6 +1,6 @@
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, TimestampType
-from pyspark.sql.functions import abs as spark_abs, avg, col, current_timestamp, greatest, least, lit, max_by, min_by, sum as spark_sum, when, window
-from utils.kafka_helpers import create_validated_kafka_json_stream, with_event_time_watermark, write_stream_to_kafka
+from pyspark.sql.functions import abs as spark_abs, avg, col, current_timestamp, greatest, least, lit, max_by, min_by, sum as spark_sum, to_date, when, window
+from utils.kafka_helpers import create_raw_kafka_lake_stream, create_validated_kafka_json_stream, with_event_time_watermark, write_stream_to_kafka, write_stream_to_parquet
 import config
 
 def process_water_stream(spark):
@@ -24,6 +24,21 @@ def process_water_stream(spark):
         StructField("water_quality", quality_schema, True),
         StructField("timestamp", TimestampType(), True)
     ])
+
+    if config.DATA_LAKE_ENABLED:
+        bronze_df = create_raw_kafka_lake_stream(
+            spark,
+            config.TOPICS["WATER"],
+            config.KAFKA_BOOTSTRAP_SERVERS,
+            "water"
+        )
+        write_stream_to_parquet(
+            bronze_df,
+            config.DATA_LAKE_PATHS["BRONZE_WATER"],
+            config.DATA_LAKE_CHECKPOINT_PATHS["BRONZE_WATER"],
+            query_name="water_bronze_lake",
+            partition_by=["event_date"]
+        )
     
     parsed_df = create_validated_kafka_json_stream(
         spark,
@@ -35,6 +50,18 @@ def process_water_stream(spark):
         config.CHECKPOINT_PATHS["WATER_ERRORS"],
         "water_errors_stream"
     )
+
+    if config.DATA_LAKE_ENABLED:
+        silver_df = parsed_df \
+            .withColumn("processed_at", current_timestamp()) \
+            .withColumn("event_date", to_date(col("timestamp")))
+        write_stream_to_parquet(
+            silver_df,
+            config.DATA_LAKE_PATHS["SILVER_WATER"],
+            config.DATA_LAKE_CHECKPOINT_PATHS["SILVER_WATER"],
+            query_name="water_silver_lake",
+            partition_by=["event_date"]
+        )
 
     # Aplatir les champs imbriqués
     flat_df = parsed_df \
