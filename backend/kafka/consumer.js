@@ -4,7 +4,7 @@ const SparkAlert = require("../models/SparkAlert");
 
 const kafka = new Kafka({
   clientId: "smartcity-multi-service",
-  brokers: ["localhost:9092"]
+  brokers: (process.env.KAFKA_BOOTSTRAP_SERVERS || "localhost:9092").split(",")
 });
 
 const consumer = kafka.consumer({

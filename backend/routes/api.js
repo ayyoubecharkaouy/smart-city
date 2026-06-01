@@ -106,6 +106,11 @@ function parseSparkType(value) {
   return ["environment", "water", "traffic"].includes(value) ? value : null;
 }
 
+// ── HEALTH ENDPOINT ──
+router.get("/health", (req, res) => {
+  res.json({ status: "OK", timestamp: new Date() });
+});
+
 // ── SPARK ENDPOINTS ──
 
 router.get("/spark/aggregations", asyncRoute(async (req, res) => {
