@@ -14,6 +14,7 @@ Plateforme Big Data & IoT pour une ville intelligente. Le dépôt contient plusi
 ## 🛠️ Prérequis
 
 - **Docker** et **Docker Compose** (installés et démarrés).
+- **Apache Kafka 4.2.0**, fourni par l'image Docker `apache/kafka:4.2.0`.
 - *Optionnel (si développement hors conteneur)* :
   - **Node.js** (v20+ recommandé)
   - **Python 3.11+** (pour les jobs Spark en local)
