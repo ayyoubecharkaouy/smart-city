@@ -37,9 +37,9 @@ function Modal({
       <div className="relative flex max-h-[80%] w-full max-w-4xl flex-col overflow-hidden border border-[#173525] bg-[#0a1710] rounded-4xl shadow-2xl animate-in slide-in-from-left duration-300">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors z-10"
+          className="absolute top-4 right-4 p-2 hover:bg-slate-900 rounded-full transition-colors z-10"
         >
-          <X className="w-5 h-5 text-gray-500" />
+          <X className="w-5 h-5 text-slate-500" />
         </button>
 
         <div className="h-full w-full overflow-y-auto">{children}</div>

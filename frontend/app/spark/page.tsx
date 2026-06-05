@@ -127,10 +127,10 @@ function StatCard({
   tone: string;
 }) {
   return (
-    <div className="rounded-2xl border border-gray-950 p-4 shadow-lg shadow-black/20">
+    <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 shadow-lg shadow-black/20">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-[10px] font-black uppercase text-gray-500">{label}</p>
+          <p className="text-[10px] font-black uppercase text-slate-500">{label}</p>
           <p className="mt-1 text-2xl font-black">
             {value === null ? "--" : <AnimatedNumber value={value} decimals={decimals} suffix={suffix} />}
           </p>
@@ -145,9 +145,9 @@ function StatCard({
 
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="rounded-2xl border border-gray-950 p-8 text-center">
-      <Database className="mx-auto mb-3 h-8 w-8 text-gray-500" />
-      <p className="font-bold text-gray-300">{message}</p>
+    <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-8 text-center">
+      <Database className="mx-auto mb-3 h-8 w-8 text-slate-500" />
+      <p className="font-bold text-slate-300">{message}</p>
     </div>
   );
 }
@@ -160,7 +160,7 @@ function SparkChartCard({
   children: ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-gray-950 p-4 shadow-lg shadow-black/20">
+    <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 shadow-lg shadow-black/20">
       <h3 className="mb-4 text-sm font-black">{title}</h3>
       <div className="h-64 w-full">{children}</div>
     </div>
@@ -238,8 +238,8 @@ function EnvironmentTable({ data }: { data: SparkEnvironmentData[] }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[760px] text-left text-sm">
-        <thead className="text-[10px] uppercase text-gray-500">
-          <tr className="border-b border-gray-800">
+        <thead className="text-[10px] uppercase text-slate-500">
+          <tr className="border-b border-slate-800">
             <th className="py-3 font-black">District</th>
             <th className="py-3 font-black">Temp. moy.</th>
             <th className="py-3 font-black">Min / Max</th>
@@ -253,15 +253,15 @@ function EnvironmentTable({ data }: { data: SparkEnvironmentData[] }) {
           {data.map(item => {
             const latency = getLatencySeconds(item.processed_at, item.window?.end);
             return (
-              <tr key={`${item.district}-${item.processed_at}`} className="border-b border-gray-900/80">
+              <tr key={`${item.district}-${item.processed_at}`} className="border-b border-slate-800">
                 <td className="py-3 font-bold">{item.district}</td>
                 <td className="py-3 text-green-500 font-black"><AnimatedNumber value={item.avg_temperature} decimals={1} suffix="°C" /></td>
-                <td className="py-3 text-gray-400">
+                <td className="py-3 text-slate-400">
                   <AnimatedNumber value={item.min_temperature} decimals={1} /> / <AnimatedNumber value={item.max_temperature} decimals={1} suffix="°C" />
                 </td>
-                <td className="py-3 text-gray-400"><AnimatedNumber value={item.max_air_quality} /></td>
-                <td className="py-3 text-gray-400">{item.temperature_trend}</td>
-                <td className="py-3 text-gray-500">{formatTime(item.processed_at)}</td>
+                <td className="py-3 text-slate-400"><AnimatedNumber value={item.max_air_quality} /></td>
+                <td className="py-3 text-slate-400">{item.temperature_trend}</td>
+                <td className="py-3 text-slate-500">{formatTime(item.processed_at)}</td>
                 <td className="py-3 font-bold text-green-500">{latency === null ? "--" : <AnimatedNumber value={latency} decimals={1} suffix="s" />}</td>
               </tr>
             );
@@ -278,8 +278,8 @@ function WaterTable({ data }: { data: SparkWaterData[] }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[760px] text-left text-sm">
-        <thead className="text-[10px] uppercase text-gray-500">
-          <tr className="border-b border-gray-800">
+        <thead className="text-[10px] uppercase text-slate-500">
+          <tr className="border-b border-slate-800">
             <th className="py-3 font-black">District</th>
             <th className="py-3 font-black">Debit moy.</th>
             <th className="py-3 font-black">Debit total</th>
@@ -293,13 +293,13 @@ function WaterTable({ data }: { data: SparkWaterData[] }) {
           {data.map(item => {
             const latency = getLatencySeconds(item.processed_at, item.window?.end);
             return (
-              <tr key={`${item.district}-${item.processed_at}`} className="border-b border-gray-900/80">
+              <tr key={`${item.district}-${item.processed_at}`} className="border-b border-slate-800">
                 <td className="py-3 font-bold">{item.district}</td>
                 <td className="py-3 text-green-500 font-black"><AnimatedNumber value={item.avg_flow_rate} decimals={1} suffix=" L/m" /></td>
-                <td className="py-3 text-gray-400"><AnimatedNumber value={item.total_flow_rate} decimals={1} /></td>
-                <td className="py-3 text-gray-400"><AnimatedNumber value={item.avg_ph} decimals={1} /></td>
+                <td className="py-3 text-slate-400"><AnimatedNumber value={item.total_flow_rate} decimals={1} /></td>
+                <td className="py-3 text-slate-400"><AnimatedNumber value={item.avg_ph} decimals={1} /></td>
                 <td className="py-3 font-bold text-green-500"><AnimatedNumber value={item.water_quality_score} /></td>
-                <td className="py-3 text-gray-400">{item.sudden_flow_drop ? "Oui" : "Non"}</td>
+                <td className="py-3 text-slate-400">{item.sudden_flow_drop ? "Oui" : "Non"}</td>
                 <td className="py-3 font-bold text-green-500">{latency === null ? "--" : <AnimatedNumber value={latency} decimals={1} suffix="s" />}</td>
               </tr>
             );
@@ -316,8 +316,8 @@ function TrafficTable({ data }: { data: SparkTrafficData[] }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[760px] text-left text-sm">
-        <thead className="text-[10px] uppercase text-gray-500">
-          <tr className="border-b border-gray-800">
+        <thead className="text-[10px] uppercase text-slate-500">
+          <tr className="border-b border-slate-800">
             <th className="py-3 font-black">Route</th>
             <th className="py-3 font-black">Vitesse moy.</th>
             <th className="py-3 font-black">Vitesse min.</th>
@@ -331,13 +331,13 @@ function TrafficTable({ data }: { data: SparkTrafficData[] }) {
           {data.map(item => {
             const latency = getLatencySeconds(item.processed_at, item.window?.end);
             return (
-              <tr key={`${item.route_id}-${item.processed_at}`} className="border-b border-gray-900/80">
+              <tr key={`${item.route_id}-${item.processed_at}`} className="border-b border-slate-800">
                 <td className="py-3 font-bold">{item.route_id}</td>
                 <td className="py-3 text-green-500 font-black"><AnimatedNumber value={item.avg_speed} decimals={1} suffix=" km/h" /></td>
-                <td className="py-3 text-gray-400"><AnimatedNumber value={item.min_speed} decimals={1} suffix=" km/h" /></td>
-                <td className="py-3 text-gray-400"><AnimatedNumber value={item.avg_vehicle_count} /></td>
+                <td className="py-3 text-slate-400"><AnimatedNumber value={item.min_speed} decimals={1} suffix=" km/h" /></td>
+                <td className="py-3 text-slate-400"><AnimatedNumber value={item.avg_vehicle_count} /></td>
                 <td className="py-3 text-green-500 font-bold"><AnimatedNumber value={item.max_congestion} decimals={2} /></td>
-                <td className="py-3 text-gray-400">{item.congestion_level}</td>
+                <td className="py-3 text-slate-400">{item.congestion_level}</td>
                 <td className="py-3 font-bold text-green-500">{latency === null ? "--" : <AnimatedNumber value={latency} decimals={1} suffix="s" />}</td>
               </tr>
             );
@@ -559,7 +559,7 @@ export default function SparkDataPage() {
   };
 
   return (
-    <div className="mx-auto min-h-screen w-full p-4">
+    <div className="mx-auto min-h-screen w-full bg-black p-4 text-slate-100 sm:p-6 lg:p-8">
       <header className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-3">
           <Image src="/images/logos/spark.png" alt="Spark" width={120} height={120} className="h-20 w-auto" />
@@ -567,12 +567,12 @@ export default function SparkDataPage() {
             <h2 className="text-3xl font-black leading-tight">
               Moteur de Calcul Spark
             </h2>
-            <p className="text-gray-500 font-medium">
+            <p className="text-slate-500 font-medium">
               Fenetres glissantes, alertes et latence de traitement
             </p>
           </div>
         </div>
-        <div className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-bold ${connected ? "border-green-500/30 bg-green-500/10 text-green-400" : "border-green-500/20 bg-gray-950 text-green-400"}`}>
+        <div className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-bold ${connected ? "border-green-500/30 bg-green-500/10 text-green-400" : "border-green-500/20 bg-slate-950 text-green-400"}`}>
           {connected ? <Wifi className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />}
           {connected ? "Backend temps reel connecte" : reconnecting ? `Reconnexion ${reconnectAttempt}` : "Backend temps reel hors ligne"}
         </div>
@@ -592,42 +592,42 @@ export default function SparkDataPage() {
       </div>
 
       <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="rounded-2xl border border-gray-950 p-5 shadow-lg shadow-black/20">
-          <h3 className="mb-3 flex items-center gap-2 text-sm font-black uppercase text-gray-500">
+        <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5 shadow-lg shadow-black/20">
+          <h3 className="mb-3 flex items-center gap-2 text-sm font-black uppercase text-slate-500">
             <Cpu className="h-4 w-4" /> Spark
           </h3>
           <p className="text-lg font-black">{allWindows.length > 0 ? "Actif" : "En attente"}</p>
-          <p className="mt-1 text-sm font-medium text-gray-500">Dernier traitement : {formatTime(latestProcessedAt)}</p>
+          <p className="mt-1 text-sm font-medium text-slate-500">Dernier traitement : {formatTime(latestProcessedAt)}</p>
         </div>
-        <div className="rounded-2xl border border-gray-950 p-5 shadow-lg shadow-black/20">
-          <h3 className="mb-3 flex items-center gap-2 text-sm font-black uppercase text-gray-500">
+        <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5 shadow-lg shadow-black/20">
+          <h3 className="mb-3 flex items-center gap-2 text-sm font-black uppercase text-slate-500">
             <Server className="h-4 w-4" /> Backend
           </h3>
           <p className="text-lg font-black">{connected ? "Connecte" : "Hors ligne"}</p>
-          <p className="mt-1 text-sm font-medium text-gray-500">
+          <p className="mt-1 text-sm font-medium text-slate-500">
             {socketError ? `Erreur: ${socketError}` : "Socket.IO et historique API"}
           </p>
         </div>
-        <div className="rounded-2xl border border-gray-950 p-5 shadow-lg shadow-black/20">
-          <h3 className="mb-3 flex items-center gap-2 text-sm font-black uppercase text-gray-500">
+        <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5 shadow-lg shadow-black/20">
+          <h3 className="mb-3 flex items-center gap-2 text-sm font-black uppercase text-slate-500">
             <Wifi className="h-4 w-4" /> Kafka
           </h3>
           <p className="text-lg font-black">{allWindows.length + sparkAlerts.length + sparkErrors.length > 0 ? "Messages recus" : "Aucun message"}</p>
-          <p className="mt-1 text-sm font-medium text-gray-500">
+          <p className="mt-1 text-sm font-medium text-slate-500">
             {eventCount} evenements, dernier: {lastEvent || "--"}
           </p>
         </div>
       </div>
 
-      <section className="mb-6 rounded-3xl border border-gray-950 p-4 shadow-lg shadow-black/20">
+      <section className="mb-6 rounded-3xl border border-slate-800 bg-slate-950/70 p-4 shadow-lg shadow-black/20">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h3 className="flex items-center gap-2 text-sm font-black uppercase text-gray-500">
+          <h3 className="flex items-center gap-2 text-sm font-black uppercase text-slate-500">
             <Filter className="h-4 w-4" />
             Filtres
           </h3>
           <button
             onClick={resetFilters}
-            className="flex w-fit items-center gap-2 rounded-xl border border-gray-700 bg-gray-950 px-3 py-4 text-xs font-black text-gray-400 transition-colors hover:bg-green-500/10"
+            className="flex w-fit items-center gap-2 rounded-xl border border-slate-800 bg-black px-3 py-3 text-xs font-black text-slate-400 transition-colors hover:bg-green-500/10"
           >
             <RotateCcw className="h-4 w-4" />
             Reinitialiser
@@ -635,11 +635,11 @@ export default function SparkDataPage() {
         </div>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
           <label className="space-y-1">
-            <span className="text-[10px] font-black uppercase text-gray-500">District</span>
+            <span className="text-[10px] font-black uppercase text-slate-500">District</span>
             <select
               value={districtFilter}
               onChange={event => setDistrictFilter(event.target.value)}
-              className="w-full rounded-xl border border-gray-700 bg-gray-950 px-3 py-4 text-sm font-bold text-gray-300 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+              className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-4 text-sm font-bold text-slate-300 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
             >
               <option value="all">Tous les districts</option>
               {districtOptions.map(district => (
@@ -648,11 +648,11 @@ export default function SparkDataPage() {
             </select>
           </label>
           <label className="space-y-1">
-            <span className="text-[10px] font-black uppercase text-gray-500">Route</span>
+            <span className="text-[10px] font-black uppercase text-slate-500">Route</span>
             <select
               value={routeFilter}
               onChange={event => setRouteFilter(event.target.value)}
-              className="w-full rounded-xl border border-gray-700 bg-gray-950 px-3 py-4 text-sm font-bold text-gray-300 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+              className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-4 text-sm font-bold text-slate-300 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
             >
               <option value="all">Toutes les routes</option>
               {routeOptions.map(route => (
@@ -661,11 +661,11 @@ export default function SparkDataPage() {
             </select>
           </label>
           <label className="space-y-1">
-            <span className="text-[10px] font-black uppercase text-gray-500">Type d&apos;alerte</span>
+            <span className="text-[10px] font-black uppercase text-slate-500">Type d&apos;alerte</span>
             <select
               value={alertTypeFilter}
               onChange={event => setAlertTypeFilter(event.target.value)}
-              className="w-full rounded-xl border border-gray-700 bg-gray-950 px-3 py-4 text-sm font-bold text-gray-300 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+              className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-4 text-sm font-bold text-slate-300 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
             >
               <option value="all">Tous les types</option>
               {alertTypeOptions.map(alertType => (
@@ -674,11 +674,11 @@ export default function SparkDataPage() {
             </select>
           </label>
           <label className="space-y-1">
-            <span className="text-[10px] font-black uppercase text-gray-500">Periode</span>
+            <span className="text-[10px] font-black uppercase text-slate-500">Periode</span>
             <select
               value={periodFilter}
               onChange={event => setPeriodFilter(event.target.value as PeriodFilter)}
-              className="w-full rounded-xl border border-gray-700 bg-gray-950 px-3 py-4 text-sm font-bold text-gray-300 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+              className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-4 text-sm font-bold text-slate-300 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
             >
               {PERIOD_OPTIONS.map(option => (
                 <option key={option.value} value={option.value}>{option.label}</option>
@@ -686,11 +686,11 @@ export default function SparkDataPage() {
             </select>
           </label>
           <label className="space-y-1">
-            <span className="text-[10px] font-black uppercase text-gray-500">Criticite</span>
+            <span className="text-[10px] font-black uppercase text-slate-500">Criticite</span>
             <select
               value={criticalFilter}
               onChange={event => setCriticalFilter(event.target.value as CriticalFilter)}
-              className="w-full rounded-xl border border-gray-700 bg-gray-950 px-3 py-4 text-sm font-bold text-gray-300 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+              className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-4 text-sm font-bold text-slate-300 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
             >
               <option value="all">Toutes les donnees</option>
               <option value="critical">Critiques seulement</option>
@@ -728,8 +728,8 @@ export default function SparkDataPage() {
         </div>
       </div>
 
-      <div className="rounded-3xl border border-gray-950 shadow-lg shadow-black/20">
-        <div className="border-b border-gray-800 p-4">
+      <div className="rounded-3xl border border-slate-800 bg-slate-950/70 shadow-lg shadow-black/20">
+        <div className="border-b border-slate-800 p-4">
           <div className="flex flex-wrap gap-2">
             {tabs.map(tab => {
               const Icon = tab.icon;
@@ -737,11 +737,11 @@ export default function SparkDataPage() {
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`flex items-center gap-2 rounded-xl border px-3 py-4 text-sm font-black transition-colors ${activeTab === tab.key ? "border-green-500 bg-green-500 text-gray-950" : "border-gray-700 text-gray-400 hover:border-green-500 hover:bg-green-500/10 hover:text-green-400"}`}
+                  className={`flex items-center gap-2 rounded-xl border px-3 py-3 text-sm font-black transition-colors ${activeTab === tab.key ? "border-green-500 bg-green-500 text-black" : "border-slate-800 text-slate-400 hover:border-green-500 hover:bg-green-500/10 hover:text-green-400"}`}
                 >
                   <Icon className="h-4 w-4" />
                   {tab.label}
-                  <span className={`rounded-full px-2 py-0.5 text-[10px] ${activeTab === tab.key ? "bg-gray-950/20 text-gray-950" : "bg-gray-800 text-gray-500"}`}>
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] ${activeTab === tab.key ? "bg-slate-950/70 text-gray-950" : "bg-slate-900 text-slate-500"}`}>
                     {tabCounts[tab.key]}
                   </span>
                 </button>

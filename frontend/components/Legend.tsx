@@ -21,14 +21,14 @@ export default function Legend({
   const max = Math.max(...values);
 
   return (
-    <div className="absolute bottom-6 right-6 z-1000 /40 backdrop-blur-md border border-gray-200 rounded-sm p-2 w-[220px]  animate-[slideUp_0.3s_ease-out]">
+    <div className="absolute bottom-6 right-6 z-1000 w-[220px] animate-[slideUp_0.3s_ease-out] rounded-2xl border border-slate-800 bg-slate-950/95 p-3 shadow-2xl shadow-black/30 backdrop-blur-md">
       {/* Header */}
       <div className="flex items-center gap-2 mb-3">
-        <span className="text-gray-700 text-xl">{metric.icon}</span>
-        <h3 className="text-sm font-bold text-gray-800">
-          {metric.label}hhhhhhhh
+        <span className="text-xl text-green-500">{metric.icon}</span>
+        <h3 className="text-sm font-bold text-slate-100">
+          {metric.label}
           {metric.unit && (
-            <span className="font-normal text-gray-500 text-xs ml-1">
+            <span className="ml-1 text-xs font-normal text-slate-500">
               ({metric.unit})
             </span>
           )}
@@ -47,13 +47,13 @@ export default function Legend({
           ))}
         </div>
         <div className="flex justify-between mt-1">
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-slate-500">
             <AnimatedNumber value={min} />
           </span>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-slate-500">
             <AnimatedNumber value={(min + max) / 2} />
           </span>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-slate-500">
             <AnimatedNumber value={max} />
           </span>
         </div>
@@ -61,8 +61,8 @@ export default function Legend({
 
       {/* Traffic Legend */}
       {showRoutes && (
-        <div className="mt-3 pt-3 border-t border-gray-200">
-          <h4 className="text-xs font-semibold text-gray-700 mb-2">
+        <div className="mt-3 border-t border-slate-800 pt-3">
+          <h4 className="mb-2 text-xs font-semibold text-slate-300">
             Trafic routier
           </h4>
           <div className="flex flex-col gap-1">
@@ -82,7 +82,7 @@ export default function Legend({
                             : 7,
                   }}
                 />
-                <span className="text-xs text-gray-600">
+                <span className="text-xs text-slate-400">
                   {getTrafficLabel(level)}
                 </span>
               </div>

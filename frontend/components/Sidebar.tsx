@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -27,10 +28,10 @@ const navItems = [
 export default function Sidebar() {
 
   return (
-    <aside className="fixed inset-x-0 bottom-0 z-2000 h-16 shrink-0 lg:static lg:h-screen lg:w-64 lg:border-t-0">
-      <div className="flex flex-col items-start h-full lg:p-2">
+    <aside className="fixed inset-x-0 bottom-0 z-2000 h-16 shrink-0 border-t border-slate-800 bg-black/95 backdrop-blur-xl lg:static lg:h-screen lg:w-64 lg:border-r lg:border-t-0">
+      <div className="flex h-full flex-col items-start lg:p-3">
         <div className="flex items-center gap-2 my-4">
-          <img src={'/images/logos/app-logo.png'} width={60} height={60} alt="Logo" />
+          <Image src="/images/logos/app-logo.png" width={60} height={60} alt="Logo Smart City" />
           <div className="hidden px-3 py-4 lg:block">
             <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#5f7668]">
               Smart City

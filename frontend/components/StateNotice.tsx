@@ -9,25 +9,25 @@ const variantConfig = {
     icon: Loader,
     iconClass: "text-green-500 animate-spin",
     title: "Chargement des données",
-    tone: "border-green-100 bg-green-50/60 text-green-700",
+    tone: "border-green-500/20 bg-green-500/10 text-green-400",
   },
   error: {
     icon: AlertTriangle,
     iconClass: "text-green-600",
     title: "Erreur API",
-    tone: "border-green-100 bg-green-50/70 text-green-700",
+    tone: "border-green-500/20 bg-green-500/10 text-green-400",
   },
   disconnected: {
     icon: ServerOff,
     iconClass: "text-green-600",
     title: "Backend déconnecté",
-    tone: "border-green-100 bg-green-50/70 text-green-700",
+    tone: "border-green-500/20 bg-green-500/10 text-green-400",
   },
   empty: {
     icon: Database,
     iconClass: "text-gray-500",
     title: "Aucune donnée",
-    tone: "border-gray-100 bg-gray-50 text-gray-600",
+    tone: "border-slate-800 bg-slate-950 text-slate-400",
   },
 };
 
@@ -49,9 +49,9 @@ export default function StateNotice({
 
   return (
     <div
-      className={`flex items-center gap-3 rounded-2xl border p-4 ${config.tone} ${className}`}
+      className={`flex items-center gap-3 rounded-2xl border p-4 shadow-2xl shadow-black/20 ${config.tone} ${className}`}
     >
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl/75">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-black/20">
         <Icon className={`h-5 w-5 ${config.iconClass}`} />
       </div>
       <div className="min-w-0">

@@ -522,9 +522,9 @@ export default function Map() {
       {/* Right Sidebar */}
       <div
         style={{ width: rightWidth }}
-        className="relative hidden h-full shrink-0 overflow-y-auto transition-[width] duration-75 ease-out xl:block"
+        className="relative hidden h-full shrink-0 overflow-y-auto border-l border-slate-800 bg-black transition-[width] duration-75 ease-out xl:block"
       >
-        <div className="flex flex-col gap-2 min-w-62.5 pt-4 pe-4">
+        <div className="flex min-w-62.5 flex-col gap-3 p-4">
           {mode === "temperature" ? (
             <>
               <TemperatureStats
@@ -579,7 +579,7 @@ function Legend({
   items: { color: string; label: string }[];
 }) {
   return (
-    <div className="w-max max-w-[calc(100vw-2rem)] rounded-sm border border-green-500/30 bg-[#06110b]/95 p-2 backdrop-blur-md">
+    <div className="w-max max-w-[calc(100vw-2rem)] rounded-2xl border border-slate-800 bg-slate-950/95 p-3 shadow-2xl shadow-black/30 backdrop-blur-md">
       <h3 className="text-[11px] font-bold text-green-100 mb-2 uppercase tracking-tight">
         {title}
       </h3>

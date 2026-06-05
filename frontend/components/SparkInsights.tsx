@@ -53,37 +53,37 @@ const SparkInsights = memo(() => {
   return (
     <div className="p-4 mt-4 flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-md font-bold text-gray-800 flex flex-col items-start gap-2">
+        <h3 className="text-md font-bold text-slate-100 flex flex-col items-start gap-2">
           <Image src="/images/logos/spark.png" alt="Apache Spark" width={96} height={48} className="h-12 w-auto" />
           <span>Analyses Apache Spark</span>
-          <span className={`text-[9px] uppercase ${connected ? "text-emerald-500" : "text-gray-400"}`}>
+          <span className={`text-[9px] uppercase ${connected ? "text-emerald-500" : "text-slate-400"}`}>
             {connected ? "Connecté" : "Hors ligne"}
           </span>
         </h3>
       </div>
       
-      <p className="text-[10px] uppercase text-gray-400 font-bold tracking-wider mb-2">
+      <p className="text-[10px] uppercase text-slate-400 font-bold tracking-wider mb-2">
         Moyennes glissantes (Temps Réel)
       </p>
 
       {/* Spark Alerts */}
       {sparkAlerts.length > 0 && (
-        <div className="rounded-4xl p-3 border border-green-100 bg-green-50">
-          <h4 className="font-bold text-green-700 flex items-center gap-1 mb-2">
+        <div className="rounded-4xl p-3 border border-green-500/20 bg-green-500/10">
+          <h4 className="font-bold text-green-400 flex items-center gap-1 mb-2">
             <AlertTriangle className="w-3 h-3" /> Alertes Spark
           </h4>
           <div className="space-y-2">
             {sparkAlerts.slice(0, 5).map((item, i) => (
-              <div key={`${item.processed_at}-${i}`} className="flex items-center justify-between gap-2 border-b border-green-100 pb-2 last:border-0 last:pb-0">
+              <div key={`${item.processed_at}-${i}`} className="flex items-center justify-between gap-2 border-b border-green-500/20 pb-2 last:border-0 last:pb-0">
                 <div className="min-w-0">
                   <p className="truncate text-xs font-bold text-green-900">
                     {item.type} / {item.alert_type}
                   </p>
-                  <p className="truncate text-[10px] text-green-700">
+                  <p className="truncate text-[10px] text-green-400">
                     {item.district || item.route_id || item.sensor_id}
                   </p>
                 </div>
-                <span className="shrink-0 text-[10px] font-black text-green-800">
+                <span className="shrink-0 text-[10px] font-black text-green-400">
                   <AnimatedNumber value={item.value} decimals={1} /> {item.operator} <AnimatedNumber value={item.threshold} decimals={1} />
                 </span>
               </div>
@@ -94,14 +94,14 @@ const SparkInsights = memo(() => {
 
       {/* Spark JSON Errors */}
       {sparkErrors.length > 0 && (
-        <div className="rounded-4xl p-3 border border-green-100 bg-green-50">
-          <h4 className="font-bold text-green-700 flex items-center gap-1 mb-2">
+        <div className="rounded-4xl p-3 border border-green-500/20 bg-green-500/10">
+          <h4 className="font-bold text-green-400 flex items-center gap-1 mb-2">
             <AlertTriangle className="w-3 h-3" /> Erreurs JSON Spark
           </h4>
           <div className="space-y-2">
             {sparkErrors.slice(0, 5).map((item, i) => (
-              <div key={`${item.processed_at}-${i}`} className="border-b border-green-100 pb-2 last:border-0 last:pb-0">
-                <div className="flex items-center justify-between gap-2 text-[10px] font-bold uppercase text-green-700">
+              <div key={`${item.processed_at}-${i}`} className="border-b border-green-500/20 pb-2 last:border-0 last:pb-0">
+                <div className="flex items-center justify-between gap-2 text-[10px] font-bold uppercase text-green-400">
                   <span>{item.stream}</span>
                   <span>{item.error_reason}</span>
                 </div>
@@ -117,26 +117,26 @@ const SparkInsights = memo(() => {
       {/* Traffic Insights */}
       {trafficData.length > 0 && (
         <div className="rounded-4xl p-3">
-          <h4 className="font-bold text-gray-600 flex items-center gap-1 mb-2">
+          <h4 className="font-bold text-slate-400 flex items-center gap-1 mb-2">
             <Activity className="w-3 h-3" /> Trafic
           </h4>
           {trafficData.map((t, i) => (
-            <div key={i} className="flex flex-wrap justify-between items-center gap-2 py-1 border-b border-gray-100 last:border-0">
-              <span className="truncate w-24 text-gray-700">{t.route_id}</span>
-              <span className="font-semibold text-green-600"><AnimatedNumber value={t.avg_speed || 0} decimals={1} suffix=" km/h" /></span>
-              <span className="text-[9px] bg-green-100 text-green-600 px-1.5 py-0.5 rounded">
+            <div key={i} className="flex flex-wrap justify-between items-center gap-2 py-1 border-b border-slate-800 last:border-0">
+              <span className="truncate w-24 text-slate-300">{t.route_id}</span>
+              <span className="font-semibold text-green-500"><AnimatedNumber value={t.avg_speed || 0} decimals={1} suffix=" km/h" /></span>
+              <span className="text-[9px] bg-green-500/15 text-green-500 px-1.5 py-0.5 rounded">
                 Congestion max: <AnimatedNumber value={t.max_congestion || 0} decimals={1} />
               </span>
               <span className="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
                 Véhicules moy.: <AnimatedNumber value={t.avg_vehicle_count || 0} />
               </span>
-              <span className="text-[9px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
+              <span className="text-[9px] bg-green-500/15 text-green-400 px-1.5 py-0.5 rounded">
                 Min: <AnimatedNumber value={t.min_speed || 0} decimals={1} suffix=" km/h" />
               </span>
-              <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
+              <span className="text-[9px] bg-slate-900 text-slate-400 px-1.5 py-0.5 rounded">
                 Spark: {formatTime(t.processed_at)}
               </span>
-              <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
+              <span className="text-[9px] bg-slate-900 text-slate-400 px-1.5 py-0.5 rounded">
                 Latence: {getLatencySeconds(t.processed_at, t.window?.end) === null ? "--" : <AnimatedNumber value={getLatencySeconds(t.processed_at, t.window?.end)} decimals={1} suffix="s" />}
               </span>
             </div>
@@ -147,26 +147,26 @@ const SparkInsights = memo(() => {
       {/* Environment Insights */}
       {envData.length > 0 && (
         <div className="rounded-4xl p-3">
-          <h4 className="font-bold text-gray-600 flex items-center gap-1 mb-2">
+          <h4 className="font-bold text-slate-400 flex items-center gap-1 mb-2">
             <Activity className="w-3 h-3" /> Environnement
           </h4>
           {envData.map((e, i) => (
-            <div key={i} className="flex flex-wrap justify-between items-center gap-2 py-1 border-b border-gray-100 last:border-0">
-              <span className="truncate w-24 text-gray-700">{e.district}</span>
+            <div key={i} className="flex flex-wrap justify-between items-center gap-2 py-1 border-b border-slate-800 last:border-0">
+              <span className="truncate w-24 text-slate-300">{e.district}</span>
               <span className="font-semibold text-green-500"><AnimatedNumber value={e.avg_temperature || 0} decimals={1} suffix="°C" /></span>
-              <span className="text-[9px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
+              <span className="text-[9px] bg-green-500/15 text-green-400 px-1.5 py-0.5 rounded">
                 AQI: <AnimatedNumber value={e.avg_air_quality || 0} />
               </span>
-              <span className="text-[9px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
+              <span className="text-[9px] bg-green-500/15 text-green-400 px-1.5 py-0.5 rounded">
                 <AnimatedNumber value={e.min_temperature || 0} decimals={1} />-<AnimatedNumber value={e.max_temperature || 0} decimals={1} suffix="°C" />
               </span>
               <span className="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
                 {e.temperature_trend || "stable"}
               </span>
-              <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
+              <span className="text-[9px] bg-slate-900 text-slate-400 px-1.5 py-0.5 rounded">
                 Spark: {formatTime(e.processed_at)}
               </span>
-              <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
+              <span className="text-[9px] bg-slate-900 text-slate-400 px-1.5 py-0.5 rounded">
                 Latence: {getLatencySeconds(e.processed_at, e.window?.end) === null ? "--" : <AnimatedNumber value={getLatencySeconds(e.processed_at, e.window?.end)} decimals={1} suffix="s" />}
               </span>
             </div>
@@ -177,26 +177,26 @@ const SparkInsights = memo(() => {
       {/* Water Insights */}
       {waterData.length > 0 && (
         <div className="rounded-4xl p-3">
-          <h4 className="font-bold text-gray-600 flex items-center gap-1 mb-2">
+          <h4 className="font-bold text-slate-400 flex items-center gap-1 mb-2">
             <Droplet className="w-3 h-3" /> Eau
           </h4>
           {waterData.map((w, i) => (
-            <div key={i} className="flex flex-wrap justify-between items-center gap-2 py-1 border-b border-gray-100 last:border-0">
-              <span className="truncate w-24 text-gray-700">{w.district}</span>
+            <div key={i} className="flex flex-wrap justify-between items-center gap-2 py-1 border-b border-slate-800 last:border-0">
+              <span className="truncate w-24 text-slate-300">{w.district}</span>
               <span className="font-semibold text-green-500"><AnimatedNumber value={w.avg_flow_rate || 0} decimals={1} suffix=" L/m" /></span>
-              <span className="text-[9px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
+              <span className="text-[9px] bg-green-500/15 text-green-400 px-1.5 py-0.5 rounded">
                 pH: <AnimatedNumber value={w.avg_ph || 0} decimals={1} />
               </span>
-              <span className="text-[9px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
+              <span className="text-[9px] bg-green-500/15 text-green-400 px-1.5 py-0.5 rounded">
                 Total: <AnimatedNumber value={w.total_flow_rate || 0} decimals={1} />
               </span>
-              <span className={`text-[9px] px-1.5 py-0.5 rounded ${w.sudden_flow_drop ? "bg-green-100 text-green-700" : "bg-emerald-100 text-emerald-700"}`}>
+              <span className={`text-[9px] px-1.5 py-0.5 rounded ${w.sudden_flow_drop ? "bg-green-500/15 text-green-400" : "bg-green-500/15 text-green-400"}`}>
                 Score: <AnimatedNumber value={w.water_quality_score || 0} />
               </span>
-              <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
+              <span className="text-[9px] bg-slate-900 text-slate-400 px-1.5 py-0.5 rounded">
                 Spark: {formatTime(w.processed_at)}
               </span>
-              <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
+              <span className="text-[9px] bg-slate-900 text-slate-400 px-1.5 py-0.5 rounded">
                 Latence: {getLatencySeconds(w.processed_at, w.window?.end) === null ? "--" : <AnimatedNumber value={getLatencySeconds(w.processed_at, w.window?.end)} decimals={1} suffix="s" />}
               </span>
             </div>

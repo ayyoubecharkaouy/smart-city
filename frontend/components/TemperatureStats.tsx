@@ -60,14 +60,14 @@ export default function TemperatureStats({
   ).length;
 
   return (
-    <div className="flex flex-col gap-2">
-      <div>
+    <div className="flex flex-col gap-3">
+      <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-4 shadow-2xl shadow-black/20">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-lg font-bold flex items-center gap-2">
             <TrendingUp className="w-5 h-5" />
             Évolution 24h
           </h3>
-          <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full uppercase">
+          <span className="text-[10px] font-bold text-slate-400 bg-slate-900 px-2 py-0.5 rounded-full uppercase">
             <AnimatedNumber value={combinedHistory.length} /> Points
           </span>
         </div>
@@ -79,28 +79,28 @@ export default function TemperatureStats({
         />
       </div>
 
-      <div>
+      <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-4 shadow-2xl shadow-black/20">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-xl font-bold flex items-center gap-2">
             Moyennes par Quartier
           </h3>
           <div className="flex items-center gap-1.5">
             {connected ? (
-              <Wifi className="w-4 h-4 text-green-600" />
+              <Wifi className="w-4 h-4 text-green-500" />
             ) : (
-              <WifiOff className="w-4 h-4 text-green-600" />
+              <WifiOff className="w-4 h-4 text-green-500" />
             )}
           </div>
         </div>
 
         {loading && (
-          <div className="text-xs text-gray-500 text-center py-2">
+          <div className="text-xs text-slate-500 text-center py-2">
             Chargement des données…
           </div>
         )}
 
         {error && (
-          <div className="text-xs text-green-500 bg-green-50 rounded-4xl p-2 mb-2 flex items-center gap-2">
+          <div className="text-xs text-green-500 bg-green-500/10 rounded-4xl p-2 mb-2 flex items-center gap-2">
             <AlertTriangle className="w-4 h-4" />
             {error}
           </div>
@@ -108,12 +108,12 @@ export default function TemperatureStats({
 
         {!loading && !error && districts.length > 0 && (
           <>
-            <div className="flex items-center justify-between text-sm text-gray-800 mb-4 px-4">
-              <span className="font-medium text-gray-500">
+            <div className="flex items-center justify-between text-sm text-slate-100 mb-4 px-4">
+              <span className="font-medium text-slate-500">
                 <AnimatedNumber value={totalSensors} /> capteurs actifs
               </span>
               {criticalZones > 0 && (
-                <span className="text-green-600 font-bold flex items-center gap-1">
+                <span className="text-green-500 font-bold flex items-center gap-1">
                   <AlertTriangle className="w-4 h-4" />
                   <AnimatedNumber value={criticalZones} /> zone{criticalZones > 1 ? "s" : ""} critique
                 </span>
@@ -128,13 +128,13 @@ export default function TemperatureStats({
                   return (
                     <div
                       key={d.district}
-                      className="flex items-center justify-between py-2 border-b border-gray-900 transition-all"
+                      className="flex items-center justify-between py-2 border-b border-slate-800 transition-all"
                     >
                       <div className="flex flex-col items-start">
                         <span className="text-base font-semibold truncate">
                         {d.district}
                       </span>
-                      <span className="text-xs text-gray-600"><AnimatedNumber value={d.sensor_count} /> capteurs</span>
+                      <span className="text-xs text-slate-400"><AnimatedNumber value={d.sensor_count} /> capteurs</span>
                       </div>
                       <div className="flex items-center gap-3">
                         <span className="text-xl font-black" style={{ color: getTemperatureLevelColor(level) }}>

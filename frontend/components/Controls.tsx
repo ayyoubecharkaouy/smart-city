@@ -33,7 +33,7 @@ function Controls({
                     className={`cursor-pointer w-full flex items-center gap-2.5 px-1 pe-4 py-1 rounded-full font-semibold transition-all text-left ${
                       isActive
                         ? `bg-[#102a1b] ring-2 ring-[#22c55e]/50 ${item.colorClass}`
-                        : "text-gray-500 hover:bg-[#0e2016] hover:text-gray-900"
+                        : "text-slate-500 hover:bg-[#0e2016] hover:text-slate-100"
                     }`}
                   >
                     <div

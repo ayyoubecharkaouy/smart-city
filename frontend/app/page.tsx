@@ -33,7 +33,7 @@ function MetricCard({
   colorClass: string;
 }) {
   return (
-    <div className="bg-green-950/10 p-6 rounded-3xl border border-green-950">
+    <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 shadow-2xl shadow-black/30">
       <div className="flex items-center justify-between mb-4">
         <div className={`${colorClass} p-3 rounded-2xl`}>
           <Icon className="w-6 h-6 text-white" />
@@ -52,14 +52,14 @@ function MetricCard({
         )}
       </div>
       <div>
-        <p className="text-sm font-bold text-gray-50 uppercase tracking-wider mb-1">
+        <p className="mb-1 text-xs font-black uppercase tracking-widest text-slate-400">
           {title}
         </p>
         <div className="flex items-baseline gap-1">
           <h3 className="text-3xl font-black">
             <AnimatedNumber value={value} decimals={decimals} />
           </h3>
-          <span className="text-sm font-bold text-gray-100">{unit}</span>
+          <span className="text-sm font-bold text-slate-400">{unit}</span>
         </div>
       </div>
     </div>
@@ -189,14 +189,17 @@ export default function Overview() {
   const trafficTrend = calculateTrend(totalVehicles, trafficHistory, "total_vehicles");
 
   return (
-    <div className="p-8 max-w-7xl mx-auto w-full">
-      <header className="mb-10">
-        <h2 className="text-3xl font-black mb-2">
+    <div className="mx-auto min-h-screen w-full max-w-7xl bg-black p-4 text-slate-100 sm:p-6 lg:p-8">
+      <header className="mb-8">
+        <h2 className="mb-2 text-3xl font-black">
           Vue d&apos;ensemble
         </h2>
+        <p className="text-sm font-medium text-slate-400">
+          Synthèse temps réel des principaux indicateurs urbains
+        </p>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 mb-10">
+      <div className="mb-10 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
         <MetricCard
           title="Température Moy."
           value={avgTemp}

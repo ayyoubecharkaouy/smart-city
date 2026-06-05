@@ -62,9 +62,9 @@ export default function AnalyticsChart({
 }: AnalyticsChartProps) {
   if (loading) {
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50/50 rounded-3xl border border-dashed border-gray-200">
-        <Loader className="w-10 h-10 text-gray-300 animate-spin mb-4" />
-        <p className="text-gray-400 font-medium">
+      <div className="flex h-full w-full flex-col items-center justify-center rounded-3xl border border-dashed border-slate-800 bg-slate-950/50">
+        <Loader className="mb-4 h-10 w-10 animate-spin text-green-500" />
+        <p className="font-medium text-slate-400">
           Traitement des données Big Data...
         </p>
       </div>
@@ -73,8 +73,8 @@ export default function AnalyticsChart({
 
   if (!data || data.length === 0) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-gray-50/50 rounded-3xl border border-dashed border-gray-200">
-        <p className="text-gray-400 font-medium">
+      <div className="flex h-full w-full items-center justify-center rounded-3xl border border-dashed border-slate-800 bg-slate-950/50">
+        <p className="font-medium text-slate-400">
           Aucune donnée disponible pour cette sélection.
         </p>
       </div>
@@ -94,8 +94,8 @@ export default function AnalyticsChart({
 
   if (chartData.length === 0) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-gray-50/50 rounded-3xl border border-dashed border-gray-200">
-        <p className="text-gray-400 font-medium">
+      <div className="flex h-full w-full items-center justify-center rounded-3xl border border-dashed border-slate-800 bg-slate-950/50">
+        <p className="font-medium text-slate-400">
           Données reçues, mais format inexploitable pour ce graphique.
         </p>
       </div>

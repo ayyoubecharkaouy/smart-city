@@ -15,7 +15,7 @@ export default function GenericPlaceholderStats({
   colorClass,
 }: GenericPlaceholderStatsProps) {
   return (
-    <div className=" border border-gray-200 rounded-xl p-4">
+    <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-4 shadow-2xl shadow-black/20">
       <div className="flex items-center justify-between mb-3">
         <h3
           className={`text-sm font-bold flex items-center gap-2 ${colorClass}`}
@@ -23,12 +23,12 @@ export default function GenericPlaceholderStats({
           <Icon className="w-4 h-4" />
           {title}
         </h3>
-        <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+        <span className="text-xs font-semibold text-slate-500 bg-slate-900 px-2 py-0.5 rounded-full">
           EN DÉVELOPPEMENT
         </span>
       </div>
 
-      <div className="text-xs text-gray-500 mb-4 bg-gray-50 p-3 rounded-lg border border-gray-100 flex gap-2 items-start">
+      <div className="text-xs text-slate-500 mb-4 bg-slate-950 p-3 rounded-lg border border-slate-800 flex gap-2 items-start">
         <Info className="w-4 h-4 shrink-0 mt-0.5" />
         <p>
           Le flux Kafka pour le domaine <strong>{title}</strong> n&apos;est pas
@@ -38,10 +38,10 @@ export default function GenericPlaceholderStats({
       </div>
 
       <div className="space-y-2 opacity-40 grayscale pointer-events-none">
-        <div className="h-10 bg-gray-100 rounded-lg animate-pulse" />
-        <div className="h-10 bg-gray-100 rounded-lg animate-pulse" />
-        <div className="h-10 bg-gray-100 rounded-lg animate-pulse" />
-        <div className="h-10 bg-gray-100 rounded-lg animate-pulse" />
+        <div className="h-10 bg-slate-900 rounded-lg animate-pulse" />
+        <div className="h-10 bg-slate-900 rounded-lg animate-pulse" />
+        <div className="h-10 bg-slate-900 rounded-lg animate-pulse" />
+        <div className="h-10 bg-slate-900 rounded-lg animate-pulse" />
       </div>
     </div>
   );

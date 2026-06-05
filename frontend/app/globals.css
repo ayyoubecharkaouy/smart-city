@@ -2,6 +2,13 @@
 
 :root {
   color-scheme: dark;
+  --city-bg: #000000;
+  --city-panel: #020617;
+  --city-panel-2: #0f172a;
+  --city-border: #1e293b;
+  --city-text: #f1f5f9;
+  --city-muted: #94a3b8;
+  --city-primary: #22c55e;
 }
 
 * {
@@ -40,16 +47,36 @@ body {
   padding: 0;
   overflow: hidden;
   font-family: Arial, Helvetica, sans-serif;
+  background: var(--city-bg);
+  color: var(--city-text);
+}
+
+button,
+select,
+input {
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+button:focus-visible,
+select:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--city-primary);
+  outline-offset: 2px;
 }
 
 /* ── Leaflet popup/tooltip overrides (can't use Tailwind in Leaflet DOM) ── */
 
 .smart-popup .leaflet-popup-content-wrapper {
-   background: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
+  background: var(--city-panel) !important;
+  border: 1px solid var(--city-border) !important;
   border-radius: 16px !important;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12) !important;
-  color: #0f172a !important;
+  color: var(--city-text) !important;
   padding: 0 !important;
 }
 
@@ -58,34 +85,34 @@ body {
 }
 
 .smart-popup .leaflet-popup-tip {
-  background: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
+  background: var(--city-panel) !important;
+  border: 1px solid var(--city-border) !important;
   box-shadow: none !important;
 }
 
 .smart-popup .leaflet-popup-close-button {
-  color: #94a3b8 !important;
+  color: var(--city-muted) !important;
   font-size: 20px !important;
   top: 8px !important;
   right: 10px !important;
 }
 
 .smart-popup .leaflet-popup-close-button:hover {
-  color: #0f172a !important;
+  color: var(--city-text) !important;
 }
 
 .smart-tooltip {
-  background: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
+  background: var(--city-panel) !important;
+  border: 1px solid var(--city-border) !important;
   border-radius: 8px !important;
-  color: #0f172a !important;
+  color: var(--city-text) !important;
   font-size: 12px !important;
   padding: 6px 10px !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
 }
 
 .smart-tooltip::before {
-  border-top-color: #ffffff !important;
+  border-top-color: var(--city-panel) !important;
 }
 
 /* ── Leaflet controls override for dark theme ── */

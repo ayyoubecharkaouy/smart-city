@@ -59,9 +59,9 @@ export default function AirQualityStats({
   }, [initialHistory, avgAqi]);
 
   return (
-    <div className="flex flex-col gap-2 p-4">
-      <div className="border border-gray-200 rounded-4xl p-4/50 backdrop-blur-sm">
-        <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2 px-2 mb-2">
+    <div className="flex flex-col gap-3 p-4">
+      <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-4 shadow-2xl shadow-black/20 backdrop-blur-sm">
+        <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2 px-2 mb-2">
           <TrendingUp className="w-5 h-5 text-emerald-500" />
           Analyse Qualité Air
         </h3>
@@ -73,22 +73,22 @@ export default function AirQualityStats({
         />
       </div>
 
-      <div className=" border border-gray-200 rounded-4xl p-4/50 backdrop-blur-sm">
+      <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-4 shadow-2xl shadow-black/20 backdrop-blur-sm">
         <div className="flex items-center justify-between mb-2 px-4">
-          <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+          <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
             Indices par Quartier
           </h3>
           <div className="flex items-center gap-1.5">
             {connected ? (
-              <Wifi className="w-4 h-4 text-green-600" />
+              <Wifi className="w-4 h-4 text-green-500" />
             ) : (
-              <WifiOff className="w-4 h-4 text-green-600" />
+              <WifiOff className="w-4 h-4 text-green-500" />
             )}
           </div>
         </div>
 
         {loading && (
-          <div className="text-xs text-gray-500 text-center py-4">
+          <div className="text-xs text-slate-500 text-center py-4">
             Analyse de l&apos;air en cours...
           </div>
         )}
@@ -103,13 +103,13 @@ export default function AirQualityStats({
                 return (
                   <div
                     key={d.district}
-                    className="flex items-center justify-between px-4 py-3/80 rounded-full border-2 border-gray-100 transition-all"
+                    className="flex items-center justify-between rounded-2xl border border-slate-800 bg-black px-4 py-3 transition-all hover:border-green-500/40"
                   >
-                    <span className="text-sm font-semibold text-gray-700 truncate">
+                    <span className="text-sm font-semibold text-slate-300 truncate">
                       {d.district}
                     </span>
                     <div className="flex items-center gap-3">
-                      <span className="text-base font-black text-gray-900">
+                      <span className="text-base font-black text-slate-100">
                         <AnimatedNumber value={aqi} />
                       </span>
                       <span

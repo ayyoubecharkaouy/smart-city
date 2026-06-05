@@ -479,18 +479,18 @@ const DashboardBar = memo(
                   {kpi.icon}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
                     {kpi.label}
                   </p>
                   <div className="flex items-baseline gap-1">
                     {kpi.value === null || loading ? (
-                      <Loader className="w-5 h-5 animate-spin text-gray-400" />
+                      <Loader className="w-5 h-5 animate-spin text-slate-400" />
                     ) : (
                       <>
-                        <span className="text-2xl font-black text-gray-500 tabular-nums">
+                        <span className="text-2xl font-black text-slate-500 tabular-nums">
                           <AnimatedNumber value={kpi.value} decimals={String(kpi.value).includes(".") ? String(kpi.value).split(".")[1].length : 0} />
                         </span>
-                        <span className="text-[10px] font-bold text-gray-500">
+                        <span className="text-[10px] font-bold text-slate-500">
                           {kpi.unit}
                         </span>
                       </>
@@ -505,7 +505,7 @@ const DashboardBar = memo(
         {/* Distribution Statistics Bar */}
         {stats.distribution && (
           <div className="w-full max-w-max/70 backdrop-blur-xl border border-[#173525] rounded-full px-6 py-3 pointer-events-auto flex items-center gap-2">
-            <div className="flex items-center gap-2 text-gray-500">
+            <div className="flex items-center gap-2 text-slate-500">
               <span className="text-sm font-bold uppercase tracking-widest whitespace-nowrap">
                 {stats.title}
               </span>
@@ -515,12 +515,12 @@ const DashboardBar = memo(
               {connected && (
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
-                  <span className="text-sm font-black text-green-600 tracking-tighter uppercase">
+                  <span className="text-sm font-black text-green-500 tracking-tighter uppercase">
                     {mode === "traffic_congestion" ? "TEMPS RÉEL" : "LIVE FEED"}
                   </span>
                 </div>
               )}
-              <span className="text-sm font-medium text-gray-500 tabular-nums border-b-2 border-green-600">
+              <span className="text-sm font-medium text-slate-500 tabular-nums border-b-2 border-green-600">
                 {currentTime ?? "--:--:--"}
               </span>
             </div>
