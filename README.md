@@ -87,9 +87,40 @@ Installez d'abord les dépendances Python nécessaires :
 pip install -r requirements.txt
 ```
 Lancez ensuite le script d'initialisation et d'exécution Spark :
+
+Linux/macOS :
+
 ```bash
 cd spark
 ./run_spark.sh
+```
+
+Windows PowerShell :
+
+```powershell
+cd spark
+py -m pip install -r requirements.txt
+Set-ExecutionPolicy -Scope Process Bypass
+.\run_spark.ps1
+```
+
+Windows CMD :
+
+```bat
+cd spark
+py -m pip install -r requirements.txt
+run_spark.cmd
+```
+
+Sous Windows, Java 17 doit être installé et `spark-submit` doit être disponible
+dans le `PATH`. Consultez `spark/README.md` pour le diagnostic détaillé.
+
+Pour éviter l'installation locale de Java et Spark sous Windows, lancez
+directement le service Docker depuis la racine du projet :
+
+```powershell
+docker compose up -d zookeeper kafka kafka-init spark
+docker compose logs -f spark
 ```
 
 ---

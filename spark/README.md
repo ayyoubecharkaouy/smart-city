@@ -26,18 +26,81 @@ cd ../backend/kafka
 
 ## Lancement
 
+### Linux et macOS
+
 Depuis le dossier `spark` :
 
 ```bash
 ./run_spark.sh
 ```
 
-Commande equivalente :
+### Windows PowerShell
+
+Installez Java 17 et Python, puis depuis le dossier `spark` :
+
+```powershell
+py -m pip install -r requirements.txt
+Set-ExecutionPolicy -Scope Process Bypass
+.\run_spark.ps1
+```
+
+Le changement de politique s'applique uniquement au terminal PowerShell courant.
+
+### Windows CMD
+
+Depuis le dossier `spark` :
+
+```bat
+py -m pip install -r requirements.txt
+run_spark.cmd
+```
+
+Si `spark-submit` est introuvable après l'installation, ajoutez le dossier `Scripts`
+de Python au `PATH`, puis ouvrez un nouveau terminal. Pour trouver ce dossier :
+
+```powershell
+py -c "import sysconfig; print(sysconfig.get_path('scripts'))"
+```
+
+Vérifiez ensuite les prérequis :
+
+```powershell
+java -version
+spark-submit --version
+```
+
+Kafka doit être lancé sur `localhost:9092` avant Spark :
+
+```powershell
+docker compose -f ..\docker-compose.yml up -d zookeeper kafka kafka-init
+```
+
+### Windows avec Docker
+
+Cette méthode évite d'installer Java et Spark directement sur Windows. Depuis la
+racine `platform/smart-city` :
+
+```powershell
+docker compose up -d zookeeper kafka kafka-init spark
+docker compose logs -f spark
+```
+
+Utilisez `Ctrl+C` pour quitter l'affichage des logs sans arrêter Spark.
+
+### Commande equivalente
+
+Sous Linux/macOS :
 
 ```bash
 spark-submit \
   --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1 \
   main.py
+```
+
+Sous Windows PowerShell :
+
+```powershell
+spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1 main.py
 ```
 
 ## Topics Kafka
