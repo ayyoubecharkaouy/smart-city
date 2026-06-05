@@ -11,6 +11,8 @@ RUN npm ci
 
 # Copy application code and compile
 COPY . .
+ARG NEXT_PUBLIC_BACKEND_URL=http://localhost:4000
+ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
@@ -21,7 +23,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=3000
-ENV NEXT_PUBLIC_BACKEND_URL=http://localhost:4000
+ENV HOSTNAME=0.0.0.0
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Copy public assets, standalone build and static files from builder with proper ownership

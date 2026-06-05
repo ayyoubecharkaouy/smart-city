@@ -1,6 +1,7 @@
-FROM python:3.11-slim
+FROM python:3.11-slim-bookworm
 
-# Install OpenJDK 17, procps (required by Spark), and wget/curl for network checks
+# Spark 3.5 supports Java 17. Bookworm is pinned because newer Debian releases
+# no longer provide openjdk-17-jre-headless.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     openjdk-17-jre-headless \
     procps \
@@ -15,6 +16,17 @@ WORKDIR /app
 # Copy requirements and install
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Download the Kafka connector while building so Spark can start without
+# contacting Maven repositories each time the container is recreated.
+ARG SPARK_KAFKA_PACKAGE=org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1
+RUN printf '%s\n' \
+    'from pyspark.sql import SparkSession' \
+    'spark = SparkSession.builder.appName("DependencyCache").getOrCreate()' \
+    'spark.stop()' \
+    > /tmp/cache_spark_dependencies.py \
+    && spark-submit --packages "${SPARK_KAFKA_PACKAGE}" /tmp/cache_spark_dependencies.py \
+    && rm /tmp/cache_spark_dependencies.py
 
 # Copy Spark streaming code
 COPY . .
