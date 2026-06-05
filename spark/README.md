@@ -55,19 +55,25 @@ py -m pip install -r requirements.txt
 run_spark.cmd
 ```
 
-Si `spark-submit` est introuvable après l'installation, ajoutez le dossier `Scripts`
-de Python au `PATH`, puis ouvrez un nouveau terminal. Pour trouver ce dossier :
+Le script `run_spark.ps1` cherche automatiquement `spark-submit.cmd` dans le
+dossier `Scripts` de Python, même si ce dossier n'est pas dans le `PATH`.
+
+Si Spark reste introuvable, vérifiez que PySpark est installé avec le même
+interpréteur Python :
 
 ```powershell
-py -c "import sysconfig; print(sysconfig.get_path('scripts'))"
+py -3 -m pip install -r requirements.txt
+py -3 -m pip show pyspark
 ```
 
-Vérifiez ensuite les prérequis :
+Pour localiser manuellement `spark-submit.cmd` :
 
 ```powershell
-java -version
-spark-submit --version
+$scripts = py -3 -c "import sysconfig; print(sysconfig.get_path('scripts'))"
+Get-ChildItem $scripts -Filter "spark-submit*"
 ```
+
+Vérifiez aussi Java avec `java -version`.
 
 Kafka doit être lancé sur `localhost:9092` avant Spark :
 
