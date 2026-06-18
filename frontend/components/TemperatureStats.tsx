@@ -65,7 +65,7 @@ export default function TemperatureStats({
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-lg font-bold flex items-center gap-2">
             <TrendingUp className="w-5 h-5" />
-            Évolution 24h
+            24h Trend
           </h3>
           <span className="text-[10px] font-bold text-slate-400 bg-slate-900 px-2 py-0.5 rounded-full uppercase">
             <AnimatedNumber value={combinedHistory.length} /> Points
@@ -74,7 +74,7 @@ export default function TemperatureStats({
         <TrendChart
           data={combinedHistory}
           color="#16a34a"
-          label="Température"
+          label="Temperature"
           unit="°C"
         />
       </div>
@@ -82,7 +82,7 @@ export default function TemperatureStats({
       <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-4 shadow-2xl shadow-black/20">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-xl font-bold flex items-center gap-2">
-            Moyennes par Quartier
+            Averages by District
           </h3>
           <div className="flex items-center gap-1.5">
             {connected ? (
@@ -95,7 +95,7 @@ export default function TemperatureStats({
 
         {loading && (
           <div className="text-xs text-slate-500 text-center py-2">
-            Chargement des données…
+            Loading data…
           </div>
         )}
 
@@ -110,12 +110,12 @@ export default function TemperatureStats({
           <>
             <div className="flex items-center justify-between text-sm text-slate-100 mb-4 px-4">
               <span className="font-medium text-slate-500">
-                <AnimatedNumber value={totalSensors} /> capteurs actifs
+                <AnimatedNumber value={totalSensors} /> active sensors
               </span>
               {criticalZones > 0 && (
                 <span className="text-green-500 font-bold flex items-center gap-1">
                   <AlertTriangle className="w-4 h-4" />
-                  <AnimatedNumber value={criticalZones} /> zone{criticalZones > 1 ? "s" : ""} critique
+                  <AnimatedNumber value={criticalZones} /> critical zone{criticalZones > 1 ? "s" : ""}
                 </span>
               )}
             </div>
@@ -134,7 +134,7 @@ export default function TemperatureStats({
                         <span className="text-base font-semibold truncate">
                         {d.district}
                       </span>
-                      <span className="text-xs text-slate-400"><AnimatedNumber value={d.sensor_count} /> capteurs</span>
+                      <span className="text-xs text-slate-400"><AnimatedNumber value={d.sensor_count} /> sensors</span>
                       </div>
                       <div className="flex items-center gap-3">
                         <span className="text-xl font-black" style={{ color: getTemperatureLevelColor(level) }}>

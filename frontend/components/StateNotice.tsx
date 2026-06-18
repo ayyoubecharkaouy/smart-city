@@ -8,25 +8,25 @@ const variantConfig = {
   loading: {
     icon: Loader,
     iconClass: "text-green-500 animate-spin",
-    title: "Chargement des données",
+    title: "Loading data",
     tone: "border-green-500/20 bg-green-500/10 text-green-400",
   },
   error: {
     icon: AlertTriangle,
     iconClass: "text-green-600",
-    title: "Erreur API",
+    title: "API Error",
     tone: "border-green-500/20 bg-green-500/10 text-green-400",
   },
   disconnected: {
     icon: ServerOff,
     iconClass: "text-green-600",
-    title: "Backend déconnecté",
+    title: "Backend disconnected",
     tone: "border-green-500/20 bg-green-500/10 text-green-400",
   },
   empty: {
     icon: Database,
     iconClass: "text-gray-500",
-    title: "Aucune donnée",
+    title: "No data",
     tone: "border-slate-800 bg-slate-950 text-slate-400",
   },
 };

@@ -15,11 +15,11 @@ interface AirQualityStatsProps {
 }
 
 const getAqiLabel = (aqi: number) => {
-  if (aqi <= 50) return { label: "Bon", color: "#22c55e" };
-  if (aqi <= 100) return { label: "Moyen", color: "#4ade80" };
-  if (aqi <= 150) return { label: "Sensible", color: "#16a34a" };
-  if (aqi <= 200) return { label: "Mauvais", color: "#15803d" };
-  return { label: "Critique", color: "#14532d" };
+  if (aqi <= 50) return { label: "Good", color: "#22c55e" };
+  if (aqi <= 100) return { label: "Moderate", color: "#4ade80" };
+  if (aqi <= 150) return { label: "Sensitive", color: "#16a34a" };
+  if (aqi <= 200) return { label: "Poor", color: "#15803d" };
+  return { label: "Critical", color: "#14532d" };
 };
 
 export default function AirQualityStats({
@@ -63,7 +63,7 @@ export default function AirQualityStats({
       <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-4 shadow-2xl shadow-black/20 backdrop-blur-sm">
         <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2 px-2 mb-2">
           <TrendingUp className="w-5 h-5 text-emerald-500" />
-          Analyse Qualité Air
+          Air Quality Analysis
         </h3>
         <TrendChart
           data={combinedHistory}
@@ -76,7 +76,7 @@ export default function AirQualityStats({
       <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-4 shadow-2xl shadow-black/20 backdrop-blur-sm">
         <div className="flex items-center justify-between mb-2 px-4">
           <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-            Indices par Quartier
+            AQI by District
           </h3>
           <div className="flex items-center gap-1.5">
             {connected ? (
@@ -89,7 +89,7 @@ export default function AirQualityStats({
 
         {loading && (
           <div className="text-xs text-slate-500 text-center py-4">
-            Analyse de l&apos;air en cours...
+            Air analysis in progress...
           </div>
         )}
 

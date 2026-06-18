@@ -33,71 +33,72 @@ export interface MetricConfig {
 export const METRICS: MetricConfig[] = [
   {
     key: "energy",
-    label: "Énergie",
+    label: "Energy",
     unit: "kWh",
     icon: "⚡",
     colors: ["#bbf7d0", "#86efac", "#4ade80", "#22c55e", "#15803d", "#14532d"],
     thresholds: [
-      { label: "Faible", color: "#bbf7d0" },
-      { label: "Élevée", color: "#14532d" },
+      { label: "Low", color: "#bbf7d0" },
+      { label: "High", color: "#14532d" },
     ],
   },
   {
     key: "water",
-    label: "Eau",
+    label: "Water",
     unit: "m³",
     icon: "💧",
     colors: ["#bbf7d0", "#86efac", "#4ade80", "#22c55e", "#16a34a", "#15803d"],
     thresholds: [
-      { label: "Faible", color: "#bbf7d0" },
-      { label: "Élevée", color: "#15803d" },
+      { label: "Low", color: "#bbf7d0" },
+      { label: "High", color: "#15803d" },
     ],
   },
   {
     key: "vehicles",
-    label: "Véhicules",
+    label: "Vehicles",
     unit: "",
     icon: "🚗",
     colors: ["#bbf7d0", "#86efac", "#22c55e", "#22c55e", "#16a34a", "#14532d"],
     thresholds: [
-      { label: "Faible", color: "#bbf7d0" },
+      { label: "Low", color: "#bbf7d0" },
       { label: "Dense", color: "#14532d" },
     ],
   },
   {
     key: "aqi",
-    label: "Qualité Air",
+    label: "Air Quality",
     unit: "AQI",
     icon: "🌬️",
     colors: ["#bbf7d0", "#a7f3d0", "#86efac", "#4ade80", "#15803d", "#14532d"],
     thresholds: [
-      { label: "Bon", color: "#bbf7d0" },
-      { label: "Dangereux", color: "#14532d" },
+      { label: "Good", color: "#bbf7d0" },
+      { label: "Hazardous", color: "#14532d" },
     ],
   },
   {
     key: "noise",
-    label: "Bruit",
+    label: "Noise",
     unit: "dB",
     icon: "🔊",
     colors: ["#bbf7d0", "#86efac", "#4ade80", "#22c55e", "#15803d", "#14532d"],
     thresholds: [
-      { label: "Calme", color: "#bbf7d0" },
-      { label: "Fort", color: "#14532d" },
+      { label: "Quiet", color: "#bbf7d0" },
+      { label: "Loud", color: "#14532d" },
     ],
   },
   {
     key: "temperature",
-    label: "Température",
+    label: "Temperature",
     unit: "°C",
     icon: "🌡️",
     colors: ["#bbf7d0", "#86efac", "#86efac", "#4ade80", "#15803d", "#15803d"],
     thresholds: [
-      { label: "Froid", color: "#bbf7d0" },
-      { label: "Chaud", color: "#15803d" },
+      { label: "Cold", color: "#bbf7d0" },
+      { label: "Hot", color: "#15803d" },
     ],
   },
 ];
+
 
 export const zonesGeoJSON = zonesGeoJSONJson;
 

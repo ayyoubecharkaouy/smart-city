@@ -32,10 +32,10 @@ type PeriodFilter = "all" | keyof typeof PERIOD_HOURS;
 type CriticalFilter = "all" | "critical";
 
 const domainOptions: { value: AlertDomain; label: string }[] = [
-  { value: "all", label: "Toutes" },
+  { value: "all", label: "All" },
   { value: "environment", label: "Pollution" },
   { value: "traffic", label: "Congestion" },
-  { value: "water", label: "Eau" },
+  { value: "water", label: "Water" },
 ];
 
 function getSparkAlertLabel(alert: SparkAlertData): string {
@@ -56,7 +56,7 @@ function formatDate(value?: string): string {
   if (!value) return "--";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "--";
-  return date.toLocaleString("fr-FR", {
+  return date.toLocaleString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
@@ -159,21 +159,21 @@ export default function AlertsPage() {
       <header className="flex flex-col gap-4 mb-10 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <h2 className="text-3xl font-black text-slate-100 mb-2">
-            Centre d&apos;Alertes
+            Alert Center
           </h2>
           <p className="text-slate-400 font-medium">
-            Alertes Spark temps reel, seuils critiques et incidents capteurs
+            Real-time Spark alerts, critical thresholds and sensor incidents
           </p>
         </div>
         <div className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-bold ${connected ? "border-green-500/20 bg-green-500/10 text-green-500" : "border-slate-800 bg-slate-950 text-slate-400"}`}>
           {connected ? <Wifi className="w-4 h-4" /> : <WifiOff className="w-4 h-4" />}
           {connected ? (
             <>
-              Socket connecte · <AnimatedNumber value={eventCount} /> evenements · {lastEvent || "--"}
+              Socket connected · <AnimatedNumber value={eventCount} /> events · {lastEvent || "--"}
             </>
           ) : reconnecting ? (
-            <>Reconnexion <AnimatedNumber value={reconnectAttempt} /></>
-          ) : "Socket hors ligne"}
+            <>Reconnecting <AnimatedNumber value={reconnectAttempt} /></>
+          ) : "Socket offline"}
         </div>
       </header>
 
@@ -182,7 +182,7 @@ export default function AlertsPage() {
           <section className="space-y-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <h3 className="text-lg font-bold text-slate-100">
-                Alertes Spark
+                Spark Alerts
               </h3>
               <div className="flex flex-wrap items-center gap-2">
                 <Filter className="w-4 h-4 text-slate-500" />
@@ -209,7 +209,7 @@ export default function AlertsPage() {
                   className="flex w-fit items-center gap-2 rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-xs font-black text-slate-300 transition-colors hover:border-green-500/40 hover:bg-green-500/10 hover:text-green-500"
                 >
                   <RotateCcw className="h-4 w-4" />
-                  Reinitialiser
+                  Reset
                 </button>
               </div>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
@@ -220,7 +220,7 @@ export default function AlertsPage() {
                     onChange={event => setDistrictFilter(event.target.value)}
                     className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-sm font-bold text-slate-100 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                   >
-                    <option value="all">Tous les districts</option>
+                    <option value="all">All districts</option>
                     {districtOptions.map(district => (
                       <option key={district} value={district}>{district}</option>
                     ))}
@@ -233,27 +233,27 @@ export default function AlertsPage() {
                     onChange={event => setRouteFilter(event.target.value)}
                     className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-sm font-bold text-slate-100 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                   >
-                    <option value="all">Toutes les routes</option>
+                    <option value="all">All routes</option>
                     {routeOptions.map(route => (
                       <option key={route} value={route}>{route}</option>
                     ))}
                   </select>
                 </label>
                 <label className="space-y-1">
-                  <span className="text-[10px] font-black uppercase text-slate-500">Type d&apos;alerte</span>
+                  <span className="text-[10px] font-black uppercase text-slate-500">Alert Type</span>
                   <select
                     value={alertTypeFilter}
                     onChange={event => setAlertTypeFilter(event.target.value)}
                     className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-sm font-bold text-slate-100 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                   >
-                    <option value="all">Tous les types</option>
+                    <option value="all">All types</option>
                     {alertTypeOptions.map(alertType => (
                       <option key={alertType} value={alertType}>{alertType}</option>
                     ))}
                   </select>
                 </label>
                 <label className="space-y-1">
-                  <span className="text-[10px] font-black uppercase text-slate-500">Periode</span>
+                  <span className="text-[10px] font-black uppercase text-slate-500">Period</span>
                   <select
                     value={periodFilter}
                     onChange={event => setPeriodFilter(event.target.value as PeriodFilter)}
@@ -265,14 +265,14 @@ export default function AlertsPage() {
                   </select>
                 </label>
                 <label className="space-y-1">
-                  <span className="text-[10px] font-black uppercase text-slate-500">Criticite</span>
+                  <span className="text-[10px] font-black uppercase text-slate-500">Criticality</span>
                   <select
                     value={criticalFilter}
                     onChange={event => setCriticalFilter(event.target.value as CriticalFilter)}
                     className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-sm font-bold text-slate-100 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                   >
-                    <option value="all">Toutes les alertes</option>
-                    <option value="critical">Critiques seulement</option>
+                    <option value="all">All alerts</option>
+                    <option value="critical">Critical only</option>
                   </select>
                 </label>
               </div>
@@ -290,17 +290,17 @@ export default function AlertsPage() {
                   <CheckCircle2 className="w-8 h-8 text-green-500" />
                 </div>
                 <h4 className="text-xl font-bold text-slate-100 mb-2">
-                  Aucune alerte Spark
+                  No Spark alerts
                 </h4>
                 <p className="text-slate-400">
-                  Les alertes pollution, congestion et eau apparaitront ici des que Spark detecte un depassement.
+                  Pollution, congestion and water alerts will appear here as soon as Spark detects a threshold breach.
                 </p>
               </div>
             ) : (
               <div className="space-y-2">
                 {filteredSparkAlerts.map((alert, index) => {
                   const Icon = getDomainIcon(alert.type);
-                  const location = alert.district || alert.route_id || alert.sensor_id || "Source inconnue";
+                  const location = alert.district || alert.route_id || alert.sensor_id || "Unknown source";
                   return (
                     <div
                       key={`${alert.processed_at}-${alert.type}-${index}`}
@@ -341,7 +341,7 @@ export default function AlertsPage() {
                         </div>
                         <div className="rounded-2xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-right">
                           <p className="text-[10px] font-black uppercase text-green-500">
-                            Valeur / seuil
+                            Value / Threshold
                           </p>
                           <p className="text-lg font-black text-green-500">
                             <AnimatedNumber value={alert.value} decimals={1} /> {alert.operator} <AnimatedNumber value={alert.threshold} decimals={1} />
@@ -357,13 +357,13 @@ export default function AlertsPage() {
 
           <section className="space-y-4">
             <h3 className="text-lg font-bold text-slate-100">
-              Alertes Temperature
+              Temperature Alerts
             </h3>
 
             {filteredTemperatureAlerts.length === 0 ? (
               <div className="rounded-3xl border border-slate-800 bg-slate-950 p-8 text-center">
                 <CheckCircle2 className="w-8 h-8 text-green-500 mx-auto mb-3" />
-                <p className="font-bold text-slate-100">Aucune alerte temperature</p>
+                <p className="font-bold text-slate-100">No temperature alerts</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -379,7 +379,7 @@ export default function AlertsPage() {
                         </div>
                         <div>
                           <h4 className="text-lg font-bold text-slate-100">
-                            Temperature critique : <AnimatedNumber value={alert.temperature} decimals={1} suffix="°C" />
+                            Critical temperature: <AnimatedNumber value={alert.temperature} decimals={1} suffix="°C" />
                           </h4>
                           <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-slate-500 font-medium">
                             <span className="flex items-center gap-1">
@@ -398,7 +398,7 @@ export default function AlertsPage() {
                           onClick={() => acknowledgeAlert(alert.id)}
                           className="bg-green-500 text-black font-bold px-4 py-2 rounded-xl text-sm hover:bg-green-400 transition-colors"
                         >
-                          Acquitter
+                          Acknowledge
                         </button>
                       )}
                     </div>
@@ -413,7 +413,7 @@ export default function AlertsPage() {
           <div className="rounded-3xl border border-slate-800 bg-slate-950 p-8 text-slate-100">
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
               <Bell className="w-5 h-5 text-green-500" />
-              Resume Spark
+              Spark Summary
             </h3>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -429,7 +429,7 @@ export default function AlertsPage() {
                 <span className="text-xl font-black"><AnimatedNumber value={domainCounts.traffic} /></span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-bold text-slate-500">Eau</span>
+                <span className="text-sm font-bold text-slate-500">Water</span>
                 <span className="text-xl font-black"><AnimatedNumber value={domainCounts.water} /></span>
               </div>
             </div>
@@ -438,10 +438,10 @@ export default function AlertsPage() {
           <div className="rounded-3xl border border-slate-800 bg-slate-950 p-6">
             <h3 className="text-lg font-bold text-slate-100 mb-4 flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-green-500" />
-              Severite
+              Severity
             </h3>
             <p className="text-sm text-slate-400 font-medium leading-relaxed">
-              Les alertes Spark sont generees depuis les seuils configures dans le pipeline de streaming et sont mises a jour en temps reel.
+              Spark alerts are generated from thresholds configured in the streaming pipeline and are updated in real time.
             </p>
           </div>
         </div>

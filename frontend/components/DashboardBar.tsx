@@ -66,7 +66,7 @@ const DashboardBar = memo(
     const [currentTime, setCurrentTime] = useState<string | null>(null);
 
     useEffect(() => {
-      const updateTime = () => setCurrentTime(new Date().toLocaleTimeString("fr-FR"));
+      const updateTime = () => setCurrentTime(new Date().toLocaleTimeString("en-US"));
       const timeout = window.setTimeout(updateTime, 0);
       const interval = window.setInterval(() => {
         updateTime();
@@ -85,7 +85,7 @@ const DashboardBar = memo(
             return [
               {
                 icon: <Thermometer />,
-                label: "Moyenne",
+                label: "Average",
                 unit: "°C",
                 color: "from-green-400 to-green-700",
                 key: "avg",
@@ -106,14 +106,14 @@ const DashboardBar = memo(
               },
               {
                 icon: <Activity />,
-                label: "Capteurs",
-                unit: "actifs",
+                label: "Sensors",
+                unit: "active",
                 color: "from-green-400 to-green-700",
                 key: "total",
               },
               {
                 icon: <AlertTriangle />,
-                label: "Alertes",
+                label: "Alerts",
                 unit: "zones",
                 color: "from-green-400 to-green-600",
                 key: "critical",
@@ -123,29 +123,29 @@ const DashboardBar = memo(
             return [
               {
                 icon: <Wind />,
-                label: "AQI Moyen",
+                label: "Avg. AQI",
                 unit: "",
                 color: "from-green-400 to-emerald-600",
                 key: "avg",
               },
               {
                 icon: <AlertTriangle />,
-                label: "AQI Max",
+                label: "Max AQI",
                 unit: "",
                 color: "from-green-400 to-green-700",
                 key: "max",
               },
               {
                 icon: <Activity />,
-                label: "Capteurs",
-                unit: "actifs",
+                label: "Sensors",
+                unit: "active",
                 color: "from-green-400 to-green-700",
                 key: "total",
               },
               {
                 icon: <Navigation />,
-                label: "Zones Critiques",
-                unit: "alertes",
+                label: "Critical Zones",
+                unit: "alerts",
                 color: "from-green-400 to-green-600",
                 key: "critical",
               },
@@ -154,29 +154,29 @@ const DashboardBar = memo(
             return [
               {
                 icon: <Droplets />,
-                label: "Débit Total",
+                label: "Total Flow",
                 unit: "L/min",
                 color: "from-green-400 to-green-700",
                 key: "totalFlow",
               },
               {
                 icon: <Gauge />,
-                label: "Moyenne",
+                label: "Average",
                 unit: "L/min",
                 color: "from-green-400 to-green-700",
                 key: "avg",
               },
               {
                 icon: <Activity />,
-                label: "Volume Cumulé",
+                label: "Cumulative Volume",
                 unit: "L",
                 color: "from-green-500 to-green-800",
                 key: "totalVolume",
               },
               {
                 icon: <Navigation />,
-                label: "Points d'accès",
-                unit: "actifs",
+                label: "Access points",
+                unit: "active",
                 color: "from-green-400 to-green-700",
                 key: "sensors",
               },
@@ -185,21 +185,21 @@ const DashboardBar = memo(
             return [
               {
                 icon: <FlaskConical />,
-                label: "pH Moyen",
+                label: "Avg. pH",
                 unit: "pH",
                 color: "from-green-400 to-green-700",
                 key: "avgPh",
               },
               {
                 icon: <Droplets />,
-                label: "Turbidité",
+                label: "Turbidity",
                 unit: "NTU",
                 color: "from-green-400 to-green-700",
                 key: "avgTurb",
               },
               {
                 icon: <AlertTriangle />,
-                label: "Hors Normes",
+                label: "Out of Norm",
                 unit: "zones",
                 color: "from-green-400 to-green-600",
                 key: "alerts",
@@ -209,22 +209,22 @@ const DashboardBar = memo(
             return [
               {
                 icon: <Gauge />,
-                label: "Vitesse Moy.",
+                label: "Avg. Speed",
                 unit: "km/h",
                 color: "from-emerald-400 to-emerald-600",
                 key: "avgSpeed",
               },
               {
                 icon: <Car />,
-                label: "Véhicules",
-                unit: "détectés",
+                label: "Vehicles",
+                unit: "detected",
                 color: "from-green-400 to-green-700",
                 key: "totalVehicles",
               },
               {
                 icon: <Activity />,
-                label: "Capteurs",
-                unit: "actifs",
+                label: "Sensors",
+                unit: "active",
                 color: "from-green-400 to-green-700",
                 key: "totalSensors",
               },
@@ -243,11 +243,11 @@ const DashboardBar = memo(
 
       const title =
         {
-          temperature: "Température",
-          air_quality: "Qualité de l'Air",
-          water_consumption: "Consommation d'Eau",
-          water_quality: "Qualité de l'Eau",
-          traffic_congestion: "Trafic Routier",
+          temperature: "Temperature",
+          air_quality: "Air Quality",
+          water_consumption: "Water Consumption",
+          water_quality: "Water Quality",
+          traffic_congestion: "Road Traffic",
         }[mode as never] || "Smart City";
 
       const baseKpis: Kpi[] = getKpis();
@@ -516,7 +516,7 @@ const DashboardBar = memo(
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
                   <span className="text-sm font-black text-green-500 tracking-tighter uppercase">
-                    {mode === "traffic_congestion" ? "TEMPS RÉEL" : "LIVE FEED"}
+                    {mode === "traffic_congestion" ? "REAL TIME" : "LIVE FEED"}
                   </span>
                 </div>
               )}

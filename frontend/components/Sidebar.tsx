@@ -17,12 +17,12 @@ import { useState, useEffect } from "react";
 import { APP_ROUTES } from "@/lib/constants";
 
 const navItems = [
-  { label: "Vue d'ensemble", icon: LayoutDashboard, href: APP_ROUTES.home },
-  { label: "Carte Interactive", icon: MapIcon, href: APP_ROUTES.map },
-  { label: "Données Spark", icon: Star, href: APP_ROUTES.spark },
-  { label: "Analytiques", icon: LineChart, href: APP_ROUTES.analytics },
-  { label: "Alertes", icon: Bell, href: APP_ROUTES.alerts },
-  { label: "Réglages", icon: Settings, href: APP_ROUTES.settings },
+  { label: "Overview", icon: LayoutDashboard, href: APP_ROUTES.home },
+  { label: "Interactive Map", icon: MapIcon, href: APP_ROUTES.map },
+  { label: "Spark Data", icon: Star, href: APP_ROUTES.spark },
+  { label: "Analytics", icon: LineChart, href: APP_ROUTES.analytics },
+  { label: "Alerts", icon: Bell, href: APP_ROUTES.alerts },
+  { label: "Settings", icon: Settings, href: APP_ROUTES.settings },
 ];
 
 export default function Sidebar() {

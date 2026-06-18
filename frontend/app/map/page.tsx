@@ -10,10 +10,10 @@ const Map = dynamic(() => import("@/components/Map"), {
       <div className="text-center animate-pulse">
         <Loader className="mx-auto mb-3 h-6 w-6 animate-spin text-green-500" />
         <h2 className="text-xl font-bold text-slate-100">
-          Carte Smart City
+          Smart City Map
         </h2>
         <p className="mt-1 text-sm text-slate-400">
-          Initialisation du moteur Leaflet…
+          Initializing Leaflet engine…
         </p>
       </div>
     </div>

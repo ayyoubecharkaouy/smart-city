@@ -38,7 +38,7 @@ const buildPopup = (district: string, stats: DistrictTemperature, mode: string) 
         <div className={`flex items-center justify-between ${mode === 'temperature' ? 'bg-green-50 p-1.5 rounded' : ''}`}>
           <div className="flex items-center gap-1.5 text-gray-600">
             <Thermometer className="w-3.5 h-3.5" />
-            <span className="text-[11px] font-medium">Température</span>
+            <span className="text-[11px] font-medium">Temperature</span>
           </div>
           <span className="text-[11px] font-bold text-gray-800">
             {stats.avg_temperature.toFixed(1)}°C
@@ -49,7 +49,7 @@ const buildPopup = (district: string, stats: DistrictTemperature, mode: string) 
           <div className={`flex items-center justify-between ${mode === 'air_quality' ? 'bg-green-50 p-1.5 rounded' : ''}`}>
             <div className="flex items-center gap-1.5 text-gray-600">
               <Wind className="w-3.5 h-3.5" />
-              <span className="text-[11px] font-medium">Qualité Air</span>
+              <span className="text-[11px] font-medium">Air Quality</span>
             </div>
             <span className="text-[11px] font-bold text-gray-800">
               AQI {Math.round(stats.avg_aqi)}
@@ -60,7 +60,7 @@ const buildPopup = (district: string, stats: DistrictTemperature, mode: string) 
         <div className="flex items-center justify-between text-gray-500 pt-1">
           <div className="flex items-center gap-1.5">
             <Gauge className="w-3.5 h-3.5" />
-            <span className="text-[10px]">Capteurs</span>
+            <span className="text-[10px]">Sensors</span>
           </div>
           <span className="text-[10px] font-bold">{stats.sensor_count}</span>
         </div>

@@ -133,7 +133,7 @@ export default function AnalyticsPage() {
   };
 
   const selectedPeriodLabel =
-    PERIOD_OPTIONS.find((option) => option.value === periodFilter)?.label || "24 dernieres heures";
+    PERIOD_OPTIONS.find((option) => option.value === periodFilter)?.label || "Last 24 hours";
 
   const chartConfig = useMemo(() => {
     let rawData: Record<string, string | number>[] = [];
@@ -240,16 +240,16 @@ export default function AnalyticsPage() {
   ]);
 
   const chartTypes: { id: ChartType; icon: ReactNode; label: string }[] = [
-    { id: "line", icon: <LineIcon />, label: "Lignes" },
-    { id: "column", icon: <BarIcon />, label: "Colonnes" },
-    { id: "pie", icon: <PieIcon />, label: "Secteurs" },
+    { id: "line", icon: <LineIcon />, label: "Lines" },
+    { id: "column", icon: <BarIcon />, label: "Columns" },
+    { id: "pie", icon: <PieIcon />, label: "Pie" },
     {
       id: "nightingale",
       icon: <PieIcon className="rotate-45" />,
       label: "Nightingale",
     },
-    { id: "gauge", icon: <GaugeIcon />, label: "Jauge" },
-    { id: "table", icon: <TableIcon />, label: "Tableau" },
+    { id: "gauge", icon: <GaugeIcon />, label: "Gauge" },
+    { id: "table", icon: <TableIcon />, label: "Table" },
   ];
 
   const metrics: { id: MetricType; icon: ReactNode; label: string; color: string }[] =
@@ -299,14 +299,14 @@ export default function AnalyticsPage() {
         <div className="flex items-center gap-3 mb-10">
           <Settings2 className="w-5 h-5 text-green-500" />
           <h2 className="text-xl font-black text-slate-100 uppercase tracking-tighter">
-            Explorateur
+            Explorer
           </h2>
         </div>
 
         {/* Metric Selection */}
         <section className="mb-8">
           <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 block">
-            Type de Métrique
+            Metric Type
           </label>
           <div className="grid grid-cols-1 gap-2">
             {metrics.map((m) => (
@@ -335,7 +335,7 @@ export default function AnalyticsPage() {
         {/* Mode Toggle */}
         <section className="mb-8">
           <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 block">
-            Fenêtre Temporelle
+            Time Window
           </label>
           <div className="flex p-1 bg-slate-950 rounded-2xl gap-1 border border-slate-800">
             <button
@@ -347,7 +347,7 @@ export default function AnalyticsPage() {
               <Zap
                 className={`w-6 h-6 ${isRealtime ? "text-black" : "text-green-500"}`}
               />
-              Temps Réel
+              Real-Time
             </button>
             <button
               onClick={() => setIsRealtime(false)}
@@ -356,7 +356,7 @@ export default function AnalyticsPage() {
               }`}
             >
               <Clock className={`w-6 h-6 ${!isRealtime ? "text-black" : "text-green-500"}`} />
-              Historique
+              History
             </button>
           </div>
         </section>
@@ -364,7 +364,7 @@ export default function AnalyticsPage() {
         {/* Chart Type Selection */}
         <section className="mb-8">
           <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 block">
-            Visualisation
+            Visualization
           </label>
           <div className="grid grid-cols-2 gap-2">
             {chartTypes.map((t) => (
@@ -403,12 +403,12 @@ export default function AnalyticsPage() {
                 {metrics.find((m) => m.id === metric)?.label}
                 <span className="ml-0 block text-base font-medium text-slate-500 sm:ml-2 sm:inline sm:text-2xl">
                   {isRealtime
-                    ? "Flux de données Live"
-                    : `Analyse Historique (${selectedPeriodLabel})`}
+                    ? "Live Data Stream"
+                    : `Historical Analysis (${selectedPeriodLabel})`}
                 </span>
               </h1>
               <p className="text-sm font-medium text-slate-400 mt-1">
-                Exploration granulaire des métriques urbaines via Apache Spark
+                Granular exploration of urban metrics via Apache Spark
               </p>
             </div>
           </div>
@@ -427,10 +427,10 @@ export default function AnalyticsPage() {
               </div>
               <div>
                 <h3 className="text-sm font-black uppercase text-slate-100">
-                  Filtres globaux
+                  Global Filters
                 </h3>
                 <p className="text-xs font-medium text-slate-400">
-                  Période, zone et criticité appliquées au graphique
+                  Period, zone and criticality applied to the chart
                 </p>
               </div>
             </div>
@@ -439,13 +439,13 @@ export default function AnalyticsPage() {
               className="flex w-fit items-center gap-2 rounded-2xl border border-slate-800 bg-black px-3 py-2 text-xs font-black uppercase text-slate-400 transition-colors hover:border-green-500/50 hover:text-green-500"
             >
               <RotateCcw className="h-4 w-4" />
-              Réinitialiser
+              Reset
             </button>
           </div>
 
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_auto]">
             <label className="space-y-1">
-              <span className="text-[10px] font-black uppercase text-slate-500">Période</span>
+              <span className="text-[10px] font-black uppercase text-slate-500">Period</span>
               <select
                 value={periodFilter}
                 onChange={(event) => setPeriodFilter(event.target.value as PeriodFilter)}
@@ -465,7 +465,7 @@ export default function AnalyticsPage() {
                 disabled={metric === "traffic"}
                 className="h-11 w-full rounded-2xl border border-slate-800 bg-black px-3 text-sm font-bold text-slate-200 outline-none transition-colors focus:border-green-500 focus:bg-slate-950 disabled:bg-slate-900 disabled:text-slate-600"
               >
-                <option value="all">Tous les districts</option>
+                <option value="all">All districts</option>
                 {districtOptions.map(district => (
                   <option key={district} value={district}>{district}</option>
                 ))}
@@ -480,7 +480,7 @@ export default function AnalyticsPage() {
                 disabled={metric !== "traffic"}
                 className="h-11 w-full rounded-2xl border border-slate-800 bg-black px-3 text-sm font-bold text-slate-200 outline-none transition-colors focus:border-green-500 focus:bg-slate-950 disabled:bg-slate-900 disabled:text-slate-600"
               >
-                <option value="all">Toutes les routes</option>
+                <option value="all">All routes</option>
                 {routeOptions.map(route => (
                   <option key={route} value={route}>{route}</option>
                 ))}
@@ -489,7 +489,7 @@ export default function AnalyticsPage() {
 
             <label className="flex h-full min-h-11 items-center justify-between gap-3 rounded-2xl border border-slate-800 bg-black px-3 xl:mt-4">
               <span className="text-xs font-black uppercase text-slate-400">
-                Critiques
+                Critical
               </span>
               <input
                 type="checkbox"
@@ -508,7 +508,7 @@ export default function AnalyticsPage() {
               <div className="flex h-full items-center justify-center">
                 <StateNotice
                   variant="error"
-                  message={`${activeError}. Vérifiez la disponibilité de l'API backend.`}
+                  message={`${activeError}. Check backend API availability.`}
                   className="max-w-xl"
                 />
               </div>
@@ -516,7 +516,7 @@ export default function AnalyticsPage() {
               <div className="flex h-full items-center justify-center">
                 <StateNotice
                   variant="disconnected"
-                  message="Le backend temps réel n'est pas connecté et aucune donnée locale n'est disponible."
+                  message="The real-time backend is not connected and no local data is available."
                   className="max-w-xl"
                 />
               </div>
@@ -524,7 +524,7 @@ export default function AnalyticsPage() {
               <div className="flex h-full items-center justify-center">
                 <StateNotice
                   variant="empty"
-                  message="Aucune mesure ne correspond à cette métrique et à cette fenêtre temporelle."
+                  message="No measurement matches this metric and time window."
                   className="max-w-xl"
                 />
               </div>
@@ -546,7 +546,7 @@ export default function AnalyticsPage() {
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div className="flex flex-col">
                 <span className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">
-                  Métrique Active
+                  Active Metric
                 </span>
                 <span className="text-sm font-bold text-slate-200">
                   {chartConfig.label}
@@ -557,12 +557,12 @@ export default function AnalyticsPage() {
                   Total Points
                 </span>
                 <span className="text-sm font-bold text-slate-200">
-                  <AnimatedNumber value={chartConfig.data.length} /> enregistrements
+                  <AnimatedNumber value={chartConfig.data.length} /> records
                 </span>
               </div>
               <div className="flex flex-col">
                 <span className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">
-                  Dernière Sync
+                  Last Sync
                 </span>
                 <span className="text-sm font-bold text-slate-200">
                   {time ?? "--:--:--"}

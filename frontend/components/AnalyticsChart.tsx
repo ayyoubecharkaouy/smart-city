@@ -55,7 +55,7 @@ export default function AnalyticsChart({
   data,
   loading,
   color = "#22c55e",
-  label = "Valeur",
+  label = "Value",
   unit = "",
   xAxisKey = "name",
   yAxisKey = "value",
@@ -65,7 +65,7 @@ export default function AnalyticsChart({
       <div className="flex h-full w-full flex-col items-center justify-center rounded-3xl border border-dashed border-slate-800 bg-slate-950/50">
         <Loader className="mb-4 h-10 w-10 animate-spin text-green-500" />
         <p className="font-medium text-slate-400">
-          Traitement des données Big Data...
+          Processing Big Data...
         </p>
       </div>
     );
@@ -75,7 +75,7 @@ export default function AnalyticsChart({
     return (
       <div className="flex h-full w-full items-center justify-center rounded-3xl border border-dashed border-slate-800 bg-slate-950/50">
         <p className="font-medium text-slate-400">
-          Aucune donnée disponible pour cette sélection.
+          No data available for this selection.
         </p>
       </div>
     );
@@ -96,7 +96,7 @@ export default function AnalyticsChart({
     return (
       <div className="flex h-full w-full items-center justify-center rounded-3xl border border-dashed border-slate-800 bg-slate-950/50">
         <p className="font-medium text-slate-400">
-          Données reçues, mais format inexploitable pour ce graphique.
+          Data received, but format is unusable for this chart.
         </p>
       </div>
     );

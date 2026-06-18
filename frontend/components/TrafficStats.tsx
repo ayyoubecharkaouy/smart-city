@@ -76,7 +76,7 @@ export default function TrafficStats({
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-lg font-bold text-green-50 flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-green-500" />
-            Vitesse Moyenne 24h
+            Avg. Speed 24h
           </h3>
           <span className="text-[10px] font-bold text-green-300 bg-green-950/80 border border-green-800/60 px-2 py-0.5 rounded-full uppercase">
             <AnimatedNumber value={speedHistory.length} /> Points
@@ -85,7 +85,7 @@ export default function TrafficStats({
         <TrendChart
           data={speedHistory}
           color="oklch(72.3% 0.219 149.579)"
-          label="Vitesse"
+          label="Speed"
           unit=" km/h"
         />
       </div>
@@ -94,7 +94,7 @@ export default function TrafficStats({
       <div className="p-4">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-bold text-green-50 flex items-center gap-2">
-            Trafic par Route
+            Traffic by Route
           </h3>
           <div className="flex items-center gap-1.5">
             {connected ? (
@@ -107,7 +107,7 @@ export default function TrafficStats({
 
         {loading && (
           <div className="text-center py-6 text-xs text-green-300 animate-pulse">
-            Analyse du trafic en cours…
+            Traffic analysis in progress…
           </div>
         )}
 
@@ -117,7 +117,7 @@ export default function TrafficStats({
             <div className="grid grid-cols-3 gap-3 mb-6">
               <div className="bg-green-950 p-3 rounded-2xl text-center border border-green-800/50">
                 <span className="block text-[10px] uppercase font-bold text-green-300 mb-1">
-                  Vitesse Moy.
+                  Avg. Speed
                 </span>
                 <span className="text-xl font-black text-green-100">
                   <AnimatedNumber value={globalAvgSpeed} decimals={1} />
@@ -126,7 +126,7 @@ export default function TrafficStats({
               </div>
               <div className="bg-green-950 p-3 rounded-2xl text-center border border-green-800/50">
                 <span className="block text-[10px] uppercase font-bold text-green-300 mb-1">
-                  Véhicules
+                  Vehicles
                 </span>
                 <span className="text-xl font-black text-green-100">
                   <AnimatedNumber value={totalVehicles} />
@@ -189,13 +189,13 @@ export default function TrafficStats({
                           </span>
                           <span className="flex items-center gap-1">
                             <Car className="w-3 h-3" />
-                            <AnimatedNumber value={r.total_vehicles} /> véh
+                            <AnimatedNumber value={r.total_vehicles} /> veh
                           </span>
                         </div>
                         <div className="flex items-center gap-1.5 px-2 py-0.5 bg-green-950/60 rounded-full border border-green-800/50">
                           <Activity className="w-3 h-3 text-green-300" />
                           <span className="text-[10px] font-bold text-green-100 uppercase">
-                            <AnimatedNumber value={r.sensor_count} /> capteurs
+                            <AnimatedNumber value={r.sensor_count} /> sensors
                           </span>
                         </div>
                       </div>
@@ -218,7 +218,7 @@ export default function TrafficStats({
 
         {!loading && routes.length === 0 && (
           <div className="text-center py-6 text-xs text-green-300">
-            Aucune donnée de trafic disponible
+            No traffic data available
           </div>
         )}
       </div>

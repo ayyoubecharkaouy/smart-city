@@ -173,17 +173,17 @@ const RoutesOverlay = memo(function RoutesOverlay({
                         lineHeight: 1.6,
                       }}
                     >
-                      🚗 {liveStats.total_vehicles} véhicules
+                      🚗 {liveStats.total_vehicles} vehicles
                       <br />⚡ {liveStats.avg_speed.toFixed(1)} km/h
                       <br />
-                      📊 Congestion : {liveStats.avg_congestion.toFixed(2)}
+                      📊 Congestion: {liveStats.avg_congestion.toFixed(2)}
                       <br />
-                      📡 {liveStats.sensor_count} capteurs
+                      📡 {liveStats.sensor_count} sensors
                     </div>
                   </div>
                 ) : (
                   <div style={{ marginTop: 4, fontSize: 11, color: "#86efac" }}>
-                    Pas de données en temps réel
+                    No real-time data
                   </div>
                 )}
               </div>
@@ -344,7 +344,7 @@ export default function Map() {
         >
           <Menu className="h-5 w-5 text-green-400" />
           <span className="truncate pr-1 text-sm font-black text-green-50">
-            Type de données
+            Data type
           </span>
         </button>
 
@@ -421,7 +421,7 @@ export default function Map() {
           <div className="absolute top-28 left-6 right-6 z-1001 pointer-events-none">
             <StateNotice
               variant="error"
-              message={`${currentError}. Les dernières données affichées peuvent être obsolètes.`}
+              message={`${currentError}. The displayed data may be outdated.`}
               className="mx-auto max-w-2xl pointer-events-auto"
             />
           </div>
@@ -431,7 +431,7 @@ export default function Map() {
           <div className="absolute top-28 left-6 right-6 z-1001 pointer-events-none">
             <StateNotice
               variant="disconnected"
-              message="Le backend n'est pas connecté. Lancez l'API et les producteurs Kafka pour alimenter la carte."
+              message="Backend is not connected. Start the API and the Kafka producers to feed the map."
               className="mx-auto max-w-2xl pointer-events-auto"
             />
           </div>
@@ -441,7 +441,7 @@ export default function Map() {
           <div className="absolute top-28 left-6 right-6 z-1001 pointer-events-none">
             <StateNotice
               variant="empty"
-              message="Connexion active, mais aucune mesure n'est disponible pour cette couche."
+              message="Connection active, but no measurement is available for this layer."
               className="mx-auto max-w-2xl pointer-events-auto"
             />
           </div>
@@ -451,7 +451,7 @@ export default function Map() {
         <div className="absolute bottom-4 right-4 z-1000 flex max-w-[calc(100vw-2rem)] flex-col gap-2 sm:bottom-6 sm:right-6">
           {mode === "temperature" && (
             <Legend
-              title="🌡️ Température"
+              title="🌡️ Temperature"
               items={[
                 { color: "#3b82f6", label: "< 15°C" },
                 { color: "#60a5fa", label: "15 – 20°C" },
@@ -465,14 +465,14 @@ export default function Map() {
           )}
           {mode === "air_quality" && (
             <Legend
-              title="🌬️ Qualité de l'Air (AQI)"
+              title="🌬️ Air Quality (AQI)"
               items={[
-                { color: "#22c55e", label: "0 – 50 (Bon)" },
-                { color: "#84cc16", label: "51 – 100 (Moyen)" },
-                { color: "#eab308", label: "101 – 150 (Sensible)" },
-                { color: "#f97316", label: "151 – 200 (Mauvais)" },
-                { color: "#ef4444", label: "201 – 300 (Très Mauvais)" },
-                { color: "#b91c1c", label: "> 300 (Dangereux)" },
+                { color: "#22c55e", label: "0 – 50 (Good)" },
+                { color: "#84cc16", label: "51 – 100 (Moderate)" },
+                { color: "#eab308", label: "101 – 150 (Sensitive)" },
+                { color: "#f97316", label: "151 – 200 (Poor)" },
+                { color: "#ef4444", label: "201 – 300 (Very Poor)" },
+                { color: "#b91c1c", label: "> 300 (Hazardous)" },
               ]}
             />
           )}
@@ -480,8 +480,8 @@ export default function Map() {
             <Legend
               title={
                 mode === "water_consumption"
-                  ? "💧 Débit d'Eau"
-                  : "🧪 Qualité d'Eau (pH)"
+                  ? "💧 Water Flow"
+                  : "🧪 Water Quality (pH)"
               }
               items={
                 mode === "water_consumption"
@@ -492,21 +492,21 @@ export default function Map() {
                       { color: "#0369a1", label: "> 25 L/min" },
                     ]
                   : [
-                      { color: "#ef4444", label: "< 6.5 (Acide)" },
-                      { color: "#22c55e", label: "6.5 – 8.5 (Sain)" },
-                      { color: "#3b82f6", label: "> 8.5 (Basique)" },
+                      { color: "#ef4444", label: "< 6.5 (Acidic)" },
+                      { color: "#22c55e", label: "6.5 – 8.5 (Safe)" },
+                      { color: "#3b82f6", label: "> 8.5 (Basic)" },
                     ]
               }
             />
           )}
           {mode === "traffic_congestion" && (
             <Legend
-              title="🚦 Congestion Routière"
+              title="🚦 Road Congestion"
               items={[
-                { color: "#22c55e", label: "Fluide" },
+                { color: "#22c55e", label: "Smooth" },
                 { color: "#eab308", label: "Dense" },
-                { color: "#f97316", label: "Congestion" },
-                { color: "#ef4444", label: "Forte Congestion" },
+                { color: "#f97316", label: "Congested" },
+                { color: "#ef4444", label: "Heavy Congestion" },
               ]}
             />
           )}

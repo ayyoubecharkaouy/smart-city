@@ -79,13 +79,13 @@ export function getTemperatureLevelColor(level: number): string {
 export function getTemperatureLevelLabel(level: number): string {
   switch (level) {
     case 0:
-      return "Normale";
+      return "Normal";
     case 1:
-      return "Chaude";
+      return "Warm";
     case 2:
-      return "Critique";
+      return "Critical";
     default:
-      return "Normale";
+      return "Normal";
   }
 }
 
@@ -314,12 +314,12 @@ export function getTrafficStatusColor(status: TrafficStatus): string {
 
 export function getTrafficStatusLabel(status: TrafficStatus): string {
   const map: Record<TrafficStatus, string> = {
-    fluide: "Fluide",
+    fluide: "Smooth",
     dense: "Dense",
-    congestion: "Congestion",
-    forte_congestion: "Forte Congestion",
+    congestion: "Congested",
+    forte_congestion: "Heavy Congestion",
   };
-  return map[status] || "Inconnu";
+  return map[status] || "Unknown";
 }
 
 export function getTrafficStatusLevel(status: TrafficStatus): number {

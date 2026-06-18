@@ -32,7 +32,7 @@ const buildPopup = (district: string, stats: DistrictWater, mode: string) => {
         <div className={`flex items-center justify-between ${mode === 'water_consumption' ? 'bg-green-50 p-1.5 rounded' : ''}`}>
           <div className="flex items-center gap-1.5 text-gray-600">
             <Activity className="w-3.5 h-3.5" />
-            <span className="text-[11px] font-medium">Débit</span>
+            <span className="text-[11px] font-medium">Flow</span>
           </div>
           <span className="text-[11px] font-bold text-gray-800">{stats.avg_flow.toFixed(2)} L/min</span>
         </div>
@@ -40,7 +40,7 @@ const buildPopup = (district: string, stats: DistrictWater, mode: string) => {
         <div className={`flex items-center justify-between ${mode === 'water_quality' ? 'bg-green-50 p-1.5 rounded' : ''}`}>
           <div className="flex items-center gap-1.5 text-gray-600">
             <Droplet className="w-3.5 h-3.5" />
-            <span className="text-[11px] font-medium">Qualité (pH)</span>
+            <span className="text-[11px] font-medium">Quality (pH)</span>
           </div>
           <span className="text-[11px] font-bold text-gray-800">{stats.avg_ph.toFixed(2)}</span>
         </div>
@@ -48,7 +48,7 @@ const buildPopup = (district: string, stats: DistrictWater, mode: string) => {
         <div className="flex items-center justify-between text-gray-500 pt-1 border-t border-gray-50 mt-1">
           <div className="flex items-center gap-1.5">
             <Gauge className="w-3.5 h-3.5" />
-            <span className="text-[10px]">Volume Total</span>
+            <span className="text-[10px]">Total Volume</span>
           </div>
           <span className="text-[10px] font-bold">{stats.total_volume.toFixed(1)} L</span>
         </div>

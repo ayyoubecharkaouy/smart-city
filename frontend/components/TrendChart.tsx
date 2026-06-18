@@ -32,13 +32,13 @@ export default function TrendChart({
   // Use a simpler ID for the gradient
   const gradientId =
     "colorGradient-" +
-    (label === "Température"
+    (label === "Temperature"
       ? "temp"
       : label === "AQI"
         ? "aqi"
-        : label === "Débit"
+        : label === "Flow"
           ? "flow"
-          : "vitesse");
+          : "speed");
 
   return (
     <div className="w-full h-55 mt-4 relative">

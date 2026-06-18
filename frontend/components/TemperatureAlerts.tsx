@@ -24,7 +24,7 @@ export default function TemperatureAlerts({
       <div className="px-2 py-3 border-b border-slate-800 flex items-center justify-between bg-green-500/10">
         <h3 className="text-sm font-bold text-green-400 flex items-center gap-2">
           <AlertTriangle className="w-4 h-4" />
-          Alertes Température
+          Temperature Alerts
         </h3>
         {activeAlerts.length > 0 && (
           <span className="text-xs font-bold bg-green-500 text-black px-2 py-0.5 rounded-full animate-pulse">
@@ -61,7 +61,7 @@ export default function TemperatureAlerts({
                 </p>
                 <p className="text-xs text-slate-500 truncate">
                   {alert.sensor_id} ·{" "}
-                  {new Date(alert.timestamp).toLocaleTimeString("fr-FR")}
+                  {new Date(alert.timestamp).toLocaleTimeString("en-US")}
                 </p>
               </div>
             </div>
@@ -70,7 +70,7 @@ export default function TemperatureAlerts({
               <button
                 onClick={() => onAcknowledge(alert.id)}
                 className="p-1 rounded hover:bg-slate-900 transition-colors shrink-0 cursor-pointer"
-                title="Acquitter l'alerte"
+                title="Acknowledge alert"
               >
                 <Check className="w-3.5 h-3.5 text-slate-500" />
               </button>

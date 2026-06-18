@@ -11,7 +11,7 @@ function formatTime(value?: string): string {
   if (!value) return "--:--:--";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "--:--:--";
-  return date.toLocaleTimeString("fr-FR", {
+  return date.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
@@ -37,13 +37,13 @@ const SparkInsights = memo(() => {
         ) : !connected ? (
           <StateNotice
             variant="disconnected"
-            message="Le backend temps réel est hors ligne. Les résultats Spark arriveront après reconnexion."
+            message="The real-time backend is offline. Spark results will arrive after reconnection."
           />
         ) : (
           <StateNotice
             variant="empty"
-            title="En attente de Spark Streaming"
-            message="Connexion active, mais aucune fenêtre d'agrégation Spark n'a encore été reçue."
+            title="Waiting for Spark Streaming"
+            message="Connection active, but no Spark aggregation window has been received yet."
           />
         )}
       </div>
@@ -55,22 +55,22 @@ const SparkInsights = memo(() => {
       <div className="flex items-center justify-between">
         <h3 className="text-md font-bold text-slate-100 flex flex-col items-start gap-2">
           <Image src="/images/logos/spark.png" alt="Apache Spark" width={96} height={48} className="h-12 w-auto" />
-          <span>Analyses Apache Spark</span>
+          <span>Apache Spark Analyses</span>
           <span className={`text-[9px] uppercase ${connected ? "text-emerald-500" : "text-slate-400"}`}>
-            {connected ? "Connecté" : "Hors ligne"}
+            {connected ? "Connected" : "Offline"}
           </span>
         </h3>
       </div>
       
       <p className="text-[10px] uppercase text-slate-400 font-bold tracking-wider mb-2">
-        Moyennes glissantes (Temps Réel)
+        Sliding averages (Real-Time)
       </p>
 
       {/* Spark Alerts */}
       {sparkAlerts.length > 0 && (
         <div className="rounded-4xl p-3 border border-green-500/20 bg-green-500/10">
           <h4 className="font-bold text-green-400 flex items-center gap-1 mb-2">
-            <AlertTriangle className="w-3 h-3" /> Alertes Spark
+            <AlertTriangle className="w-3 h-3" /> Spark Alerts
           </h4>
           <div className="space-y-2">
             {sparkAlerts.slice(0, 5).map((item, i) => (
@@ -96,7 +96,7 @@ const SparkInsights = memo(() => {
       {sparkErrors.length > 0 && (
         <div className="rounded-4xl p-3 border border-green-500/20 bg-green-500/10">
           <h4 className="font-bold text-green-400 flex items-center gap-1 mb-2">
-            <AlertTriangle className="w-3 h-3" /> Erreurs JSON Spark
+            <AlertTriangle className="w-3 h-3" /> Spark JSON Errors
           </h4>
           <div className="space-y-2">
             {sparkErrors.slice(0, 5).map((item, i) => (
@@ -118,17 +118,17 @@ const SparkInsights = memo(() => {
       {trafficData.length > 0 && (
         <div className="rounded-4xl p-3">
           <h4 className="font-bold text-slate-400 flex items-center gap-1 mb-2">
-            <Activity className="w-3 h-3" /> Trafic
+            <Activity className="w-3 h-3" /> Traffic
           </h4>
           {trafficData.map((t, i) => (
             <div key={i} className="flex flex-wrap justify-between items-center gap-2 py-1 border-b border-slate-800 last:border-0">
               <span className="truncate w-24 text-slate-300">{t.route_id}</span>
               <span className="font-semibold text-green-500"><AnimatedNumber value={t.avg_speed || 0} decimals={1} suffix=" km/h" /></span>
               <span className="text-[9px] bg-green-500/15 text-green-500 px-1.5 py-0.5 rounded">
-                Congestion max: <AnimatedNumber value={t.max_congestion || 0} decimals={1} />
+                Max congestion: <AnimatedNumber value={t.max_congestion || 0} decimals={1} />
               </span>
               <span className="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
-                Véhicules moy.: <AnimatedNumber value={t.avg_vehicle_count || 0} />
+                Avg. vehicles: <AnimatedNumber value={t.avg_vehicle_count || 0} />
               </span>
               <span className="text-[9px] bg-green-500/15 text-green-400 px-1.5 py-0.5 rounded">
                 Min: <AnimatedNumber value={t.min_speed || 0} decimals={1} suffix=" km/h" />
@@ -137,7 +137,7 @@ const SparkInsights = memo(() => {
                 Spark: {formatTime(t.processed_at)}
               </span>
               <span className="text-[9px] bg-slate-900 text-slate-400 px-1.5 py-0.5 rounded">
-                Latence: {getLatencySeconds(t.processed_at, t.window?.end) === null ? "--" : <AnimatedNumber value={getLatencySeconds(t.processed_at, t.window?.end)} decimals={1} suffix="s" />}
+                Latency: {getLatencySeconds(t.processed_at, t.window?.end) === null ? "--" : <AnimatedNumber value={getLatencySeconds(t.processed_at, t.window?.end)} decimals={1} suffix="s" />}
               </span>
             </div>
           ))}
@@ -148,7 +148,7 @@ const SparkInsights = memo(() => {
       {envData.length > 0 && (
         <div className="rounded-4xl p-3">
           <h4 className="font-bold text-slate-400 flex items-center gap-1 mb-2">
-            <Activity className="w-3 h-3" /> Environnement
+            <Activity className="w-3 h-3" /> Environment
           </h4>
           {envData.map((e, i) => (
             <div key={i} className="flex flex-wrap justify-between items-center gap-2 py-1 border-b border-slate-800 last:border-0">
@@ -167,7 +167,7 @@ const SparkInsights = memo(() => {
                 Spark: {formatTime(e.processed_at)}
               </span>
               <span className="text-[9px] bg-slate-900 text-slate-400 px-1.5 py-0.5 rounded">
-                Latence: {getLatencySeconds(e.processed_at, e.window?.end) === null ? "--" : <AnimatedNumber value={getLatencySeconds(e.processed_at, e.window?.end)} decimals={1} suffix="s" />}
+                Latency: {getLatencySeconds(e.processed_at, e.window?.end) === null ? "--" : <AnimatedNumber value={getLatencySeconds(e.processed_at, e.window?.end)} decimals={1} suffix="s" />}
               </span>
             </div>
           ))}
@@ -178,7 +178,7 @@ const SparkInsights = memo(() => {
       {waterData.length > 0 && (
         <div className="rounded-4xl p-3">
           <h4 className="font-bold text-slate-400 flex items-center gap-1 mb-2">
-            <Droplet className="w-3 h-3" /> Eau
+            <Droplet className="w-3 h-3" /> Water
           </h4>
           {waterData.map((w, i) => (
             <div key={i} className="flex flex-wrap justify-between items-center gap-2 py-1 border-b border-slate-800 last:border-0">
@@ -197,7 +197,7 @@ const SparkInsights = memo(() => {
                 Spark: {formatTime(w.processed_at)}
               </span>
               <span className="text-[9px] bg-slate-900 text-slate-400 px-1.5 py-0.5 rounded">
-                Latence: {getLatencySeconds(w.processed_at, w.window?.end) === null ? "--" : <AnimatedNumber value={getLatencySeconds(w.processed_at, w.window?.end)} decimals={1} suffix="s" />}
+                Latency: {getLatencySeconds(w.processed_at, w.window?.end) === null ? "--" : <AnimatedNumber value={getLatencySeconds(w.processed_at, w.window?.end)} decimals={1} suffix="s" />}
               </span>
             </div>
           ))}

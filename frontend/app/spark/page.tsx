@@ -49,18 +49,18 @@ type PeriodFilter = "all" | keyof typeof PERIOD_HOURS;
 type CriticalFilter = "all" | "critical";
 
 const tabs: { key: SparkTab; label: string; icon: typeof Activity }[] = [
-  { key: "environment", label: "Environnement", icon: Factory },
-  { key: "water", label: "Eau", icon: Droplet },
-  { key: "traffic", label: "Trafic", icon: Activity },
-  { key: "alerts", label: "Alertes", icon: Bell },
-  { key: "errors", label: "Erreurs", icon: AlertTriangle },
+  { key: "environment", label: "Environment", icon: Factory },
+  { key: "water", label: "Water", icon: Droplet },
+  { key: "traffic", label: "Traffic", icon: Activity },
+  { key: "alerts", label: "Alerts", icon: Bell },
+  { key: "errors", label: "Errors", icon: AlertTriangle },
 ];
 
 function formatTime(value?: string): string {
   if (!value) return "--";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "--";
-  return date.toLocaleString("fr-FR", {
+  return date.toLocaleString("en-US", {
     day: "2-digit",
     month: "2-digit",
     hour: "2-digit",
@@ -181,7 +181,7 @@ function SparkBarChart({
   unit?: string;
 }) {
   if (data.length === 0) {
-    return <EmptyState message="Aucune donnee disponible pour ce graphique." />;
+    return <EmptyState message="No data available for this chart." />;
   }
 
   return (
@@ -208,7 +208,7 @@ function SparkBarChart({
 
 function SparkLatencyChart({ data }: { data: { time: string; latency: number }[] }) {
   if (data.length === 0) {
-    return <EmptyState message="Aucune latence Spark disponible." />;
+    return <EmptyState message="No Spark latency data available." />;
   }
 
   return (
@@ -233,7 +233,7 @@ function SparkLatencyChart({ data }: { data: { time: string; latency: number }[]
 }
 
 function EnvironmentTable({ data }: { data: SparkEnvironmentData[] }) {
-  if (data.length === 0) return <EmptyState message="Aucune fenetre environnement disponible." />;
+  if (data.length === 0) return <EmptyState message="No environment window data available." />;
 
   return (
     <div className="overflow-x-auto">
@@ -241,12 +241,12 @@ function EnvironmentTable({ data }: { data: SparkEnvironmentData[] }) {
         <thead className="text-[10px] uppercase text-slate-500">
           <tr className="border-b border-slate-800">
             <th className="py-3 font-black">District</th>
-            <th className="py-3 font-black">Temp. moy.</th>
+            <th className="py-3 font-black">Avg. Temp.</th>
             <th className="py-3 font-black">Min / Max</th>
-            <th className="py-3 font-black">AQI max</th>
-            <th className="py-3 font-black">Tendance</th>
-            <th className="py-3 font-black">Traite</th>
-            <th className="py-3 font-black">Latence</th>
+            <th className="py-3 font-black">Max AQI</th>
+            <th className="py-3 font-black">Trend</th>
+            <th className="py-3 font-black">Processed</th>
+            <th className="py-3 font-black">Latency</th>
           </tr>
         </thead>
         <tbody>
@@ -273,7 +273,7 @@ function EnvironmentTable({ data }: { data: SparkEnvironmentData[] }) {
 }
 
 function WaterTable({ data }: { data: SparkWaterData[] }) {
-  if (data.length === 0) return <EmptyState message="Aucune fenetre eau disponible." />;
+  if (data.length === 0) return <EmptyState message="No water window data available." />;
 
   return (
     <div className="overflow-x-auto">
@@ -281,12 +281,12 @@ function WaterTable({ data }: { data: SparkWaterData[] }) {
         <thead className="text-[10px] uppercase text-slate-500">
           <tr className="border-b border-slate-800">
             <th className="py-3 font-black">District</th>
-            <th className="py-3 font-black">Debit moy.</th>
-            <th className="py-3 font-black">Debit total</th>
+            <th className="py-3 font-black">Avg. Flow</th>
+            <th className="py-3 font-black">Total Flow</th>
             <th className="py-3 font-black">pH</th>
             <th className="py-3 font-black">Score</th>
-            <th className="py-3 font-black">Baisse debit</th>
-            <th className="py-3 font-black">Latence</th>
+            <th className="py-3 font-black">Flow Drop</th>
+            <th className="py-3 font-black">Latency</th>
           </tr>
         </thead>
         <tbody>
@@ -299,7 +299,7 @@ function WaterTable({ data }: { data: SparkWaterData[] }) {
                 <td className="py-3 text-slate-400"><AnimatedNumber value={item.total_flow_rate} decimals={1} /></td>
                 <td className="py-3 text-slate-400"><AnimatedNumber value={item.avg_ph} decimals={1} /></td>
                 <td className="py-3 font-bold text-green-500"><AnimatedNumber value={item.water_quality_score} /></td>
-                <td className="py-3 text-slate-400">{item.sudden_flow_drop ? "Oui" : "Non"}</td>
+                <td className="py-3 text-slate-400">{item.sudden_flow_drop ? "Yes" : "No"}</td>
                 <td className="py-3 font-bold text-green-500">{latency === null ? "--" : <AnimatedNumber value={latency} decimals={1} suffix="s" />}</td>
               </tr>
             );
@@ -311,7 +311,7 @@ function WaterTable({ data }: { data: SparkWaterData[] }) {
 }
 
 function TrafficTable({ data }: { data: SparkTrafficData[] }) {
-  if (data.length === 0) return <EmptyState message="Aucune fenetre trafic disponible." />;
+  if (data.length === 0) return <EmptyState message="No traffic window data available." />;
 
   return (
     <div className="overflow-x-auto">
@@ -319,12 +319,12 @@ function TrafficTable({ data }: { data: SparkTrafficData[] }) {
         <thead className="text-[10px] uppercase text-slate-500">
           <tr className="border-b border-slate-800">
             <th className="py-3 font-black">Route</th>
-            <th className="py-3 font-black">Vitesse moy.</th>
-            <th className="py-3 font-black">Vitesse min.</th>
-            <th className="py-3 font-black">Vehicules moy.</th>
+            <th className="py-3 font-black">Avg. Speed</th>
+            <th className="py-3 font-black">Min. Speed</th>
+            <th className="py-3 font-black">Avg. Vehicles</th>
             <th className="py-3 font-black">Congestion</th>
-            <th className="py-3 font-black">Niveau</th>
-            <th className="py-3 font-black">Latence</th>
+            <th className="py-3 font-black">Level</th>
+            <th className="py-3 font-black">Latency</th>
           </tr>
         </thead>
         <tbody>
@@ -349,7 +349,7 @@ function TrafficTable({ data }: { data: SparkTrafficData[] }) {
 }
 
 function AlertsTable({ data }: { data: SparkAlertData[] }) {
-  if (data.length === 0) return <EmptyState message="Aucune alerte Spark disponible." />;
+  if (data.length === 0) return <EmptyState message="No Spark alerts available." />;
 
   return (
     <div className="space-y-2">
@@ -359,7 +359,7 @@ function AlertsTable({ data }: { data: SparkAlertData[] }) {
             <div>
               <p className="font-black text-green-300">{item.type} / {item.alert_type}</p>
               <p className="mt-1 text-sm font-medium text-green-400">
-                {item.district || item.route_id || item.sensor_id || "Source inconnue"} · {formatTime(item.timestamp || item.processed_at)}
+                {item.district || item.route_id || item.sensor_id || "Unknown source"} · {formatTime(item.timestamp || item.processed_at)}
               </p>
             </div>
             <p className="font-black text-green-300">
@@ -373,7 +373,7 @@ function AlertsTable({ data }: { data: SparkAlertData[] }) {
 }
 
 function ErrorsTable({ data }: { data: SparkErrorData[] }) {
-  if (data.length === 0) return <EmptyState message="Aucune erreur JSON Spark disponible." />;
+  if (data.length === 0) return <EmptyState message="No Spark JSON errors available." />;
 
   return (
     <div className="space-y-2">
@@ -565,16 +565,16 @@ export default function SparkDataPage() {
           <Image src="/images/logos/spark.png" alt="Spark" width={120} height={120} className="h-20 w-auto" />
           <div>
             <h2 className="text-3xl font-black leading-tight">
-              Moteur de Calcul Spark
+              Spark Compute Engine
             </h2>
             <p className="text-slate-500 font-medium">
-              Fenetres glissantes, alertes et latence de traitement
+              Sliding windows, alerts and processing latency
             </p>
           </div>
         </div>
         <div className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-bold ${connected ? "border-green-500/30 bg-green-500/10 text-green-400" : "border-green-500/20 bg-slate-950 text-green-400"}`}>
           {connected ? <Wifi className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />}
-          {connected ? "Backend temps reel connecte" : reconnecting ? `Reconnexion ${reconnectAttempt}` : "Backend temps reel hors ligne"}
+          {connected ? "Real-time backend connected" : reconnecting ? `Reconnecting ${reconnectAttempt}` : "Real-time backend offline"}
         </div>
       </header>
 
@@ -585,10 +585,10 @@ export default function SparkDataPage() {
       )}
 
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard icon={Database} label="Fenetres chargees" value={allWindows.length} tone="bg-green-500/10 text-green-500" />
-        <StatCard icon={Gauge} label="Latence moyenne" value={averageLatency} decimals={1} suffix="s" tone="bg-green-500/10 text-green-500" />
-        <StatCard icon={Bell} label="Alertes Spark" value={sparkAlerts.length} tone="bg-green-500/10 text-green-500" />
-        <StatCard icon={AlertTriangle} label="Erreurs JSON" value={sparkErrors.length} tone="bg-green-500/10 text-green-500" />
+        <StatCard icon={Database} label="Loaded windows" value={allWindows.length} tone="bg-green-500/10 text-green-500" />
+        <StatCard icon={Gauge} label="Average latency" value={averageLatency} decimals={1} suffix="s" tone="bg-green-500/10 text-green-500" />
+        <StatCard icon={Bell} label="Spark Alerts" value={sparkAlerts.length} tone="bg-green-500/10 text-green-500" />
+        <StatCard icon={AlertTriangle} label="JSON Errors" value={sparkErrors.length} tone="bg-green-500/10 text-green-500" />
       </div>
 
       <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
@@ -596,25 +596,25 @@ export default function SparkDataPage() {
           <h3 className="mb-3 flex items-center gap-2 text-sm font-black uppercase text-slate-500">
             <Cpu className="h-4 w-4" /> Spark
           </h3>
-          <p className="text-lg font-black">{allWindows.length > 0 ? "Actif" : "En attente"}</p>
-          <p className="mt-1 text-sm font-medium text-slate-500">Dernier traitement : {formatTime(latestProcessedAt)}</p>
+          <p className="text-lg font-black">{allWindows.length > 0 ? "Active" : "Waiting"}</p>
+          <p className="mt-1 text-sm font-medium text-slate-500">Last processing: {formatTime(latestProcessedAt)}</p>
         </div>
         <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5 shadow-lg shadow-black/20">
           <h3 className="mb-3 flex items-center gap-2 text-sm font-black uppercase text-slate-500">
             <Server className="h-4 w-4" /> Backend
           </h3>
-          <p className="text-lg font-black">{connected ? "Connecte" : "Hors ligne"}</p>
+          <p className="text-lg font-black">{connected ? "Connected" : "Offline"}</p>
           <p className="mt-1 text-sm font-medium text-slate-500">
-            {socketError ? `Erreur: ${socketError}` : "Socket.IO et historique API"}
+            {socketError ? `Error: ${socketError}` : "Socket.IO and history API"}
           </p>
         </div>
         <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5 shadow-lg shadow-black/20">
           <h3 className="mb-3 flex items-center gap-2 text-sm font-black uppercase text-slate-500">
             <Wifi className="h-4 w-4" /> Kafka
           </h3>
-          <p className="text-lg font-black">{allWindows.length + sparkAlerts.length + sparkErrors.length > 0 ? "Messages recus" : "Aucun message"}</p>
+          <p className="text-lg font-black">{allWindows.length + sparkAlerts.length + sparkErrors.length > 0 ? "Messages received" : "No messages"}</p>
           <p className="mt-1 text-sm font-medium text-slate-500">
-            {eventCount} evenements, dernier: {lastEvent || "--"}
+            {eventCount} events, last: {lastEvent || "--"}
           </p>
         </div>
       </div>
@@ -630,7 +630,7 @@ export default function SparkDataPage() {
             className="flex w-fit items-center gap-2 rounded-xl border border-slate-800 bg-black px-3 py-3 text-xs font-black text-slate-400 transition-colors hover:bg-green-500/10"
           >
             <RotateCcw className="h-4 w-4" />
-            Reinitialiser
+            Reset
           </button>
         </div>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
@@ -641,7 +641,7 @@ export default function SparkDataPage() {
               onChange={event => setDistrictFilter(event.target.value)}
               className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-4 text-sm font-bold text-slate-300 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
             >
-              <option value="all">Tous les districts</option>
+              <option value="all">All districts</option>
               {districtOptions.map(district => (
                 <option key={district} value={district}>{district}</option>
               ))}
@@ -654,7 +654,7 @@ export default function SparkDataPage() {
               onChange={event => setRouteFilter(event.target.value)}
               className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-4 text-sm font-bold text-slate-300 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
             >
-              <option value="all">Toutes les routes</option>
+              <option value="all">All routes</option>
               {routeOptions.map(route => (
                 <option key={route} value={route}>{route}</option>
               ))}
@@ -667,7 +667,7 @@ export default function SparkDataPage() {
               onChange={event => setAlertTypeFilter(event.target.value)}
               className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-4 text-sm font-bold text-slate-300 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
             >
-              <option value="all">Tous les types</option>
+              <option value="all">All types</option>
               {alertTypeOptions.map(alertType => (
                 <option key={alertType} value={alertType}>{alertType}</option>
               ))}
@@ -692,8 +692,8 @@ export default function SparkDataPage() {
               onChange={event => setCriticalFilter(event.target.value as CriticalFilter)}
               className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-4 text-sm font-bold text-slate-300 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
             >
-              <option value="all">Toutes les donnees</option>
-              <option value="critical">Critiques seulement</option>
+              <option value="all">All data</option>
+              <option value="critical">Critical only</option>
             </select>
           </label>
         </div>
@@ -701,28 +701,28 @@ export default function SparkDataPage() {
 
       <div className="mb-6">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-lg font-black">Graphiques Spark</h3>
+          <h3 className="text-lg font-black">Spark Charts</h3>
           <span className="rounded-full bg-green-500/10 px-3 py-1 text-[10px] font-black uppercase text-green-400 ring-1 ring-green-500/20">
             Recharts
           </span>
         </div>
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <SparkChartCard title="Temperature moyenne par quartier">
+          <SparkChartCard title="Average temperature by district">
             <SparkBarChart data={temperatureChartData} xKey="name" yKey="value" color="#22c55e" unit="°C" />
           </SparkChartCard>
-          <SparkChartCard title="AQI max par quartier">
+          <SparkChartCard title="Max AQI by district">
             <SparkBarChart data={aqiChartData} xKey="name" yKey="value" color="#22c55e" />
           </SparkChartCard>
-          <SparkChartCard title="Congestion max par route">
+          <SparkChartCard title="Max congestion by route">
             <SparkBarChart data={congestionChartData} xKey="name" yKey="value" color="#22c55e" />
           </SparkChartCard>
-          <SparkChartCard title="Debit moyen par quartier">
+          <SparkChartCard title="Average flow by district">
             <SparkBarChart data={flowChartData} xKey="name" yKey="value" color="#22c55e" />
           </SparkChartCard>
-          <SparkChartCard title="Score qualite de l'eau">
+          <SparkChartCard title="Water quality score">
             <SparkBarChart data={waterScoreChartData} xKey="name" yKey="value" color="#22c55e" />
           </SparkChartCard>
-          <SparkChartCard title="Latence Spark dans le temps">
+          <SparkChartCard title="Spark latency over time">
             <SparkLatencyChart data={latencyChartData} />
           </SparkChartCard>
         </div>

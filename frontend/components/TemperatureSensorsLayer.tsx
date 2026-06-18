@@ -92,7 +92,7 @@ function EnvironmentSensorsLayer({
         let color = "#5f7668";
         let valueStr = "—";
         let aqiStatus = "";
-        let timeStr = "Aucune donnée";
+        let timeStr = "No data";
 
         if (reading) {
           if (mode === "temperature") {
@@ -105,7 +105,7 @@ function EnvironmentSensorsLayer({
             aqiStatus = reading.air_quality?.status || "";
           }
           
-          timeStr = "MAJ: " + new Date(reading.timestamp).toLocaleTimeString("fr-FR");
+          timeStr = "Updated: " + new Date(reading.timestamp).toLocaleTimeString("en-US");
         }
 
         // Calculate dynamic size based on zoom (base size 8 at zoom 13)
