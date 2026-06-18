@@ -61,13 +61,13 @@ export default function TemperatureStats({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-4 shadow-2xl shadow-black/20">
+      <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-lg font-bold flex items-center gap-2">
             <TrendingUp className="w-5 h-5" />
             24h Trend
           </h3>
-          <span className="text-[10px] font-bold text-slate-400 bg-slate-900 px-2 py-0.5 rounded-full uppercase">
+          <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full uppercase">
             <AnimatedNumber value={combinedHistory.length} /> Points
           </span>
         </div>
@@ -79,7 +79,7 @@ export default function TemperatureStats({
         />
       </div>
 
-      <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-4 shadow-2xl shadow-black/20">
+      <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-xl font-bold flex items-center gap-2">
             Averages by District
@@ -100,7 +100,7 @@ export default function TemperatureStats({
         )}
 
         {error && (
-          <div className="text-xs text-green-500 bg-green-500/10 rounded-4xl p-2 mb-2 flex items-center gap-2">
+          <div className="text-xs text-amber-600 bg-amber-50 rounded-4xl p-2 mb-2 flex items-center gap-2">
             <AlertTriangle className="w-4 h-4" />
             {error}
           </div>
@@ -108,7 +108,7 @@ export default function TemperatureStats({
 
         {!loading && !error && districts.length > 0 && (
           <>
-            <div className="flex items-center justify-between text-sm text-slate-100 mb-4 px-4">
+            <div className="flex items-center justify-between text-sm text-slate-800 mb-4 px-4">
               <span className="font-medium text-slate-500">
                 <AnimatedNumber value={totalSensors} /> active sensors
               </span>
@@ -128,7 +128,7 @@ export default function TemperatureStats({
                   return (
                     <div
                       key={d.district}
-                      className="flex items-center justify-between py-2 border-b border-slate-800 transition-all"
+                      className="flex items-center justify-between py-2 border-b border-slate-100 transition-all"
                     >
                       <div className="flex flex-col items-start">
                         <span className="text-base font-semibold truncate">

@@ -169,7 +169,7 @@ const RoutesOverlay = memo(function RoutesOverlay({
                     <div
                       style={{
                         fontSize: 11,
-                        color: "#86efac",
+                        color: "#475569",
                         lineHeight: 1.6,
                       }}
                     >
@@ -182,7 +182,7 @@ const RoutesOverlay = memo(function RoutesOverlay({
                     </div>
                   </div>
                 ) : (
-                  <div style={{ marginTop: 4, fontSize: 11, color: "#86efac" }}>
+                  <div style={{ marginTop: 4, fontSize: 11, color: "#64748b" }}>
                     No real-time data
                   </div>
                 )}
@@ -321,7 +321,7 @@ export default function Map() {
 
   return (
     <div
-      className={`flex h-full w-full flex-row-reverse overflow-hidden text-green-50 select-none ${isResizingRight ? "cursor-col-resize" : ""}`}
+      className={`flex h-full w-full flex-row-reverse overflow-hidden text-slate-800 select-none ${isResizingRight ? "cursor-col-resize" : ""}`}
     >
       {/* Menu Modal */}
       {isModalOpen && (
@@ -340,10 +340,10 @@ export default function Map() {
       <div className="flex-1 relative h-full min-w-0">
         <button
           onClick={openModal}
-          className="absolute bottom-4 left-4 z-1001 flex max-w-[calc(100vw-2rem)] cursor-pointer items-center gap-2 rounded-2xl border border-green-500/30 bg-[#06110b]/95 px-3 py-3 shadow-lg backdrop-blur-md sm:bottom-6 sm:left-6 sm:gap-3 sm:px-4"
+          className="absolute bottom-4 left-4 z-1001 flex max-w-[calc(100vw-2rem)] cursor-pointer items-center gap-2 rounded-2xl border border-slate-200 bg-white/95 px-3 py-3 shadow-lg backdrop-blur-md sm:bottom-6 sm:left-6 sm:gap-3 sm:px-4"
         >
-          <Menu className="h-5 w-5 text-green-400" />
-          <span className="truncate pr-1 text-sm font-black text-green-50">
+          <Menu className="h-5 w-5 text-green-600" />
+          <span className="truncate pr-1 text-sm font-black text-slate-700">
             Data type
           </span>
         </button>
@@ -357,7 +357,7 @@ export default function Map() {
           <MapResizer rightWidth={rightWidth} />
           <TileLayer
             attribution="&copy; OpenStreetMap"
-            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
           />
 
           {/* Environmental Layers */}
@@ -516,13 +516,13 @@ export default function Map() {
       {/* Right Resizer */}
       <div
         onMouseDown={startResizingRight}
-        className={`relative z-1100 hidden h-full w-1.5 shrink-0 cursor-col-resize transition-colors hover:bg-green-500/30 xl:block ${isResizingRight ? "bg-green-500" : "bg-green-950/50"}`}
+        className={`relative z-1100 hidden h-full w-1.5 shrink-0 cursor-col-resize transition-colors hover:bg-green-400/30 xl:block ${isResizingRight ? "bg-green-500" : "bg-slate-200"}`}
       />
 
       {/* Right Sidebar */}
       <div
         style={{ width: rightWidth }}
-        className="relative hidden h-full shrink-0 overflow-y-auto border-l border-slate-800 bg-black transition-[width] duration-75 ease-out xl:block"
+        className="relative hidden h-full shrink-0 overflow-y-auto border-l border-slate-200 bg-white transition-[width] duration-75 ease-out xl:block"
       >
         <div className="flex min-w-62.5 flex-col gap-3 p-4">
           {mode === "temperature" ? (
@@ -579,8 +579,8 @@ function Legend({
   items: { color: string; label: string }[];
 }) {
   return (
-    <div className="w-max max-w-[calc(100vw-2rem)] rounded-2xl border border-slate-800 bg-slate-950/95 p-3 shadow-2xl shadow-black/30 backdrop-blur-md">
-      <h3 className="text-[11px] font-bold text-green-100 mb-2 uppercase tracking-tight">
+    <div className="w-max max-w-[calc(100vw-2rem)] rounded-2xl border border-slate-200 bg-white/95 p-3 shadow-lg backdrop-blur-md">
+      <h3 className="text-[11px] font-bold text-slate-700 mb-2 uppercase tracking-tight">
         {title}
       </h3>
       <div className="space-y-1">
@@ -590,7 +590,7 @@ function Legend({
               className="w-3 h-3 rounded-full"
               style={{ backgroundColor: item.color }}
             />
-            <span className="text-[10px] text-green-200/80 font-medium">
+            <span className="text-[10px] text-slate-600 font-medium">
               {item.label}
             </span>
           </div>

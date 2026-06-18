@@ -14,10 +14,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className="h-full">
-      <body className="h-full overflow-hidden bg-black text-white">
+      <body className="h-full overflow-hidden bg-slate-50 text-slate-900">
         <div className="flex h-full flex-col lg:flex-row">
           <Sidebar />
-          <div className="min-w-0 flex-1 flex flex-col overflow-auto h-full bg-black pb-16 text-slate-100 lg:pb-0">
+          <div className="min-w-0 flex-1 flex flex-col overflow-auto h-full bg-slate-50 pb-16 text-slate-800 lg:pb-0">
             {children}
           </div>
         </div>
@@ -25,3 +25,4 @@ export default function RootLayout({
     </html>
   );
 }
+

@@ -33,7 +33,7 @@ function MetricCard({
   colorClass: string;
 }) {
   return (
-    <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 shadow-2xl shadow-black/30">
+    <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <div className={`${colorClass} p-3 rounded-2xl`}>
           <Icon className="w-6 h-6 text-white" />
@@ -56,7 +56,7 @@ function MetricCard({
           {title}
         </p>
         <div className="flex items-baseline gap-1">
-          <h3 className="text-3xl font-black">
+          <h3 className="text-3xl font-black text-slate-800">
             <AnimatedNumber value={value} decimals={decimals} />
           </h3>
           <span className="text-sm font-bold text-slate-400">{unit}</span>
@@ -189,9 +189,9 @@ export default function Overview() {
   const trafficTrend = calculateTrend(totalVehicles, trafficHistory, "total_vehicles");
 
   return (
-    <div className="mx-auto min-h-screen w-full max-w-7xl bg-black p-4 text-slate-100 sm:p-6 lg:p-8">
+    <div className="mx-auto min-h-screen w-full max-w-7xl bg-slate-50 p-4 text-slate-800 sm:p-6 lg:p-8">
       <header className="mb-8">
-        <h2 className="mb-2 text-3xl font-black">
+        <h2 className="mb-2 text-3xl font-black text-slate-800">
           Overview
         </h2>
         <p className="text-sm font-medium text-slate-400">

@@ -60,8 +60,8 @@ export default function AirQualityStats({
 
   return (
     <div className="flex flex-col gap-3 p-4">
-      <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-4 shadow-2xl shadow-black/20 backdrop-blur-sm">
-        <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2 px-2 mb-2">
+      <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+        <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2 px-2 mb-2">
           <TrendingUp className="w-5 h-5 text-emerald-500" />
           Air Quality Analysis
         </h3>
@@ -73,9 +73,9 @@ export default function AirQualityStats({
         />
       </div>
 
-      <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-4 shadow-2xl shadow-black/20 backdrop-blur-sm">
+      <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between mb-2 px-4">
-          <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+          <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
             AQI by District
           </h3>
           <div className="flex items-center gap-1.5">
@@ -103,13 +103,13 @@ export default function AirQualityStats({
                 return (
                   <div
                     key={d.district}
-                    className="flex items-center justify-between rounded-2xl border border-slate-800 bg-black px-4 py-3 transition-all hover:border-green-500/40"
+                    className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 transition-all hover:border-green-400"
                   >
-                    <span className="text-sm font-semibold text-slate-300 truncate">
+                    <span className="text-sm font-semibold text-slate-600 truncate">
                       {d.district}
                     </span>
                     <div className="flex items-center gap-3">
-                      <span className="text-base font-black text-slate-100">
+                      <span className="text-base font-black text-slate-800">
                         <AnimatedNumber value={aqi} />
                       </span>
                       <span

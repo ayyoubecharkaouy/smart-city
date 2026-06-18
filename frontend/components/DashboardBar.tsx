@@ -470,7 +470,7 @@ const DashboardBar = memo(
           {stats.kpis.map((kpi, idx) => (
             <div
               key={idx}
-              className="flex-1/70 backdrop-blur-xl border border-[#173525] rounded-4xl p-4 pointer-events-auto transition-all hover:bg-[#0e2016]"
+              className="flex-1/70 backdrop-blur-xl bg-white/90 border border-slate-200 rounded-4xl p-4 pointer-events-auto transition-all hover:bg-slate-50 shadow-sm"
             >
               <div className="flex items-center gap-2">
                 <div
@@ -487,7 +487,7 @@ const DashboardBar = memo(
                       <Loader className="w-5 h-5 animate-spin text-slate-400" />
                     ) : (
                       <>
-                        <span className="text-2xl font-black text-slate-500 tabular-nums">
+                        <span className="text-2xl font-black text-slate-800 tabular-nums">
                           <AnimatedNumber value={kpi.value} decimals={String(kpi.value).includes(".") ? String(kpi.value).split(".")[1].length : 0} />
                         </span>
                         <span className="text-[10px] font-bold text-slate-500">
@@ -504,7 +504,7 @@ const DashboardBar = memo(
 
         {/* Distribution Statistics Bar */}
         {stats.distribution && (
-          <div className="w-full max-w-max/70 backdrop-blur-xl border border-[#173525] rounded-full px-6 py-3 pointer-events-auto flex items-center gap-2">
+          <div className="w-full max-w-max/70 backdrop-blur-xl bg-white/90 border border-slate-200 rounded-full px-6 py-3 pointer-events-auto flex items-center gap-2 shadow-sm">
             <div className="flex items-center gap-2 text-slate-500">
               <span className="text-sm font-bold uppercase tracking-widest whitespace-nowrap">
                 {stats.title}

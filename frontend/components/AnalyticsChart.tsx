@@ -62,9 +62,9 @@ export default function AnalyticsChart({
 }: AnalyticsChartProps) {
   if (loading) {
     return (
-      <div className="flex h-full w-full flex-col items-center justify-center rounded-3xl border border-dashed border-slate-800 bg-slate-950/50">
+      <div className="flex h-full w-full flex-col items-center justify-center rounded-3xl border border-dashed border-slate-200 bg-slate-50">
         <Loader className="mb-4 h-10 w-10 animate-spin text-green-500" />
-        <p className="font-medium text-slate-400">
+        <p className="font-medium text-slate-500">
           Processing Big Data...
         </p>
       </div>
@@ -73,8 +73,8 @@ export default function AnalyticsChart({
 
   if (!data || data.length === 0) {
     return (
-      <div className="flex h-full w-full items-center justify-center rounded-3xl border border-dashed border-slate-800 bg-slate-950/50">
-        <p className="font-medium text-slate-400">
+      <div className="flex h-full w-full items-center justify-center rounded-3xl border border-dashed border-slate-200 bg-slate-50">
+        <p className="font-medium text-slate-500">
           No data available for this selection.
         </p>
       </div>
@@ -94,8 +94,8 @@ export default function AnalyticsChart({
 
   if (chartData.length === 0) {
     return (
-      <div className="flex h-full w-full items-center justify-center rounded-3xl border border-dashed border-slate-800 bg-slate-950/50">
-        <p className="font-medium text-slate-400">
+      <div className="flex h-full w-full items-center justify-center rounded-3xl border border-dashed border-slate-200 bg-slate-50">
+        <p className="font-medium text-slate-500">
           Data received, but format is unusable for this chart.
         </p>
       </div>
@@ -110,29 +110,30 @@ export default function AnalyticsChart({
             <LineChart data={chartData}>
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="#173525"
+                stroke="#e2e8f0"
                 vertical={false}
               />
               <XAxis
                 dataKey={xAxisKey}
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "#8fa89a", fontSize: 12 }}
+                tick={{ fill: "#94a3b8", fontSize: 12 }}
                 dy={10}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "#8fa89a", fontSize: 12 }}
+                tick={{ fill: "#94a3b8", fontSize: 12 }}
                 unit={unit}
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#06110b",
+                  backgroundColor: "#ffffff",
                   borderRadius: "16px",
-                  border: "none",
-                  color: "#e7f8ed",
+                  border: "1px solid #e2e8f0",
+                  color: "#0f172a",
                   padding: "8px 12px",
+                  boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
                 }}
                 itemStyle={{ color: color, fontWeight: 700 }}
               />
@@ -141,7 +142,7 @@ export default function AnalyticsChart({
                 dataKey={yAxisKey}
                 stroke={color}
                 strokeWidth={4}
-                dot={{ r: 4, fill: color, strokeWidth: 2, stroke: "#06110b" }}
+                dot={{ r: 4, fill: color, strokeWidth: 2, stroke: "#ffffff" }}
                 activeDot={{ r: 6, strokeWidth: 0 }}
                 animationDuration={1500}
               />
@@ -160,7 +161,7 @@ export default function AnalyticsChart({
             >
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="#173525"
+                stroke="#e2e8f0"
                 vertical={false}
               />
 
@@ -168,24 +169,24 @@ export default function AnalyticsChart({
                 dataKey={xAxisKey}
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "#8fa89a", fontSize: 12 }}
+                tick={{ fill: "#94a3b8", fontSize: 12 }}
                 dy={10}
               />
 
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "#8fa89a", fontSize: 12 }}
+                tick={{ fill: "#94a3b8", fontSize: 12 }}
                 unit={unit}
               />
 
               <Tooltip
-                cursor={{ fill: "#0e2016" }}
+                cursor={{ fill: "#f8fafc" }}
                 contentStyle={{
-                  backgroundColor: "#06110b",
+                  backgroundColor: "#ffffff",
                   borderRadius: "16px",
-                  border: "none",
-                  boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.35)",
+                  border: "1px solid #e2e8f0",
+                  boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
                 }}
               />
 
@@ -237,7 +238,7 @@ export default function AnalyticsChart({
                 nameKey={xAxisKey}
                 animationDuration={1200}
                 animationEasing="ease-out"
-                stroke="#06110b"
+                stroke="#ffffff"
                 strokeWidth={3}
               >
                 {chartData.map((_, index) => (
@@ -250,18 +251,18 @@ export default function AnalyticsChart({
 
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#06110b",
-                  border: "1px solid #173525",
+                  backgroundColor: "#ffffff",
+                  border: "1px solid #e2e8f0",
                   borderRadius: "14px",
-                  boxShadow: "0 12px 30px rgba(15, 23, 42, 0.12)",
+                  boxShadow: "0 12px 30px rgba(15, 23, 42, 0.08)",
                   padding: "10px 12px",
                 }}
                 labelStyle={{
-                  color: "#e7f8ed",
+                  color: "#0f172a",
                   fontWeight: 700,
                 }}
                 itemStyle={{
-                  color: "#e7f8ed",
+                  color: "#0f172a",
                   fontWeight: 600,
                 }}
                 formatter={(value, name) => [
@@ -280,7 +281,7 @@ export default function AnalyticsChart({
                   paddingTop: 12,
                   fontSize: 12,
                   fontWeight: 600,
-                  color: "#8fa89a",
+                  color: "#94a3b8",
                 }}
               />
             </PieChart>

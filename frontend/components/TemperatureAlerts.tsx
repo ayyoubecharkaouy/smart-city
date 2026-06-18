@@ -19,9 +19,9 @@ export default function TemperatureAlerts({
   if (recentAlerts.length === 0) return null;
 
   return (
-    <div className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/70 shadow-2xl shadow-black/20">
+    <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
       {/* Header */}
-      <div className="px-2 py-3 border-b border-slate-800 flex items-center justify-between bg-green-500/10">
+      <div className="px-2 py-3 border-b border-slate-200 flex items-center justify-between bg-amber-50">
         <h3 className="text-sm font-bold text-green-400 flex items-center gap-2">
           <AlertTriangle className="w-4 h-4" />
           Temperature Alerts
@@ -34,12 +34,12 @@ export default function TemperatureAlerts({
       </div>
 
       {/* Alerts list */}
-      <div className="max-h-52 divide-y divide-slate-800 overflow-y-auto">
+      <div className="max-h-52 divide-y divide-slate-100 overflow-y-auto">
         {recentAlerts.map((alert) => (
           <div
             key={alert.id}
             className={`px-2 py-2.5 flex items-center justify-between transition-colors ${
-              alert.acknowledged ? "opacity-50 bg-slate-950" : ""
+              alert.acknowledged ? "opacity-50 bg-slate-50" : ""
             }`}
           >
             <div className="flex items-center gap-2 min-w-0">
@@ -69,7 +69,7 @@ export default function TemperatureAlerts({
             {!alert.acknowledged && (
               <button
                 onClick={() => onAcknowledge(alert.id)}
-                className="p-1 rounded hover:bg-slate-900 transition-colors shrink-0 cursor-pointer"
+                className="p-1 rounded hover:bg-slate-100 transition-colors shrink-0 cursor-pointer"
                 title="Acknowledge alert"
               >
                 <Check className="w-3.5 h-3.5 text-slate-500" />

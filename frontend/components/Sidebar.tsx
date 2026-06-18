@@ -28,15 +28,15 @@ const navItems = [
 export default function Sidebar() {
 
   return (
-    <aside className="fixed inset-x-0 bottom-0 z-2000 h-16 shrink-0 border-t border-slate-800 bg-black/95 backdrop-blur-xl lg:static lg:h-screen lg:w-64 lg:border-r lg:border-t-0">
+    <aside className="fixed inset-x-0 bottom-0 z-2000 h-16 shrink-0 border-t border-slate-200 bg-white/95 backdrop-blur-xl lg:static lg:h-screen lg:w-64 lg:border-r lg:border-t-0">
       <div className="flex h-full flex-col items-start lg:p-3">
         <div className="flex items-center gap-2 my-4">
           <Image src="/images/logos/app-logo.png" width={60} height={60} alt="Logo Smart City" />
           <div className="hidden px-3 py-4 lg:block">
-            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#5f7668]">
+            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">
               Smart City
             </p>
-            <h1 className="mt-1 text-lg font-black text-[#e7f8ed]">
+            <h1 className="mt-1 text-lg font-black text-slate-800">
               El Jadida Ops
             </h1>
           </div>
@@ -82,19 +82,19 @@ function SidebarItem({
       title={label}
       className={`flex min-w-16 flex-1 flex-col items-center justify-center gap-1 rounded-2xl px-2 py-2 transition-all duration-200 group lg:min-w-0 lg:flex-row lg:justify-start lg:gap-3 lg:px-4 lg:py-3 ${
         isActive
-          ? "bg-[#22C55E] text-[#031007] shadow-lg shadow-green-950/40"
-          : "text-[#8fa89a] hover:bg-[#0e2016] hover:text-[#e7f8ed]"
+          ? "bg-green-600 text-white shadow-lg shadow-green-600/20"
+          : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"
       }`}
       onClick={() => {
         if (!isActive) setIsclicked(true);
       }}
     >
       {isclicked ? (
-        <Loader className="w-5 h-5 animate-spin text-[#22C55E]" />
+        <Loader className="w-5 h-5 animate-spin text-green-600" />
       ) : (
         <Icon
           className={`w-5 h-5 transition-colors ${
-            isActive ? "text-[#031007]" : "text-[#6f8979] group-hover:text-[#22C55E]"
+            isActive ? "text-white" : "text-slate-400 group-hover:text-green-600"
           }`}
         />
       )}

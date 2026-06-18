@@ -74,11 +74,11 @@ export default function TrafficStats({
       {/* Speed Trend Chart */}
       <div className="p-4">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-lg font-bold text-green-50 flex items-center gap-2">
+          <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-green-500" />
             Avg. Speed 24h
           </h3>
-          <span className="text-[10px] font-bold text-green-300 bg-green-950/80 border border-green-800/60 px-2 py-0.5 rounded-full uppercase">
+          <span className="text-[10px] font-bold text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full uppercase">
             <AnimatedNumber value={speedHistory.length} /> Points
           </span>
         </div>
@@ -93,20 +93,20 @@ export default function TrafficStats({
       {/* Per-route stats */}
       <div className="p-4">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-bold text-green-50 flex items-center gap-2">
+          <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
             Traffic by Route
           </h3>
           <div className="flex items-center gap-1.5">
             {connected ? (
-              <Wifi className="w-4 h-4 text-green-300" />
+              <Wifi className="w-4 h-4 text-green-500" />
             ) : (
-              <WifiOff className="w-4 h-4 text-green-300" />
+              <WifiOff className="w-4 h-4 text-slate-400" />
             )}
           </div>
         </div>
 
         {loading && (
-          <div className="text-center py-6 text-xs text-green-300 animate-pulse">
+          <div className="text-center py-6 text-xs text-slate-400 animate-pulse">
             Traffic analysis in progress…
           </div>
         )}
@@ -115,38 +115,38 @@ export default function TrafficStats({
           <>
             {/* Summary KPIs */}
             <div className="grid grid-cols-3 gap-3 mb-6">
-              <div className="bg-green-950 p-3 rounded-2xl text-center border border-green-800/50">
-                <span className="block text-[10px] uppercase font-bold text-green-300 mb-1">
+              <div className="bg-green-50 p-3 rounded-2xl text-center border border-green-200">
+                <span className="block text-[10px] uppercase font-bold text-green-700 mb-1">
                   Avg. Speed
                 </span>
-                <span className="text-xl font-black text-green-100">
+                <span className="text-xl font-black text-green-800">
                   <AnimatedNumber value={globalAvgSpeed} decimals={1} />
                 </span>
-                <span className="text-[10px] text-green-300 ml-1">km/h</span>
+                <span className="text-[10px] text-green-600 ml-1">km/h</span>
               </div>
-              <div className="bg-green-950 p-3 rounded-2xl text-center border border-green-800/50">
-                <span className="block text-[10px] uppercase font-bold text-green-300 mb-1">
+              <div className="bg-green-50 p-3 rounded-2xl text-center border border-green-200">
+                <span className="block text-[10px] uppercase font-bold text-green-700 mb-1">
                   Vehicles
                 </span>
-                <span className="text-xl font-black text-green-100">
+                <span className="text-xl font-black text-green-800">
                   <AnimatedNumber value={totalVehicles} />
                 </span>
               </div>
               <div
-                className={`p-3 rounded-2xl text-center border ${congestionRoutes > 0 ? "bg-green-950 border-green-800/50" : "bg-green-950/60 border-green-800/50"}`}
+                className={`p-3 rounded-2xl text-center border ${congestionRoutes > 0 ? "bg-amber-50 border-amber-200" : "bg-green-50 border-green-200"}`}
               >
                 <span
-                  className={`block text-[10px] uppercase font-bold mb-1 ${congestionRoutes > 0 ? "text-green-300" : "text-green-300"}`}
+                  className={`block text-[10px] uppercase font-bold mb-1 ${congestionRoutes > 0 ? "text-amber-700" : "text-green-700"}`}
                 >
                   Congestion
                 </span>
                 <span
-                  className={`text-xl font-black ${congestionRoutes > 0 ? "text-green-100" : "text-green-100"}`}
+                  className={`text-xl font-black ${congestionRoutes > 0 ? "text-amber-800" : "text-green-800"}`}
                 >
                   <AnimatedNumber value={congestionRoutes} />
                 </span>
                 <span
-                  className={`text-[10px] ml-1 ${congestionRoutes > 0 ? "text-green-300" : "text-green-300"}`}
+                  className={`text-[10px] ml-1 ${congestionRoutes > 0 ? "text-amber-600" : "text-green-600"}`}
                 >
                   routes
                 </span>
@@ -163,11 +163,11 @@ export default function TrafficStats({
                   return (
                     <div
                       key={r.route_id}
-                      className="flex flex-col gap-2 py-2 border-b border-gray-900"
+                      className="flex flex-col gap-2 py-2 border-b border-slate-100"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-bold uppercase text-green-50">
+                          <span className="text-sm font-bold uppercase text-slate-700">
                             {r.route_id}
                           </span>
                         </div>
@@ -181,7 +181,7 @@ export default function TrafficStats({
                           {statusLabel}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between text-xs text-green-200/80">
+                      <div className="flex items-center justify-between text-xs text-slate-500">
                         <div className="flex items-center gap-3">
                           <span className="flex items-center gap-1">
                             <Gauge className="w-3 h-3" />
@@ -192,15 +192,15 @@ export default function TrafficStats({
                             <AnimatedNumber value={r.total_vehicles} /> veh
                           </span>
                         </div>
-                        <div className="flex items-center gap-1.5 px-2 py-0.5 bg-green-950/60 rounded-full border border-green-800/50">
-                          <Activity className="w-3 h-3 text-green-300" />
-                          <span className="text-[10px] font-bold text-green-100 uppercase">
+                        <div className="flex items-center gap-1.5 px-2 py-0.5 bg-slate-100 rounded-full border border-slate-200">
+                          <Activity className="w-3 h-3 text-slate-400" />
+                          <span className="text-[10px] font-bold text-slate-600 uppercase">
                             <AnimatedNumber value={r.sensor_count} /> sensors
                           </span>
                         </div>
                       </div>
                       {/* Occupancy bar */}
-                      <div className="w-full h-1.5 bg-green-950/70 rounded-full overflow-hidden border border-green-900/50">
+                      <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
                         <div
                           className="h-full rounded-full transition-all duration-700"
                           style={{
@@ -217,7 +217,7 @@ export default function TrafficStats({
         )}
 
         {!loading && routes.length === 0 && (
-          <div className="text-center py-6 text-xs text-green-300">
+          <div className="text-center py-6 text-xs text-slate-400">
             No traffic data available
           </div>
         )}
