@@ -1,12 +1,12 @@
-# Smart City | Backend Node.js
+# Smart City | Node.js Backend
 
-Ce dossier contient le backend Node.js du projet **Smart City**.
+This folder contains the Node.js backend for the **Smart City** project.
 
-## Prérequis
+## Prerequisites
 
-Avant de commencer, assurez-vous que **Node.js** et **npm** sont bien installés sur votre machine.
+Before starting, make sure that **Node.js** and **npm** are installed on your machine.
 
-Vous pouvez vérifier l'installation avec les commandes suivantes :
+You can verify the installation with the following commands:
 
 ```bash
 node -v
@@ -15,26 +15,26 @@ npm -v
 
 ## Installation
 
-Installez les dépendances du projet avec la commande suivante :
+Install the project dependencies with the following command:
 
 ```bash
 npm install
 ```
 
-## Démarrage du serveur
+## Starting the server
 
-Pour lancer le serveur backend, utilisez :
+To launch the backend server, use:
 
 ```bash
 node server.js
 ```
 
-## Accès au serveur
+## Accessing the server
 
-Par défaut, le serveur peut être accessible sur :
+By default, the server can be accessed at:
 
 ```text
 http://localhost:4000
 ```
 
-Vérifiez le port utilisé dans le fichier de configuration ou dans le fichier principal du serveur.
+Check the port used in the configuration file or in the main server file.
