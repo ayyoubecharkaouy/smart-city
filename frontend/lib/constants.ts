@@ -62,16 +62,16 @@ export const SPARK_THRESHOLDS = {
 } as const;
 
 export const SPARK_ALERT_LABELS: Record<string, string> = {
-  high_air_quality: "Pollution elevee",
-  high_congestion: "Congestion elevee",
-  abnormal_ph: "pH anormal",
-  high_turbidity: "Turbidite elevee",
+  high_air_quality: "High pollution",
+  high_congestion: "High congestion",
+  abnormal_ph: "Abnormal pH",
+  high_turbidity: "High turbidity",
 };
 
 export const SPARK_DOMAIN_LABELS: Record<string, string> = {
   environment: "Pollution",
   traffic: "Congestion",
-  water: "Eau",
+  water: "Water",
 };
 
 export const TRAFFIC_LEVEL_COLORS = {
@@ -82,10 +82,10 @@ export const TRAFFIC_LEVEL_COLORS = {
 } as const;
 
 export const TRAFFIC_LEVEL_LABELS = {
-  low: "Fluide",
-  medium: "Modéré",
+  low: "Smooth",
+  medium: "Moderate",
   high: "Dense",
-  critical: "Critique",
+  critical: "Critical",
 } as const;
 
 export const SPARK_CHART_COLORS = {
@@ -105,39 +105,39 @@ export const PERIOD_HOURS = {
 } as const;
 
 export const PERIOD_OPTIONS = [
-  { value: "all", label: "Toute la periode" },
-  { value: "1h", label: "Derniere heure" },
-  { value: "6h", label: "6 dernieres heures" },
-  { value: "24h", label: "24 dernieres heures" },
-  { value: "7d", label: "7 derniers jours" },
+  { value: "all", label: "All time" },
+  { value: "1h", label: "Last hour" },
+  { value: "6h", label: "Last 6 hours" },
+  { value: "24h", label: "Last 24 hours" },
+  { value: "7d", label: "Last 7 days" },
 ] as const;
 
 export const ANALYTICS_DEFAULT_PERIOD = "24h";
 
 export const ANALYTICS_METRICS = {
   temperature: {
-    label: "Température",
-    chartLabel: "Température",
+    label: "Temperature",
+    chartLabel: "Temperature",
     color: SPARK_CHART_COLORS.temperature,
     accentClass: "bg-green-500",
     unit: "°C",
   },
   aqi: {
-    label: "Qualité Air",
-    chartLabel: "Qualité Air (AQI)",
+    label: "Air Quality",
+    chartLabel: "Air Quality (AQI)",
     color: SPARK_CHART_COLORS.aqi,
     accentClass: "bg-emerald-500",
     unit: "",
   },
   water: {
-    label: "Eau Potable",
-    chartLabel: "Débit d'Eau",
+    label: "Drinking Water",
+    chartLabel: "Water Flow",
     color: SPARK_CHART_COLORS.flow,
     accentClass: "bg-green-500",
     unit: "L/min",
   },
   traffic: {
-    label: "Trafic Routier",
+    label: "Road Traffic",
     chartLabel: "Congestion",
     color: SPARK_CHART_COLORS.congestion,
     accentClass: "bg-green-500",

@@ -1,19 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  color-scheme: dark;
-  --city-bg: #000000;
-  --city-panel: #020617;
-  --city-panel-2: #0f172a;
-  --city-border: #1e293b;
-  --city-text: #f1f5f9;
-  --city-muted: #94a3b8;
-  --city-primary: #22c55e;
+  color-scheme: light;
+  --city-bg: #f8fafc;
+  --city-panel: #ffffff;
+  --city-panel-2: #f1f5f9;
+  --city-border: #e2e8f0;
+  --city-text: #0f172a;
+  --city-muted: #64748b;
+  --city-primary: #16a34a;
 }
 
 * {
   box-sizing: border-box;
-  scrollbar-color: #7dce32 transparent;
+  scrollbar-color: #16a34a transparent;
   scrollbar-width: auto;
 }
 
@@ -27,14 +27,14 @@
 }
 
 *::-webkit-scrollbar-thumb {
-  background: #7dce32;
+  background: #16a34a;
   border: 2px solid transparent;
   border-radius: 999px;
   background-clip: content-box;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: #7dce32;
+  background: #15803d;
   background-clip: content-box;
 }
 
@@ -69,13 +69,13 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
-/* ── Leaflet popup/tooltip overrides (can't use Tailwind in Leaflet DOM) ── */
+/* ── Leaflet popup/tooltip overrides (light theme) ── */
 
 .smart-popup .leaflet-popup-content-wrapper {
   background: var(--city-panel) !important;
   border: 1px solid var(--city-border) !important;
   border-radius: 16px !important;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08) !important;
   color: var(--city-text) !important;
   padding: 0 !important;
 }
@@ -108,17 +108,17 @@ a:focus-visible {
   color: var(--city-text) !important;
   font-size: 12px !important;
   padding: 6px 10px !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
 }
 
 .smart-tooltip::before {
   border-top-color: var(--city-panel) !important;
 }
 
-/* ── Leaflet controls override for dark theme ── */
+/* ── Leaflet controls override for light theme ── */
 
 .leaflet-control-attribution {
-  background: rgba(3, 10, 7, 0.86) !important;
+  background: rgba(255, 255, 255, 0.92) !important;
   color: var(--city-muted) !important;
   font-size: 10px !important;
 }

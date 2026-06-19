@@ -1,57 +1,57 @@
 # Smart City | Node-RED
 
-## Installation de Node-RED
+## Node-RED Installation
 
-Avant de commencer, assurez-vous que **Node.js** est bien installé sur votre machine.
+Before starting, make sure that **Node.js** is installed on your machine.
 
-Vous pouvez vérifier l'installation avec les commandes suivantes :
+You can verify the installation with the following commands:
 
 ```bash
 node -v
 npm -v
 ```
 
-Ensuite, installez Node-RED avec la commande suivante :
+Next, install Node-RED with the following command:
 
 ```bash
 npm install -g node-red
 ```
 
-## Démarrage de Node-RED
+## Starting Node-RED
 
-Pour démarrer Node-RED, lancez :
+To start Node-RED, run:
 
 ```bash
 node-red
 ```
 
-Node-RED va afficher une URL comme celle-ci :
+Node-RED will display a URL like this:
 
 ```text
 http://127.0.0.1:1880/
 ```
 
-Copiez cette URL dans le navigateur de la même machine pour accéder à l'interface Node-RED.
+Copy this URL into the browser of the same machine to access the Node-RED interface.
 
-## Connexion de Node-RED avec Kafka
+## Connecting Node-RED with Kafka
 
-Pour connecter Node-RED avec Kafka, il faut installer le module KafkaJS.
+To connect Node-RED with Kafka, you need to install the KafkaJS module.
 
-Dans l'interface Node-RED, ouvrez :
+In the Node-RED interface, open:
 
 ```text
 Menu ☰ → Manage palette → Install
 ```
 
-Recherchez le module suivant :
+Search for the following module:
 
 ```text
 node-red-contrib-kafkajs
 ```
 
-Puis cliquez sur **Install**.
+Then click on **Install**.
 
-Après l'installation, vous trouverez les nœuds suivants dans la palette Node-RED :
+After installation, you will find the following nodes in the Node-RED palette:
 
 ```text
 kafkajs-producer
@@ -59,18 +59,19 @@ kafkajs-consumer
 kafkajs-client
 ```
 
-Le nœud `kafkajs-client` permet de configurer la connexion avec le broker Kafka.
+The `kafkajs-client` node allows you to configure the connection with the Kafka broker.
 
-## Exemple de broker Kafka
+## Kafka Broker Example
 
-Si Kafka est installé sur la même machine, vous pouvez utiliser :
+If Kafka is installed on the same machine, you can use:
 
 ```text
 localhost:9092
 ```
 
-**POUR PLUS DE DETAILS CONSULTER LE DOSSIER `images/` QUI CONTIENT DES SCREENSSHOTS**
-Si Node-RED est lancé avec Docker, utilisez le nom du service Kafka, par exemple :
+**FOR MORE DETAILS, CHECK THE `images/` FOLDER WHICH CONTAINS SCREENSHOTS**
+
+If Node-RED is launched with Docker, use the Kafka service name, for example:
 
 ```text
 kafka:9092

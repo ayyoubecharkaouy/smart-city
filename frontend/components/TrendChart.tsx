@@ -32,13 +32,13 @@ export default function TrendChart({
   // Use a simpler ID for the gradient
   const gradientId =
     "colorGradient-" +
-    (label === "Température"
+    (label === "Temperature"
       ? "temp"
       : label === "AQI"
         ? "aqi"
-        : label === "Débit"
+        : label === "Flow"
           ? "flow"
-          : "vitesse");
+          : "speed");
 
   return (
     <div className="w-full h-55 mt-4 relative">
@@ -56,25 +56,25 @@ export default function TrendChart({
           <CartesianGrid
             strokeDasharray="3 3"
             vertical={false}
-            stroke="#173525"
+            stroke="#e2e8f0"
           />
           <XAxis
             dataKey="time"
             axisLine={false}
             tickLine={false}
-            tick={{ fontSize: 10, fill: "#8fa89a" }}
+            tick={{ fontSize: 10, fill: "#94a3b8" }}
           />
           <YAxis
             axisLine={false}
             tickLine={false}
-            tick={{ fontSize: 10, fill: "#8fa89a" }}
+            tick={{ fontSize: 10, fill: "#94a3b8" }}
             domain={["auto", "auto"]}
           />
           <Tooltip
             contentStyle={{
               borderRadius: "12px",
-              backgroundColor: "#06110b",
-              border: "1px solid #173525",
+              backgroundColor: "#ffffff",
+              border: "1px solid #e2e8f0",
             }}
             formatter={(val: unknown) => {
               const numVal = Number(val);

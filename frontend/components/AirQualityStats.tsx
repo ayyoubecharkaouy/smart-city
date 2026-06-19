@@ -15,11 +15,11 @@ interface AirQualityStatsProps {
 }
 
 const getAqiLabel = (aqi: number) => {
-  if (aqi <= 50) return { label: "Bon", color: "#22c55e" };
-  if (aqi <= 100) return { label: "Moyen", color: "#4ade80" };
-  if (aqi <= 150) return { label: "Sensible", color: "#16a34a" };
-  if (aqi <= 200) return { label: "Mauvais", color: "#15803d" };
-  return { label: "Critique", color: "#14532d" };
+  if (aqi <= 50) return { label: "Good", color: "#22c55e" };
+  if (aqi <= 100) return { label: "Moderate", color: "#4ade80" };
+  if (aqi <= 150) return { label: "Sensitive", color: "#16a34a" };
+  if (aqi <= 200) return { label: "Poor", color: "#15803d" };
+  return { label: "Critical", color: "#14532d" };
 };
 
 export default function AirQualityStats({
@@ -60,10 +60,10 @@ export default function AirQualityStats({
 
   return (
     <div className="flex flex-col gap-3 p-4">
-      <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-4 shadow-2xl shadow-black/20 backdrop-blur-sm">
-        <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2 px-2 mb-2">
+      <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+        <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2 px-2 mb-2">
           <TrendingUp className="w-5 h-5 text-emerald-500" />
-          Analyse Qualité Air
+          Air Quality Analysis
         </h3>
         <TrendChart
           data={combinedHistory}
@@ -73,10 +73,10 @@ export default function AirQualityStats({
         />
       </div>
 
-      <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-4 shadow-2xl shadow-black/20 backdrop-blur-sm">
+      <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between mb-2 px-4">
-          <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-            Indices par Quartier
+          <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+            AQI by District
           </h3>
           <div className="flex items-center gap-1.5">
             {connected ? (
@@ -89,7 +89,7 @@ export default function AirQualityStats({
 
         {loading && (
           <div className="text-xs text-slate-500 text-center py-4">
-            Analyse de l&apos;air en cours...
+            Air analysis in progress...
           </div>
         )}
 
@@ -103,13 +103,13 @@ export default function AirQualityStats({
                 return (
                   <div
                     key={d.district}
-                    className="flex items-center justify-between rounded-2xl border border-slate-800 bg-black px-4 py-3 transition-all hover:border-green-500/40"
+                    className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 transition-all hover:border-green-400"
                   >
-                    <span className="text-sm font-semibold text-slate-300 truncate">
+                    <span className="text-sm font-semibold text-slate-600 truncate">
                       {d.district}
                     </span>
                     <div className="flex items-center gap-3">
-                      <span className="text-base font-black text-slate-100">
+                      <span className="text-base font-black text-slate-800">
                         <AnimatedNumber value={aqi} />
                       </span>
                       <span

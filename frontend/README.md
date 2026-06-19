@@ -1,12 +1,12 @@
 # Smart City | Next.js
 
-Ce projet est une application [Next.js](https://nextjs.org) créée avec [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This project is a [Next.js](https://nextjs.org) application created with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Prérequis
+## Prerequisites
 
-Avant de commencer, assurez-vous que **Node.js** et **npm** sont bien installés sur votre machine.
+Before starting, make sure that **Node.js** and **npm** are installed on your machine.
 
-Vous pouvez vérifier l’installation avec les commandes suivantes :
+You can verify the installation with the following commands:
 
 ```bash
 node -v
@@ -15,28 +15,28 @@ npm -v
 
 ## Installation
 
-Installez les dépendances du projet avec la commande suivante :
+Install the project dependencies with the following command:
 
 ```bash
 npm install
 ```
 
-## Démarrage du serveur de développement
+## Starting the development server
 
-Lancez le serveur de développement avec :
+Launch the development server with:
 
 ```bash
 npm run dev
 ```
 
-## Accès à l’application
+## Accessing the application
 
-Après le démarrage du serveur, ouvrez le lien suivant dans votre navigateur :
+After the server starts, open the following link in your browser:
 
 ```text
 http://localhost:3000
 ```
 
-Vous pouvez aussi accéder directement à l’application via :
+You can also directly access the application via:
 
 [http://localhost:3000](http://localhost:3000)

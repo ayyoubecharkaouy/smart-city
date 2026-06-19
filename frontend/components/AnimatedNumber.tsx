@@ -57,7 +57,7 @@ function AnimatedNumber({
     <NumberFlow
       className={className}
       value={safeValue}
-      locales="fr-FR"
+      locales="en-US"
       prefix={prefix}
       suffix={suffix}
       format={format}

@@ -52,23 +52,23 @@ export default function WaterStats({
 
   return (
     <div className="flex flex-col gap-3 p-4">
-      <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-4 shadow-2xl shadow-black/20 backdrop-blur-sm">
-        <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2 mb-2 px-2">
+      <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+        <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2 mb-2 px-2">
           <TrendingUp className="w-5 h-5 text-green-500" />
-          Analyse Débit Eau
+          Water Flow Analysis
         </h3>
         <TrendChart
           data={combinedHistory}
           color="#22c55e"
-          label="Débit"
+          label="Flow"
           unit=" L/m"
         />
       </div>
 
-      <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-4 shadow-2xl shadow-black/20 backdrop-blur-sm">
+      <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between mb-4 px-4">
-          <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-            Gestion par Quartier
+          <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+            Management by District
           </h3>
           <div className="flex items-center gap-1.5">
             {connected ? (
@@ -92,7 +92,7 @@ export default function WaterStats({
               </div>
               <div className="bg-green-500/10 p-3 rounded-4xl text-center border border-green-500/20">
                 <span className="block text-[10px] uppercase font-bold text-green-500 mb-1">
-                  Débit Moyen
+                  Avg. Flow
                 </span>
                 <span className="text-xl font-black text-green-400">
                   <AnimatedNumber value={avgFlow} decimals={1} />
@@ -108,13 +108,13 @@ export default function WaterStats({
                   return (
                     <div
                       key={d.district}
-                      className="flex items-center justify-between gap-2 rounded-2xl border border-slate-800 bg-black p-3 px-5 transition-all hover:border-green-500/40"
+                      className="flex items-center justify-between gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-3 px-5 transition-all hover:border-green-400"
                     >
                       <div className="flex flex-col items-start">
-                        <span className="text-sm font-bold text-slate-300">
+                        <span className="text-sm font-bold text-slate-600">
                           {d.district}
                         </span>
-                        <div className="flex items-center gap-1.5 px-2 py-0.5 bg-slate-950 rounded-full border border-slate-800">
+                        <div className="flex items-center gap-1.5 px-2 py-0.5 bg-slate-100 rounded-full border border-slate-200">
                           <Activity className="w-3 h-3 text-slate-400" />
                           <span className="text-[10px] font-bold text-slate-500 uppercase">
                             <AnimatedNumber value={d.sensor_count} /> Sensors
@@ -146,7 +146,7 @@ export default function WaterStats({
 
         {loading && (
           <div className="text-center py-6 text-xs text-slate-400 animate-pulse">
-            Analyse des flux d&apos;eau...
+            Analyzing water flows...
           </div>
         )}
       </div>

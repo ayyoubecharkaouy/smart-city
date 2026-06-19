@@ -25,39 +25,39 @@ const serviceSettings = [
   {
     icon: Radio,
     title: "Socket.IO",
-    status: "Temps réel",
+    status: "Real-time",
     detail: "environment, water, traffic, spark",
   },
   {
     icon: Database,
     title: "Kafka / Spark",
     status: "Streaming",
-    detail: "smartcity.spark.alerts et agrégations",
+    detail: "smartcity.spark.alerts and aggregations",
   },
 ];
 
 const thresholdSettings = [
   {
     icon: Thermometer,
-    label: "Température critique",
+    label: "Critical temperature",
     value: SPARK_THRESHOLDS.criticalTemperature,
     unit: "°C",
   },
   {
     icon: Gauge,
-    label: "AQI critique",
+    label: "Critical AQI",
     value: SPARK_THRESHOLDS.criticalAqi,
     unit: "AQI",
   },
   {
     icon: Droplets,
-    label: "Débit minimum",
+    label: "Minimum flow rate",
     value: SPARK_THRESHOLDS.criticalLowFlow,
     unit: "L/min",
   },
   {
     icon: Gauge,
-    label: "Congestion critique",
+    label: "Critical congestion",
     value: SPARK_THRESHOLDS.criticalCongestion,
     unit: "ratio",
   },
@@ -65,17 +65,17 @@ const thresholdSettings = [
 
 export default function SettingsPage() {
   return (
-    <main className="mx-auto min-h-screen w-full max-w-7xl bg-black p-4 text-slate-100 sm:p-6 lg:p-8">
+    <main className="mx-auto min-h-screen w-full max-w-7xl bg-slate-50 p-4 text-slate-800 sm:p-6 lg:p-8">
       <header className="mb-8 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h2 className="text-3xl font-black text-slate-100">Réglages</h2>
+          <h2 className="text-3xl font-black text-slate-800">Settings</h2>
           <p className="mt-2 max-w-2xl text-sm font-medium text-slate-500">
-            Configuration opérationnelle des services, seuils Spark et préférences d&apos;alerte.
+            Operational configuration of services, Spark thresholds and alert preferences.
           </p>
         </div>
-        <button className="flex w-fit items-center gap-2 rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm font-black text-slate-400">
+        <button className="flex w-fit items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-500 shadow-sm">
           <Save className="h-4 w-4" />
-          Lecture seule
+          Read only
         </button>
       </header>
 
@@ -83,16 +83,16 @@ export default function SettingsPage() {
         {serviceSettings.map((item) => {
           const Icon = item.icon;
           return (
-            <div key={item.title} className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5 shadow-2xl shadow-black/20">
+            <div key={item.title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div className="mb-4 flex items-center justify-between gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-500/10 text-green-500">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-100 text-green-600">
                   <Icon className="h-5 w-5" />
                 </div>
-                <span className="rounded-full bg-green-500/10 px-3 py-1 text-[10px] font-black uppercase text-green-400">
+                <span className="rounded-full bg-green-100 px-3 py-1 text-[10px] font-black uppercase text-green-700">
                   {item.status}
                 </span>
               </div>
-              <h3 className="text-lg font-black text-slate-100">{item.title}</h3>
+              <h3 className="text-lg font-black text-slate-800">{item.title}</h3>
               <p className="mt-2 break-words text-sm font-medium text-slate-500">
                 {item.detail}
               </p>
@@ -102,25 +102,25 @@ export default function SettingsPage() {
       </section>
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-        <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 shadow-2xl shadow-black/20">
+        <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="mb-5 flex items-center gap-2">
             <SlidersHorizontal className="h-5 w-5 text-slate-500" />
-            <h3 className="text-lg font-black text-slate-100">Seuils Spark</h3>
+            <h3 className="text-lg font-black text-slate-800">Spark Thresholds</h3>
           </div>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {thresholdSettings.map((item) => {
               const Icon = item.icon;
               return (
-                <label key={item.label} className="rounded-2xl border border-slate-800 bg-black p-4">
-                  <span className="mb-3 flex items-center gap-2 text-sm font-black text-slate-100">
-                    <Icon className="h-4 w-4 text-green-500" />
+                <label key={item.label} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <span className="mb-3 flex items-center gap-2 text-sm font-black text-slate-800">
+                    <Icon className="h-4 w-4 text-green-600" />
                     {item.label}
                   </span>
                   <div className="flex items-center gap-2">
                     <input
                       readOnly
                       value={item.value}
-                      className="h-11 min-w-0 flex-1 rounded-xl border border-slate-800 bg-slate-950 px-3 text-sm font-bold text-slate-200"
+                      className="h-11 min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-800 shadow-sm"
                     />
                     <span className="w-16 text-sm font-bold text-slate-500">{item.unit}</span>
                   </div>
@@ -131,45 +131,45 @@ export default function SettingsPage() {
         </section>
 
         <section className="space-y-4">
-          <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 shadow-2xl shadow-black/20">
-            <h3 className="mb-4 flex items-center gap-2 text-lg font-black text-slate-100">
-              <Bell className="h-5 w-5 text-green-500" />
-              Alertes
+          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+            <h3 className="mb-4 flex items-center gap-2 text-lg font-black text-slate-800">
+              <Bell className="h-5 w-5 text-green-600" />
+              Alerts
             </h3>
             <div className="space-y-3">
               {[
-                "Afficher les alertes critiques",
-                "Conserver les alertes acquittées",
-                "Signaler les données obsolètes",
+                "Show critical alerts",
+                "Keep acknowledged alerts",
+                "Flag stale data",
               ].map((label) => (
                 <label
                   key={label}
-                  className="flex items-center justify-between gap-4 rounded-2xl border border-slate-800 bg-black px-4 py-3"
+                  className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
                 >
-                  <span className="text-sm font-bold text-slate-300">{label}</span>
-                  <input type="checkbox" defaultChecked className="h-5 w-5 rounded border-slate-700" />
+                  <span className="text-sm font-bold text-slate-700">{label}</span>
+                  <input type="checkbox" defaultChecked className="h-5 w-5 rounded border-slate-300" />
                 </label>
               ))}
             </div>
           </div>
 
-          <div className="rounded-3xl border border-green-500/20 bg-green-500/10 p-5">
-            <h3 className="mb-2 flex items-center gap-2 text-sm font-black uppercase text-green-400">
+          <div className="rounded-3xl border border-green-200 bg-green-50 p-5 shadow-sm">
+            <h3 className="mb-2 flex items-center gap-2 text-sm font-black uppercase text-green-700">
               <AlertTriangle className="h-4 w-4" />
-              Variables d&apos;environnement
+              Environment variables
             </h3>
-            <p className="text-sm font-medium leading-relaxed text-green-400">
-              Les valeurs sensibles restent hors du client. Modifiez Kafka, MongoDB et Spark via les fichiers d&apos;environnement locaux.
+            <p className="text-sm font-medium leading-relaxed text-green-700">
+              Sensitive values stay out of the client. Edit Kafka, MongoDB and Spark via local environment files.
             </p>
           </div>
 
-          <div className="rounded-3xl border border-green-500/20 bg-green-500/10 p-5">
-            <h3 className="mb-2 flex items-center gap-2 text-sm font-black uppercase text-green-400">
+          <div className="rounded-3xl border border-green-200 bg-green-50 p-5 shadow-sm">
+            <h3 className="mb-2 flex items-center gap-2 text-sm font-black uppercase text-green-700">
               <CheckCircle2 className="h-4 w-4" />
-              État attendu
+              Expected state
             </h3>
-            <p className="text-sm font-medium leading-relaxed text-green-400">
-              Kafka, Node-RED, backend, frontend puis Spark doivent être lancés dans cet ordre.
+            <p className="text-sm font-medium leading-relaxed text-green-700">
+              Kafka, Node-RED, backend, frontend then Spark must be started in this order.
             </p>
           </div>
         </section>

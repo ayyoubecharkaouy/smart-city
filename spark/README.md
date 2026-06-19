@@ -1,34 +1,34 @@
 # Smart City | Spark Streaming
 
-Ce dossier contient les traitements Spark Structured Streaming du projet Smart City.
+This folder contains the Spark Structured Streaming processing jobs for the Smart City project.
 
-## Prerequis
+## Prerequisites
 
-- Java compatible avec votre version de Spark
-- Apache Spark installe et disponible via `spark-submit`
-- Python avec PySpark
-- Kafka demarre avant Spark
-- Topics Kafka crees avec le script du projet
+- Java compatible with your Spark version
+- Apache Spark installed and available via `spark-submit`
+- Python with PySpark
+- Kafka started before Spark
+- Kafka topics created with the project script
 
-Installation Python :
+Python Installation:
 
 ```bash
 cd spark
 pip install -r requirements.txt
 ```
 
-Creation des topics Kafka :
+Kafka Topics Creation:
 
 ```bash
 cd ../backend/kafka
 ./create-topics.sh
 ```
 
-## Lancement
+## Startup
 
-### Linux et macOS
+### Linux and macOS
 
-Depuis le dossier `spark` :
+From the `spark` folder:
 
 ```bash
 ./run_spark.sh
@@ -36,7 +36,7 @@ Depuis le dossier `spark` :
 
 ### Windows PowerShell
 
-Installez Java 17 et Python, puis depuis le dossier `spark` :
+Install Java 17 and Python, then from the `spark` folder:
 
 ```powershell
 py -m pip install -r requirements.txt
@@ -44,58 +44,58 @@ Set-ExecutionPolicy -Scope Process Bypass
 .\run_spark.ps1
 ```
 
-Le changement de politique s'applique uniquement au terminal PowerShell courant.
+The execution policy change applies only to the current PowerShell terminal.
 
 ### Windows CMD
 
-Depuis le dossier `spark` :
+From the `spark` folder:
 
 ```bat
 py -m pip install -r requirements.txt
 run_spark.cmd
 ```
 
-Le script `run_spark.ps1` cherche automatiquement `spark-submit.cmd` dans le
-dossier `Scripts` de Python, même si ce dossier n'est pas dans le `PATH`.
+The `run_spark.ps1` script automatically looks for `spark-submit.cmd` in the
+Python `Scripts` folder, even if this folder is not in the `PATH`.
 
-Si Spark reste introuvable, vérifiez que PySpark est installé avec le même
-interpréteur Python :
+If Spark is still not found, verify that PySpark is installed with the same
+Python interpreter:
 
 ```powershell
 py -3 -m pip install -r requirements.txt
 py -3 -m pip show pyspark
 ```
 
-Pour localiser manuellement `spark-submit.cmd` :
+To locate `spark-submit.cmd` manually:
 
 ```powershell
 $scripts = py -3 -c "import sysconfig; print(sysconfig.get_path('scripts'))"
 Get-ChildItem $scripts -Filter "spark-submit*"
 ```
 
-Vérifiez aussi Java avec `java -version`.
+Also, verify Java with `java -version`.
 
-Kafka doit être lancé sur `localhost:9092` avant Spark :
+Kafka must be running on `localhost:9092` before Spark:
 
 ```powershell
 docker compose -f ..\docker-compose.yml up -d zookeeper kafka kafka-init
 ```
 
-### Windows avec Docker
+### Windows with Docker
 
-Cette méthode évite d'installer Java et Spark directement sur Windows. Depuis la
-racine `platform/smart-city` :
+This method avoids installing Java and Spark directly on Windows. From the
+`platform/smart-city` root directory:
 
 ```powershell
 docker compose up -d zookeeper kafka kafka-init spark
 docker compose logs -f spark
 ```
 
-Utilisez `Ctrl+C` pour quitter l'affichage des logs sans arrêter Spark.
+Use `Ctrl+C` to exit the log view without stopping Spark.
 
-### Commande equivalente
+### Equivalent Command
 
-Sous Linux/macOS :
+On Linux/macOS:
 
 ```bash
 spark-submit \
@@ -103,15 +103,15 @@ spark-submit \
   main.py
 ```
 
-Sous Windows PowerShell :
+On Windows PowerShell:
 
 ```powershell
 spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1 main.py
 ```
 
-## Topics Kafka
+## Kafka Topics
 
-Topics lus par Spark :
+Topics read by Spark:
 
 ```text
 smartcity.environment.readings
@@ -119,7 +119,7 @@ smartcity.water.readings
 smartcity.traffic.readings
 ```
 
-Topics produits par Spark :
+Topics produced by Spark:
 
 ```text
 smartcity.spark.environment
@@ -131,7 +131,7 @@ smartcity.spark.alerts
 
 ## Configuration
 
-Les valeurs par defaut sont dans `config.py`. Elles peuvent etre surchargees avec des variables d'environnement :
+Default values are in `config.py`. They can be overridden with environment variables:
 
 ```bash
 KAFKA_BOOTSTRAP_SERVERS=localhost:9092
@@ -143,7 +143,7 @@ DATA_LAKE_ENABLED=true
 DATA_LAKE_BASE_DIR="../data_lake"
 ```
 
-Seuils d'alertes :
+Alert thresholds:
 
 ```bash
 AIR_QUALITY_ALERT_THRESHOLD=150
@@ -155,17 +155,17 @@ WATER_FLOW_DROP_THRESHOLD=10
 TEMPERATURE_TREND_THRESHOLD=1
 ```
 
-Si vous modifiez les agregations Spark, utilisez une nouvelle version de checkpoint :
+If you modify Spark aggregations, use a new checkpoint version:
 
 ```bash
 SPARK_CHECKPOINT_VERSION=v3 ./run_spark.sh
 ```
 
-## Formats JSON attendus
+## Expected JSON Formats
 
-Spark accepte un objet JSON simple ou un tableau JSON.
+Spark accepts a single JSON object or a JSON array.
 
-### Environnement
+### Environment
 
 ```json
 {
@@ -177,7 +177,7 @@ Spark accepte un objet JSON simple ou un tableau JSON.
 }
 ```
 
-### Trafic
+### Traffic
 
 ```json
 {
@@ -190,7 +190,7 @@ Spark accepte un objet JSON simple ou un tableau JSON.
 }
 ```
 
-### Eau
+### Water
 
 ```json
 {
@@ -207,7 +207,7 @@ Spark accepte un objet JSON simple ou un tableau JSON.
 }
 ```
 
-Exemple de tableau JSON :
+Example of JSON array:
 
 ```json
 [
@@ -228,36 +228,36 @@ Exemple de tableau JSON :
 ]
 ```
 
-## Resultats produits
+## Produced Results
 
-Les messages produits par Spark contiennent notamment :
+Messages produced by Spark notably contain:
 
-- `window.start` et `window.end`
-- les metriques agregees
-- `processed_at`, l'heure de traitement Spark
+- `window.start` and `window.end`
+- aggregated metrics
+- `processed_at`, the Spark processing time
 
-Les messages JSON invalides sont envoyes vers :
+Invalid JSON messages are sent to:
 
 ```text
 smartcity.spark.errors
 ```
 
-Les alertes metier sont envoyees vers :
+Business alerts are sent to:
 
 ```text
 smartcity.spark.alerts
 ```
 
-## Data lake local
+## Local Data Lake
 
-Les jobs Spark ecrivent aussi les flux dans un data lake local au format Parquet.
-Par defaut, les fichiers sont crees dans :
+Spark jobs also write streams to a local data lake in Parquet format.
+By default, files are created in:
 
 ```text
 Platform/smart-city/data_lake/
 ```
 
-Structure :
+Structure:
 
 ```text
 data_lake/
@@ -271,18 +271,18 @@ data_lake/
     traffic/
 ```
 
-- `bronze` conserve les messages Kafka bruts avec topic, partition, offset et valeur JSON originale.
-- `silver` conserve les donnees JSON parsees et validees par Spark.
+- `bronze` retains raw Kafka messages with topic, partition, offset, and original JSON value.
+- `silver` retains JSON data parsed and validated by Spark.
 
-Les dossiers sont partitionnes par `event_date` pour faciliter les analyses historiques.
-Vous pouvez desactiver cette ecriture avec :
+Folders are partitioned by `event_date` to facilitate historical analysis.
+You can disable this writing with:
 
 ```bash
 DATA_LAKE_ENABLED=false ./run_spark.sh
 ```
 
-Ou choisir un autre emplacement :
+Or choose another location:
 
 ```bash
-DATA_LAKE_BASE_DIR=/chemin/vers/data_lake ./run_spark.sh
+DATA_LAKE_BASE_DIR=/path/to/data_lake ./run_spark.sh
 ```

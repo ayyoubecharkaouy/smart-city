@@ -1,101 +1,101 @@
 # Smart City
 
-Plateforme Big Data & IoT pour une ville intelligente. Le dépôt contient plusieurs composants intégrés qui communiquent via Apache Kafka :
+Big Data & IoT platform for a smart city. The repository contains several integrated components communicating via Apache Kafka:
 
-- **Ingestion & Simulation** : Node-RED (simulateurs de capteurs environnementaux, d'eau et de trafic).
-* **Traitement de Flux** : Apache Spark / PySpark (streaming structuré, agrégations et alertes).
-- **Messagerie** : Apache Kafka (avec Zookeeper et initialisation automatisée des topics).
-- **Stockage** : MongoDB (base de données pour les données froides et agrégées).
-- **Service API** : Backend (Node.js + Express + Socket.IO pour le temps réel).
-- **Visualisation** : Frontend (Next.js + TailwindCSS + Dashboard temps réel).
-
----
-
-## 🛠️ Prérequis
-
-- **Docker** et **Docker Compose** (installés et démarrés).
-- **Apache Kafka 4.2.0**, fourni par l'image Docker `apache/kafka:4.2.0`.
-- *Optionnel (si développement hors conteneur)* :
-  - **Node.js** (v20+ recommandé)
-  - **Python 3.11+** (pour les jobs Spark en local)
+- **Ingestion & Simulation**: Node-RED (simulators for environmental, water, and traffic sensors).
+* **Stream Processing**: Apache Spark / PySpark (structured streaming, aggregations, and alerts).
+- **Messaging**: Apache Kafka (with Zookeeper and automated topic initialization).
+- **Storage**: MongoDB (database for cold and aggregated data).
+- **API Service**: Backend (Node.js + Express + Socket.IO for real-time).
+- **Visualization**: Frontend (Next.js + TailwindCSS + Real-time dashboard).
 
 ---
 
-## 🚀 Options de Démarrage
+## 🛠️ Prerequisites
 
-Deux approches de démarrage s'offrent à vous selon votre objectif (production/démonstration ou développement actif).
+- **Docker** and **Docker Compose** (installed and running).
+- **Apache Kafka 4.2.0**, provided by the `apache/kafka:4.2.0` Docker image.
+- *Optional (for local development outside a container)*:
+  - **Node.js** (v20+ recommended)
+  - **Python 3.11+** (for running Spark jobs locally)
 
-### Option A : Tout-en-un avec Docker (Recommandé & Automatisé) 🐳
+---
 
-Cette méthode lance **l'intégralité de la plateforme** (infrastructure, base de données, backend, frontend, simulateurs et traitement Spark) avec une seule commande. L'ordre de démarrage et la création des topics Kafka sont entièrement gérés et automatisés par Docker Compose.
+## 🚀 Startup Options
+
+Two startup approaches are available depending on your goal (production/demonstration vs. active development).
+
+### Option A: All-in-one with Docker (Recommended & Automated) 🐳
+
+This method launches **the entire platform** (infrastructure, database, backend, frontend, simulators, and Spark processing) with a single command. The startup order and Kafka topic creation are fully managed and automated by Docker Compose.
 
 ```bash
-# 1. Ajuster les permissions pour Linux (évite les erreurs de droits sur les volumes)
+# 1. Adjust permissions for Linux (prevents volume permission errors)
 chmod -R 777 ./node-red ./data_lake ./spark/checkpoints
 
-# 2. Lancer l'ensemble des services en arrière-plan
+# 2. Start all services in the background
 docker compose up -d
 
-# 3. Vérifier le bon fonctionnement des conteneurs
+# 3. Check that containers are running properly
 docker compose ps
 ```
 
-#### Accès aux services :
-- 🖥️ **Dashboard Frontend** : [http://localhost:3000](http://localhost:3000)
-- 🔌 **API Backend** : [http://localhost:4000/api/health](http://localhost:4000/api/health)
-- ⚙️ **Interface Node-RED** (simulateurs) : [http://localhost:1880](http://localhost:1880)
+#### Service Access:
+- 🖥️ **Frontend Dashboard**: [http://localhost:3000](http://localhost:3000)
+- 🔌 **Backend API**: [http://localhost:4000/api/health](http://localhost:4000/api/health)
+- ⚙️ **Node-RED Interface** (simulators): [http://localhost:1880](http://localhost:1880)
 
 ---
 
-### Option B : Approche Hybride (Développement Local) 💻
+### Option B: Hybrid Approach (Local Development) 💻
 
-Idéale pour modifier le code du frontend, du backend ou des scripts Spark avec rechargement à chaud (*live-reload*), sans avoir à reconstruire les images Docker.
+Ideal for modifying frontend, backend, or Spark script code with hot-reloading (*live-reload*), without having to rebuild Docker images.
 
-#### 1. Démarrer uniquement l'infrastructure (Zookeeper, Kafka, MongoDB)
-Nous lançons uniquement les briques de stockage et de messagerie dans Docker :
+#### 1. Start only the infrastructure (Zookeeper, Kafka, MongoDB)
+We only launch the storage and messaging components in Docker:
 ```bash
 docker compose up -d zookeeper kafka kafka-init mongodb
 ```
-*Note : Le conteneur éphémère `kafka-init` se chargera de créer automatiquement les topics Kafka.*
+*Note: The ephemeral `kafka-init` container will automatically create Kafka topics.*
 
-#### 2. Démarrer Node-RED en local
+#### 2. Start Node-RED locally
 ```bash
-# Installer Node-RED globalement si ce n'est pas déjà fait
+# Install Node-RED globally if not already done
 npm install -g --unsafe-perm node-red
-# Démarrer Node-RED
+# Start Node-RED
 node-red
 ```
-*Importez ensuite les flux présents dans `./node-red/flows.json`.*
+*Then import the flows located in `./node-red/flows.json`.*
 
-#### 3. Démarrer le Backend en local
+#### 3. Start the Backend locally
 ```bash
 cd backend
 npm install
-npm run dev # ou node server.js
+npm run dev # or node server.js
 ```
 
-#### 4. Démarrer le Frontend en local
+#### 4. Start the Frontend locally
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-#### 5. Exécuter les jobs Spark en local
-Installez d'abord les dépendances Python nécessaires :
+#### 5. Run Spark jobs locally
+First, install the required Python dependencies:
 ```bash
 pip install -r requirements.txt
 ```
-Lancez ensuite le script d'initialisation et d'exécution Spark :
+Then run the Spark initialization and execution script:
 
-Linux/macOS :
+Linux/macOS:
 
 ```bash
 cd spark
 ./run_spark.sh
 ```
 
-Windows PowerShell :
+Windows PowerShell:
 
 ```powershell
 cd spark
@@ -104,7 +104,7 @@ Set-ExecutionPolicy -Scope Process Bypass
 .\run_spark.ps1
 ```
 
-Windows CMD :
+Windows CMD:
 
 ```bat
 cd spark
@@ -112,11 +112,9 @@ py -m pip install -r requirements.txt
 run_spark.cmd
 ```
 
-Sous Windows, Java 17 doit être installé et `spark-submit` doit être disponible
-dans le `PATH`. Consultez `spark/README.md` pour le diagnostic détaillé.
+On Windows, Java 17 must be installed and `spark-submit` must be available in the `PATH`. See `spark/README.md` for detailed troubleshooting.
 
-Pour éviter l'installation locale de Java et Spark sous Windows, lancez
-directement le service Docker depuis la racine du projet :
+To avoid a local installation of Java and Spark on Windows, you can directly launch the Docker service from the project root:
 
 ```powershell
 docker compose up -d zookeeper kafka kafka-init spark
@@ -125,31 +123,31 @@ docker compose logs -f spark
 
 ---
 
-## 📊 Topics Kafka Utilisés
+## 📊 Kafka Topics Used
 
-Les topics suivants sont automatiquement créés au démarrage :
-*   `smartcity.environment.readings` (capteurs d'environnement, 3 partitions)
-*   `smartcity.water.readings` (capteurs d'eau)
-*   `smartcity.traffic.readings` (capteurs de trafic)
-*   `smartcity.spark.environment` (données environnementales traitées par Spark)
-*   `smartcity.spark.water` (données d'eau traitées par Spark)
-*   `smartcity.spark.traffic` (données de trafic traitées par Spark)
-*   `smartcity.spark.errors` (erreurs détectées)
-*   `smartcity.spark.alerts` (alertes générées par Spark)
+The following topics are automatically created at startup:
+*   `smartcity.environment.readings` (environmental sensors, 3 partitions)
+*   `smartcity.water.readings` (water sensors)
+*   `smartcity.traffic.readings` (traffic sensors)
+*   `smartcity.spark.environment` (environmental data processed by Spark)
+*   `smartcity.spark.water` (water data processed by Spark)
+*   `smartcity.spark.traffic` (traffic data processed by Spark)
+*   `smartcity.spark.errors` (detected errors)
+*   `smartcity.spark.alerts` (alerts generated by Spark)
 
 ---
 
-## 🧹 Nettoyage de l'Environnement
+## 🧹 Environment Cleanup
 
-Pour éteindre tous les services Docker et nettoyer les volumes de stockage associés :
+To shut down all Docker services and clean the associated storage volumes:
 ```bash
 docker compose down -v
 ```
 
 ---
 
-## 📝 Licence
+## 📝 License
 
 Copyright 2026 Echarkaouy Ayyoub, Ghazi Zakaria, Ahouir Mohamed.
 
-Ce projet est distribué sous la licence Apache 2.0.
+This project is licensed under the Apache 2.0 License.

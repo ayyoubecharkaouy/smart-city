@@ -33,7 +33,7 @@ function MetricCard({
   colorClass: string;
 }) {
   return (
-    <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 shadow-2xl shadow-black/30">
+    <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <div className={`${colorClass} p-3 rounded-2xl`}>
           <Icon className="w-6 h-6 text-white" />
@@ -56,7 +56,7 @@ function MetricCard({
           {title}
         </p>
         <div className="flex items-baseline gap-1">
-          <h3 className="text-3xl font-black">
+          <h3 className="text-3xl font-black text-slate-800">
             <AnimatedNumber value={value} decimals={decimals} />
           </h3>
           <span className="text-sm font-bold text-slate-400">{unit}</span>
@@ -100,8 +100,8 @@ export default function Overview() {
       <div className="flex-1 flex items-center justify-center h-[80vh] px-8">
         <StateNotice
           variant="loading"
-          title="Préparation de la vue d&apos;ensemble"
-          message="Synchronisation avec les flux Big Data..."
+          title="Preparing the overview"
+          message="Syncing with Big Data streams..."
           className="max-w-xl"
         />
       </div>
@@ -113,7 +113,7 @@ export default function Overview() {
       <div className="flex-1 flex items-center justify-center h-[80vh] px-8">
         <StateNotice
           variant="error"
-          message={`${error}. Vérifiez que le backend est lancé sur le bon port.`}
+          message={`${error}. Make sure the backend is running on the correct port.`}
           className="max-w-xl"
         />
       </div>
@@ -125,7 +125,7 @@ export default function Overview() {
       <div className="flex-1 flex items-center justify-center h-[80vh] px-8">
         <StateNotice
           variant="disconnected"
-          message="Aucune connexion Socket.IO active. Lancez le backend pour recevoir les flux temps réel."
+          message="No active Socket.IO connection. Start the backend to receive real-time streams."
           className="max-w-xl"
         />
       </div>
@@ -137,7 +137,7 @@ export default function Overview() {
       <div className="flex-1 flex items-center justify-center h-[80vh] px-8">
         <StateNotice
           variant="empty"
-          message="Les APIs répondent, mais aucun capteur n'a encore envoyé de mesure."
+          message="APIs are responding, but no sensor has sent a reading yet."
           className="max-w-xl"
         />
       </div>
@@ -189,19 +189,19 @@ export default function Overview() {
   const trafficTrend = calculateTrend(totalVehicles, trafficHistory, "total_vehicles");
 
   return (
-    <div className="mx-auto min-h-screen w-full max-w-7xl bg-black p-4 text-slate-100 sm:p-6 lg:p-8">
+    <div className="mx-auto min-h-screen w-full max-w-7xl bg-slate-50 p-4 text-slate-800 sm:p-6 lg:p-8">
       <header className="mb-8">
-        <h2 className="mb-2 text-3xl font-black">
-          Vue d&apos;ensemble
+        <h2 className="mb-2 text-3xl font-black text-slate-800">
+          Overview
         </h2>
         <p className="text-sm font-medium text-slate-400">
-          Synthèse temps réel des principaux indicateurs urbains
+          Real-time summary of key urban indicators
         </p>
       </header>
 
       <div className="mb-10 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
         <MetricCard
-          title="Température Moy."
+          title="Avg. Temperature"
           value={avgTemp}
           decimals={1}
           unit="°C"
@@ -210,7 +210,7 @@ export default function Overview() {
           colorClass="bg-green-500"
         />
         <MetricCard
-          title="Qualité de l'Air"
+          title="Air Quality"
           value={avgAqi}
           unit="AQI"
           icon={Activity}
@@ -218,7 +218,7 @@ export default function Overview() {
           colorClass="bg-green-500"
         />
         <MetricCard
-          title="Consommation Eau"
+          title="Water Consumption"
           value={totalFlow}
           unit="L/min"
           icon={Droplets}
@@ -226,9 +226,9 @@ export default function Overview() {
           colorClass="bg-green-500"
         />
         <MetricCard
-          title="Trafic Actuel"
+          title="Current Traffic"
           value={totalVehicles}
-          unit="véhicules"
+          unit="vehicles"
           icon={Car}
           trend={trafficTrend}
           colorClass="bg-green-500"
