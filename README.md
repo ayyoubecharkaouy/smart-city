@@ -1,13 +1,11 @@
 
 <p align="center">
   <img
-    src="assets/El%20Jadida%E2%80%99s%20Connected%20Coastal%20City.png"
+    src="assets/smart-city.png"
     alt="Smart City — Ville connectée d'El Jadida"
     width="100%"
   />
 </p>
-
-<h1 align="center">🏙️ SMART CITY</h1>
 
 <p align="center">
   <strong>Plateforme Big Data & IoT de supervision urbaine en temps réel</strong>
