@@ -1,7 +1,7 @@
 
 <p align="center">
   <img
-    src="assets/El Jadida's Connected Coastal City.png"
+    src="assets/El Jadida’s Connected Coastal City.png"
     alt="Smart City — Supervision urbaine, Big Data et Internet des objets"
     width="100%"
   />
