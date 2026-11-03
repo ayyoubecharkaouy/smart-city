@@ -127,7 +127,7 @@ L'architecture repose sur la circulation d'événements entre des composants sp�
   <img
     src="assets/mermaid-diagram.png"
     alt="Architecture Smart City : Node-RED, Kafka, Spark, MongoDB, Data Lake et Next.js"
-    width="100%" height="500px"
+    width="100%"
   />
 </p>
 
@@ -543,9 +543,9 @@ Ces éléments constituent des pistes d'amélioration, et non des fonctionnalit�
 
 Projet développé par :
 
-- **Echarkaouy Ayyoub**
-- **Ghazi Zakaria**
-- **Ahouir Mohamed**
+- **ECHARKAOUY Ayyoub**
+- **GHAZI Zakaria**
+- **AHOUIR Mohamed**
 
 ---
 
